@@ -2,7 +2,7 @@
 
 Tested on python 2.7
 
-Prerequisites
+Prerequisites:
 * numpy
 * scipy
 * scikit-learn
