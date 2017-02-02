@@ -73,7 +73,9 @@ def partitionedMDS(path, lowpath, args):
 	low_contactMat = dt.matFromBed(lowpath, lowCluster)
 	lowTads = tad.getDomains(low_contactMat, lowCluster, domainSmoothingParameter, minSizeFraction)		#low subclusters
 	tad.subclustersFromTads(lowCluster, lowTads)
-	highChrom = dt.intraChromFromBed(path, None)
+
+	size, res = dt.basicParamsFromBed(path)
+	highChrom = dt.ChromParameters(lowCluster.chrom.minPos, lowCluster.chrom.maxPos, res, lowCluster.chrom.name, size)
 
 	resRatio = lowCluster.chrom.res/highChrom.res
 	highTads = lowTads * resRatio
