@@ -86,6 +86,7 @@ The miniMDS algorithm creates partitions in the high-resolution data and perform
 The number of partitions cannot be set directly because partitions are created empirically to maximize clustering of the data. However, the degree of clustering of the data can be tweaked with the following parameters:
 
 >-m: minimum partition size (as a fraction of the data). Default = 0.05
+>
 >-p: smoothing parameter (between 0 and 1). Default = 0.1
 
 Make these parameters smaller to increase the number of partitions. For very high resolution data (such as 5-Kbp), m=0.01 and p=0.01 is recommended:
