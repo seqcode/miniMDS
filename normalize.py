@@ -52,16 +52,11 @@ def main():
 	parser.add_argument("hic_id", help="e.g. GM12878_combined")
 	parser.add_argument("res", type=int, help="resolution (bp)")
 	parser.add_argument("chrom1", help="first chromosome (e.g. 1)")
-	parser.add_argument("--inter", action="store_true", help="interchromosomal (default: intrachromosomal)")
 	parser.add_argument("-chrom2", help="second chromosome (e.g. 1)")
 	args = parser.parse_args()
 
-	if args.inter:
-		if args.chrom2 is None:
-			print "Error. Second chromosome must be specified for interchromosomal normalization."
-			sys.exit(0)
-		else:
-			normalize_inter(args.hic_id, args.res, args.chrom1, args.chrom2)
+	if args.chrom2 is not None:
+		normalize_inter(args.hic_id, args.res, args.chrom1, args.chrom2)
 	else:
 		normalize_intra(args.hic_id, args.res, args.chrom1)
 
