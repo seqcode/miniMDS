@@ -1,3 +1,5 @@
+Run these scripts to re-create figures from the paper:
+
 Fig. 1:
 	python alphas.py
 
