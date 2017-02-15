@@ -86,7 +86,6 @@ The miniMDS algorithm creates partitions in the high-resolution data and perform
 The number of partitions cannot be set directly because partitions are created empirically to maximize clustering of the data. However, the degree of clustering of the data can be tweaked with the following parameters:
 
 >-m: minimum partition size (as a fraction of the data). Default = 0.05
-> 
 >-p: smoothing parameter (between 0 and 1). Default = 0.1
 
 Make these parameters smaller to increase the number of partitions. For very high resolution data (such as 5-Kbp), m=0.01 and p=0.01 is recommended:
@@ -184,13 +183,13 @@ By default, the radius is the to-scale radius of heterochromatin.
 Multiple clusters can be plotted simultaneously:
 
     chroms = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, X)
-    clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format chrom for chrom in chroms)]
+    clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
     plotting.plot_clusters_interactive(clusters)
 
 plotting.py has 23 built-in colors designed to be as different to the human eye as possible. By default, these colors are used when plotting multiple clusters. You can also specify a list of colors:
 
     chroms = (1, 2)
-    clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format chrom for chrom in chroms)]
+    clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
     plotting.plot_clusters_interactive(clusters, colors=[(1,0,0), (0,0,1)])
 
 The radius can also be specified, as above. 
@@ -198,7 +197,7 @@ The radius can also be specified, as above.
 The option _cut_ creates a cross-section of the plot. For example, this is useful for viewing the interior of the nucleus.
 
     chroms = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, X)
-    clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format chrom for chrom in chroms)]
+    clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
     plotting.plot_clusters_interactive(clusters, cut=True)
 
 A plot can be saved as a gif:
