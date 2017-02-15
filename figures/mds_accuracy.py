@@ -2,6 +2,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import multiprocessing as mp
 from sklearn import manifold
+from scipy import stats
 import sys
 sys.path.append("..")
 import data_tools as dt
@@ -25,6 +26,19 @@ def mds(distMat, metric):
 	mds = manifold.MDS(n_components=3, metric=metric, random_state=np.random.RandomState(seed=3), verbose=0, dissimilarity="precomputed", n_jobs=-1)
 	return mds.fit(distMat).embedding_
 
+def pearson(true, embedded):
+	assert true.shape == embedded.shape
+	#convert to vectors
+	true = true.flatten()
+	embedded = embedded.flatten()
+
+	#remove zeroes
+	indices = np.where(true != 0)[0]
+	true = true[indices]
+	embedded = embedded[indices]
+
+	return stats.pearsonr(true, embedded)
+
 res = int(sys.argv[1])
 res_kb = res/1000
 domainSmoothingParameter = 0.05
@@ -46,9 +60,9 @@ for j in range(len(distMat)):	#remove diagonal
 	distMat[j,j] = 0
 
 cmds_distMat = distsFromCoords(st.cmds(distMat))
-cmds_r = st.pearson(cmds_distMat, distMat)
+cmds_r = pearson(cmds_distMat, distMat)
 mmds_distMat = distsFromCoords(mds(distMat, True))
-mmds_r = st.pearson(mmds_distMat, distMat)
+mmds_r = pearson(mmds_distMat, distMat)
 
 minimds_cluster = mm.partitionedMDS(highpath, lowpath, args)
 contactMat = dt.matFromBed(highpath, minimds_cluster, False)
@@ -56,7 +70,7 @@ distMat = at.contactToDist(contactMat)
 minimds_distMat = distsFromCoords(minimds_cluster.getCoords())
 for j in range(len(distMat)):	#remove diagonal
 	distMat[j,j] = 0
-minimds_r = st.pearson(distMat, minimds_distMat)
+minimds_r = pearson(distMat, minimds_distMat)
 
 rs = (cmds_r, mmds_r, minimds_r)
 

@@ -1,50 +1,5 @@
 import numpy as np
 import linear_algebra as la
-import sys
-from scipy import stats
-from matplotlib import pyplot as plt
-
-def rmse(true, embedded):
-	"""Root mean square error between two matrices, ignoring zeroes"""
-	assert true.shape == embedded.shape
-	#convert to vectors
-	true = true.flatten()
-	embedded = embedded.flatten()
-
-	#remove zeroes
-	indices = np.where(true != 0)[0]
-	true = true[indices]
-	embedded = embedded[indices]
-
-	#rescale 
-	true = true/np.mean(true)
-	embedded = embedded/np.mean(embedded)
-
-	#calculate rmse
-	error_sum = 0	#initialize
-	n = len(true)
-	assert len(embedded) == n
-	for i in range(n):
-		error_sum += (true[i] - embedded[i])**2
-	mse = error_sum/n	#mean square error
-	return mse**(1./2)	#root mean square error
-
-def pearson(true, embedded):
-	"""Root mean square error between two matrices, ignoring zeroes"""
-	assert true.shape == embedded.shape
-	#convert to vectors
-	true = true.flatten()
-	embedded = embedded.flatten()
-
-	#remove zeroes
-	indices = np.where(true != 0)[0]
-	true = true[indices]
-	embedded = embedded[indices]
-
-	plt.scatter(true, embedded)
-	plt.show()
-	
-	return stats.pearsonr(true, embedded)
 
 def rmsd(cluster1, cluster2):
 	"""Root mean square distance"""
@@ -76,16 +31,6 @@ def smoothWithMovingAverage(signal, size_of_window):
 	for i in range(remainder_size):
 		smoothed_remainder[i] = movingAverage(remainder[i:remainder_size], remainder_size-i)
 	return np.concatenate((smoothed, smoothed_remainder))
-
-def smooth_function(values):
-	"""Interpolates and enforces monotonic decreasing"""
-	prev_value = sys.float_info.max	
-	for i in range(len(values)):
-		if values[i] == 0:	#missing data; interpolate
-			values[i] = prev_value
-		else:			#enforce monotonic
-			values[i] = min((prev_value, values[i]))
-			prev_value = values[i]
 
 def cmds(distMat):
 	"""Modified from http://www.nervouscomputer.com/hfs/cmdscale-in-python/"""
