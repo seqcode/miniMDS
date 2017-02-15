@@ -2,8 +2,6 @@ from mayavi import mlab	#this must be first
 import numpy as np
 import linear_algebra as la
 import os
-from matplotlib import pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 #from Rippe (2001)
 kl = 289	#Kuhn length (nm)
@@ -12,26 +10,6 @@ chromatinDiameter = 30	#diameter of heterochromatin (nm)
 default_colors = np.array([[255,0,0], [255,238,0], [0,255,238], [0,102,255], [255,0,170], [255,102,0], [204,255,0], [0,238,255], [0,68,255], [255,0,102], [255,136,0], [0,255,34], [0,204,255], [34,0,255], [255,0,68], [255,170,0], [0,255,136], [0,170,255], [204,0,255], [255,204,0], [0,255,204], [0,136,255], [255,0,238]])/255.
 
 default_colors = [tuple(color) for color in default_colors]	#convert to tuple
-
-
-def plot_clusters_pyplot(clusters, colors=default_colors, radius=None, cut=False):
-	if radius is None:
-		radius = calculateRadius(clusters)
-	fig = plt.figure()
-	ax = fig.add_subplot(111, projection='3d')
-	for i, cluster in enumerate(clusters):
-		coords = np.array(cluster.getCoords())
-		xs = coords[:,0]
-		ys = coords[:,1]
-		zs = coords[:,2]
-		if cut:
-			midpoint = np.mean(xs)
-			indices = np.where(xs > midpoint)[0]
-			xs = xs[indices]
-			ys = ys[indices]
-			zs = zs[indices]	
-		ax.plot(xs, ys, zs, c=colors[i])	
-	plt.show()
 
 def plot_clusters_interactive(clusters, colors=default_colors, radius=None, cut=False):
 	mlab.close(all=True)
