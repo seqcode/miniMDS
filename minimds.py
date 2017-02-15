@@ -67,35 +67,35 @@ def partitionedMDS(path, lowpath, args):
 	maxmemory = args[2]
 	num_threads = args[3]
 
+	#create low-res cluster
 	lowCluster = dt.clusterFromBed(lowpath, None, None)
 
 	#get TADs
 	low_contactMat = dt.matFromBed(lowpath, lowCluster)
 	lowTads = tad.getDomains(low_contactMat, lowCluster, domainSmoothingParameter, minSizeFraction)		#low subclusters
-	tad.subclustersFromTads(lowCluster, lowTads)
-
+	
+	#create high-res chrom
 	size, res = dt.basicParamsFromBed(path)
 	highChrom = dt.ChromParameters(lowCluster.chrom.minPos, lowCluster.chrom.maxPos, res, lowCluster.chrom.name, size)
 
+	#create high-res cluster
 	resRatio = lowCluster.chrom.res/highChrom.res
 	highTads = lowTads * resRatio
 	highCluster = dt.clusterFromBed(path, highChrom, highTads)
-	tad.subclustersFromTads(highCluster, highTads)
+
+	#create compatible subclusters
+	tad.subclustersFromTads(highCluster, lowCluster, lowTads)
 
 	infer_cluster(low_contactMat, lowCluster, False)
 	print "Low-resolution MDS complete"
 
 	highSubclusters = pymp.shared.list(highCluster.clusters)
 	lowSubclusters = pymp.shared.list(lowCluster.clusters)
-	#highSubclusters = highCluster.clusters
-	#lowSubclusters = lowCluster.clusters
 
 	numSubclusters = len(highCluster.clusters)
 	num_threads = min((num_threads, multiprocessing.cpu_count(), numSubclusters))	#don't exceed number of requested threads, available threads, or clusters
-	print num_threads
 	with pymp.Parallel(num_threads) as p:
 		for subclusternum in p.range(numSubclusters):
-	#for subclusternum in range(numSubclusters):
 			highSubcluster = highSubclusters[subclusternum]
 			trueLow = lowSubclusters[subclusternum]
 
