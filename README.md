@@ -1,6 +1,6 @@
 # miniMDS
 
-miniMDS is a software tool for inferring and plotting 3D structures from normalized Hi-C data, using partitioned MDS, an efficient approximation to multidimensional scaling (MDS). It produces a single 3D structure from a Hi-C BED file, representing an ensemble average of chromosome conformations within the population of cells. By performing structural inference at multiple resolutions, it is able to process high-resolution data quickly with limited memory requirements. Kilobase-resolution structures can be inferred within several hours on a desktop computer. Standard MDS results in inaccuracies for sparse high-resolution data, but miniMDS focuses on local substructures to achieve greater accuracy. miniMDS also supports interchromosomal structural inference. Together with Mayavi, miniMDS produces publication-quality images and gifs. 
+miniMDS is a tool for inferring and plotting 3D structures from normalized Hi-C data, using partitioned MDS, an efficient approximation to multidimensional scaling (MDS). It produces a single 3D structure from a Hi-C BED file, representing an ensemble average of chromosome conformations within the population of cells. By performing structural inference at multiple resolutions, it is able to process high-resolution data quickly with limited memory requirements. Kilobase-resolution structures can be inferred within several hours on a desktop computer. Standard MDS results in inaccuracies for sparse high-resolution data, but miniMDS focuses on local substructures to achieve greater accuracy. miniMDS also supports interchromosomal structural inference. Together with Mayavi, miniMDS produces publication-quality images and gifs. 
 
 ## Installation
 
@@ -11,6 +11,7 @@ Prerequisites:
 * scikit-learn
 * pymp
 * mayavi (optional; for plotting)
+* ImageMagick (optional; for creating gifs)
 * scipy (optional; for creating figures from paper)
 * matplotlib (optional; for creating figures paper)
 
@@ -38,31 +39,37 @@ To view help:
 
 By default, standard MDS (not partitioned MDS) is used:
 
-``python minimds.py GM12878\_combined\_22\_10kb.bed``
+``python minimds.py GM12878_combined_22_10kb.bed``
 
 Structures are not saved by default. Use the -o option with the path where you want to save the structure.
 
-``python minimds.py -o GM12878\_combined\_22\_10kb_structure.tsv GM12878\_combined\_22\_10kb.bed``
+``python minimds.py -o GM12878_combined_22_10kb_structure.tsv GM12878_combined_22_10kb.bed``
 
 Structures are saved to tsv files. The header contains the name of the chromosome, the resolution, and the starting genomic coordinate. Each line in the file contains the point number followed by the 3D coordinates (with "nan" for missing data). 
 
 Example - chr22 at 10-Kbp resolution:
 
 >chr22
+> 
 >10000
+> 
 >16050000
+> 
 >0	0.589878298045	0.200029092422	0.182515056542
+> 
 >1	0.592088232028	0.213915817254	0.186657230841
+> 
 >2	nan	nan	nan
+> 
 >...
 
 Structures can be read into Cluster objects:
 
-``cluster = data\_tools.clusterFromFile("GM12878\_combined\_22\_100kb_structure.tsv")``
+``cluster = data_tools.clusterFromFile("GM12878_combined_22_100kb_structure.tsv")``
 
 To run partitioned MDS, you must have a normalized BED file at a lower resolution than the BED file you want to infer. For example, to use a 100-Kbp-resolution BED file to aid in the inference of a 10-Kbp-resolution file:
 
-``python minimds.py -l GM12878\_combined\_22\_100kb.bed -o GM12878\_combined\_22\_10kb_structure.tsv GM12878\_combined\_22\_10kb.bed``
+``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_10kb_structure.tsv GM12878_combined_22_10kb.bed``
 
 The resolution you choose for the low-res file depends on your tradeoff between speed and accuracy. Lower resolutions are faster but less accurate. 
 
@@ -75,15 +82,16 @@ The miniMDS algorithm creates partitions in the high-resolution data and perform
 The number of partitions cannot be set directly because partitions are created empirically to maximize clustering of the data. However, the degree of clustering of the data can be tweaked with the following parameters:
 
 >-m: minimum partition size (as a fraction of the data). Default = 0.05
+> 
 >-p: smoothing parameter (between 0 and 1). Default = 0.1
 
 Make these parameters smaller to increase the number of partitions. For very high resolution data (such as 5-Kbp), m=0.01 and p=0.01 is recommended:
 
-``python minimds.py -l GM12878\_combined\_22\_100kb.bed -o GM12878\_combined\_22\_5kb_structure.tsv -m 0.01 -p 0.01 GM12878\_combined\_22\_5kb.bed``
+``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_5kb_structure.tsv -m 0.01 -p 0.01 GM12878_combined_22_5kb.bed``
 
 You can limit the maximum RAM (in Kb) used by any given partition using -R (default = 32000):
 
-``python minimds.py -l GM12878\_combined\_22\_100kb.bed -o GM12878\_combined\_22\_5kb_structure.tsv -R 50000 GM12878\_combined\_22\_5kb.bed``
+``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_5kb_structure.tsv -R 50000 GM12878_combined_22_5kb.bed``
 
 ##### Number of threads
 
@@ -91,13 +99,13 @@ miniMDS uses multithreading to achieve greater speed. By default, it uses the nu
 
 For example, to run miniMDS with three threads:
 
-``python minimds.py -l GM12878\_combined\_22\_100kb.bed -o GM12878\_combined\_22\_10kb_structure.tsv -n 3 GM12878\_combined\_22\_10kb.bed``
+``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_10kb_structure.tsv -n 3 GM12878_combined_22_10kb.bed``
 
 ##### Classical MDS
 
 Classical MDS (cMDS), also called principal coordinates analysis, is a variant of MDS that is faster under certain circumstances. The miniMDS tool supports cMDS but NOT with partitioned MDS. Use the --classical option. 
 
-``python minimds.py --classical GM12878\_combined\_22\_10kb.bed``
+``python minimds.py --classical GM12878_combined_22_10kb.bed``
 
 This mode is mainly used for testing. 
 
@@ -129,13 +137,13 @@ Enter the prefix and resolution of the inter-chromosomal and intra-chromosomal f
 
 For example, if your files are stored in the directory _data_:
 
-``python minimds_inter.py data/GM12878\_combined\_interchromosomal data/GM12878\_combined\_intrachromosomal 1000000 10000``
+``python minimds_inter.py data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
 
 Because of the challenges of inter-chromosomal inference, it is recommended that 1-Mbp-resolution be used for inter-chromosomal data. 
 
 By default, partitioned MDS is not performed. To perform partitioned MDS on each intra-chromosomal structure, use the option -l followed by the resolution of the low-res intra-chromosomal files. (It is assumed that the naming of these files is otherwise identical to that of the high-res intra-chromosomal files.)
 
-``python minimds_inter.py -l 100000 data/GM12878\_combined\_interchromosomal data/GM12878\_combined\_intrachromosomal 1000000 10000``
+``python minimds_inter.py -l 100000 data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
 
 This will perform partitioned MDS on each of the intra-chromosomal structures at 10-Kbp resolution and then assemble the chromosomes into a whole-genome structure using 1-Mbp-resolution inter-chromosomal data. 
 
@@ -149,6 +157,6 @@ By default, minimds_inter.py uses all human chromosomes other than Y. You can sp
 
 To perform interchromosomal analysis on chromosomes 1 and 8:
 
-``python minimds_inter.py -l 100000 -c 1 8 data/GM12878\_combined\_interchromosomal data/GM12878\_combined\_intrachromosomal 1000000 10000``
+``python minimds_inter.py -l 100000 -c 1 8 data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
 
 Note: it is necessary to use this option if you are using a genome other than human, so that it won't search for chromosomes that don't exist.
