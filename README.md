@@ -47,11 +47,17 @@ Structures are saved to tsv files. The header contains the name of the chromosom
 Example - chr22 at 10-Kbp resolution:
 
 chr22
+
 10000
+
 16050000
+
 0	0.589878298045	0.200029092422	0.182515056542
+
 1	0.592088232028	0.213915817254	0.186657230841
+
 2	nan	nan	nan
+
 ...
 
 Structures can be read into Cluster objects:
