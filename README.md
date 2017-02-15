@@ -1,6 +1,6 @@
 # miniMDS
 
-miniMDS is a tool for inferring and plotting 3D structures from normalized Hi-C data, using partitioned MDS, an efficient approximation to multidimensional scaling (MDS). It produces a single 3D structure from a Hi-C BED file, representing an ensemble average of chromosome conformations within the population of cells. By performing structural inference at multiple resolutions, it is able to process high-resolution data quickly with limited memory requirements. Kilobase-resolution structures can be inferred within several hours on a desktop computer. Standard MDS results in inaccuracies for sparse high-resolution data, but miniMDS focuses on local substructures to achieve greater accuracy. miniMDS also supports interchromosomal structural inference. Together with Mayavi, miniMDS produces publication-quality images and gifs. 
+miniMDS is a tool for inferring and plotting 3D structures from normalized Hi-C data, using partitioned MDS, an efficient approximation to multidimensional scaling (MDS). It produces a single 3D structure from a Hi-C BED file, representing an ensemble average of chromosome conformations within the population of cells. By performing structural inference at both high and low resolution for a single dataset, it is able to process high-resolution data quickly with limited memory requirements. Kilobase-resolution structures can be inferred within several hours on a desktop computer. Standard MDS results in inaccuracies for sparse high-resolution data, but miniMDS focuses on local substructures to achieve greater accuracy. miniMDS also supports interchromosomal structural inference. Together with Mayavi, miniMDS produces publication-quality images and gifs. 
 
 ## Installation
 
@@ -15,6 +15,10 @@ Prerequisites:
 * scipy (optional; for creating figures from paper)
 * matplotlib (optional; for creating figures paper)
 
+## TLDR
+
+python minimds.py -l {path to low-res BED} -o {output file} {path to high-res BED}
+
 ## Usage
 
 ### Input file format
@@ -28,6 +32,8 @@ Format:
 Example - chr22 intra-chromosomal data at 10-Kbp resolution:
 
 >chr22	16050000	16060000	chr22	16050000	16060000	12441.5189291
+> 
+>...
 
 ### Intra-chromosomal structural inference
 
@@ -40,6 +46,8 @@ To view help:
 By default, standard MDS (not partitioned MDS) is used:
 
 ``python minimds.py GM12878_combined_22_10kb.bed``
+
+However, this will not offer the benefits of miniMDS and is not recommended. 
 
 Structures are not saved by default. Use the -o option with the path where you want to save the structure.
 
@@ -62,10 +70,6 @@ Example - chr22 at 10-Kbp resolution:
 >2	nan	nan	nan
 > 
 >...
-
-Structures can be read into Cluster objects:
-
-``cluster = data_tools.clusterFromFile("GM12878_combined_22_100kb_structure.tsv")``
 
 To run partitioned MDS, you must have a normalized BED file at a lower resolution than the BED file you want to infer. For example, to use a 100-Kbp-resolution BED file to aid in the inference of a 10-Kbp-resolution file:
 
@@ -145,7 +149,7 @@ By default, partitioned MDS is not performed. To perform partitioned MDS on each
 
 ``python minimds_inter.py -l 100000 data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
 
-This will perform partitioned MDS on each of the intra-chromosomal structures at 10-Kbp resolution and then assemble the chromosomes into a whole-genome structure using 1-Mbp-resolution inter-chromosomal data. 
+This will perform partitioned MDS on each of the intra-chromosomal structures at 10-Kbp resolution and then assemble the chromosomes into a whole-genome structure using 1-Mbp-resolution inter-chromosomal data. Remember that structures are not saved by default. 
 
 #### Other parameters (optional)
 
@@ -160,3 +164,49 @@ To perform interchromosomal analysis on chromosomes 1 and 8:
 ``python minimds_inter.py -l 100000 -c 1 8 data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
 
 Note: it is necessary to use this option if you are using a genome other than human, so that it won't search for chromosomes that don't exist.
+
+### Plotting
+
+Read a structure into a Cluster object:
+
+``cluster = data_tools.clusterFromFile(path)``
+
+Example:
+
+``cluster = data_tools.clusterFromFile("GM12878_combined_22_100kb_structure.tsv")``
+
+Create an interactive 3D plot in Mayavi. (Mayavi allows you to rotate the image and save a view.)
+
+``plotting.plot_cluster_interactive(cluster, color=(1,0,0), radius=None)``
+
+By default, the radius is the to-scale radius of heterochromatin. 
+
+Multiple clusters can be plotted simultaneously:
+
+    chroms = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, X)
+    clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format chrom for chrom in chroms)]
+    plotting.plot_clusters_interactive(clusters)
+
+plotting.py has 23 built-in colors designed to be as different to the human eye as possible. By default, these colors are used when plotting multiple clusters. You can also specify a list of colors:
+
+    chroms = (1, 2)
+    clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format chrom for chrom in chroms)]
+    plotting.plot_clusters_interactive(clusters, colors=[(1,0,0), (0,0,1)])
+
+The radius can also be specified, as above. 
+
+The option _cut_ creates a cross-section of the plot. For example, this is useful for viewing the interior of the nucleus.
+
+    chroms = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, X)
+    clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format chrom for chrom in chroms)]
+    plotting.plot_clusters_interactive(clusters, cut=True)
+
+A plot can be saved as a gif:
+
+``plotting.plot_cluster_gif(cluster, outname, color=(1,0,0), radius=None, increment=10)``
+
+Shorter increments will lead to a smoother gif.
+
+Multiple clusters can also be plotted in a single gif:
+
+``plotting.plot_clusters_gif(clusters, outname, colors=default_colors, radius=None, increment=10)``
