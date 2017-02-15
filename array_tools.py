@@ -18,21 +18,21 @@ def makeSymmetric(mat):
 		for col in range(row):
 			mat[col][row] = mat[row][col]
 
-#def sp_interpolate(mat):
-#	"""Shortest-path interpolation. See Lesne, et al (2014). Must be intrachromosomal."""
-#	mat[np.where(mat == 0)] = np.inf
-#	numrows = len(mat)	
-#	numcols = len(mat[0])
-#	assert numrows == numcols
-#	tracker = Tracker("Shortest-path interpolation", numrows)
-#	for k in range(numrows):
-#		row = mat[k]
-#		col = np.array([mat[:,k]]).T	
-#		i2k = np.tile(col, [1, numrows])
-#		k2j = np.tile(row, [numrows, 1])
-#		mat = minArray(mat, i2k+k2j)
-#		#tracker.increment()
-#	return mat
+def sp_interpolate(mat):
+	"""Shortest-path interpolation. See Lesne, et al (2014). Must be intrachromosomal."""
+	mat[np.where(mat == 0)] = np.inf
+	numrows = len(mat)	
+	numcols = len(mat[0])
+	assert numrows == numcols
+	tracker = Tracker("Shortest-path interpolation", numrows)
+	for k in range(numrows):
+		row = mat[k]
+		col = np.array([mat[:,k]]).T	
+		i2k = np.tile(col, [1, numrows])
+		k2j = np.tile(row, [numrows, 1])
+		mat = minArray(mat, i2k+k2j)
+		#tracker.increment()
+	return mat
 
 def minArray(a, b):
 	"""Equivalent to MATLAB min() method"""

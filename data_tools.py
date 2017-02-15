@@ -68,11 +68,11 @@ class Cluster(object):
 	
 	def setClusters(self, clusters):
 		self.clusters = clusters
-		points = [] #reset	
+		self.points = np.zeros(max([max(cluster.getPointNums()) for cluster in clusters]) + 1, dtype=np.object)	#reset
 		for cluster in self.clusters:
 			for point in cluster.points:
-				points.append(point)
-		self.points = np.array(points)
+				if point != 0:
+					self.points[point.num] = point
 
 	def distMat(self):
 		"""Creates distance matrix from cluster"""
@@ -211,7 +211,7 @@ def intraChromFromBed(path, res):
 			elif pos2 > maxPos:
 				maxPos = pos2
 			if res is None:
-				res = (int(line[2]) - pos1)
+				res = (int(line[2]) - pos1)	
 			count += 1
 	infile.close()
 	minPos = minPos/res * res	#round
@@ -284,7 +284,7 @@ def highToLow(highCluster, resRatio):
 	allPointsToMerge = []
 	for i in range(len(lowCluster.points)):
 		allPointsToMerge.append([])
-
+	
 	for highPoint in highCluster.getPoints():
 		pointsToMerge = []
 		highNum = highPoint.num
