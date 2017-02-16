@@ -218,5 +218,3 @@ A smaller value of _increment_ will lead to a smoother gif.
 Multiple clusters can also be plotted in a single gif:
 
 ``plotting.plot_clusters_gif(clusters, outname, colors=default_colors, radius=None, increment=10)``
-
-test
