@@ -213,8 +213,10 @@ A plot can be saved as a gif:
 
 ``plotting.plot_cluster_gif(cluster, outname, color=(1,0,0), radius=None, increment=10)``
 
-Shorter increments will lead to a smoother gif.
+A smaller value of _increment_ will lead to a smoother gif.
 
 Multiple clusters can also be plotted in a single gif:
 
 ``plotting.plot_clusters_gif(clusters, outname, colors=default_colors, radius=None, increment=10)``
+
+test
