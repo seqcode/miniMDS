@@ -26,7 +26,7 @@ def infer_clusters(contactMat, clusters, offsets, classical=False):
 		coords = st.cmds(distMat)
 	else:
 		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(seed=3), verbose=0, dissimilarity="precomputed", n_jobs=-1)
-		coords = mds.fit(distMat).embedding_
+		coords = mds.fit_transform(distMat)
 
 	for offset, cluster in zip(offsets, clusters):
 		for i in range(len(cluster.getPoints())):	
