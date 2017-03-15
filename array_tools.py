@@ -1,6 +1,6 @@
 import numpy as np
 
-def contactToDist(contactMat, alpha=-1./3):
+def contactToDist(contactMat, alpha=-1./4):
 	"""Convert contact matrix to distance matrix."""
 	distMat = np.zeros_like(contactMat)
 	numRows = len(contactMat)
