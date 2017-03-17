@@ -35,7 +35,7 @@ Example - chr22 intra-chromosomal data at 10-Kbp resolution:
 > 
 >...
 
-### Intra-chromosomal structural inference
+### Intra-chromosomal miniMDS
 
 Intra-chromosomal analysis is performed using minimds.py.
 
