@@ -13,7 +13,7 @@ Prerequisites:
 * mayavi (optional; for plotting)
 * ImageMagick (optional; for creating gifs)
 * scipy (optional; for creating figures from paper)
-* matplotlib (optional; for creating figures paper)
+* matplotlib (optional; for creating figures from paper)
 
 ## TLDR
 
