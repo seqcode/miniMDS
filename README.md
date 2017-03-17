@@ -145,13 +145,13 @@ Example:
 
 Enter the prefix and resolution of the inter-chromosomal and intra-chromosomal files, respectively:
 
-``python minimds_inter.py {inter-chromosomal file prefix} {intra-chromosomal file prefix} {inter-chromosomal resolution} {intra-chromosomal resolution}``
+``python minimds_inter.py [inter-chromosomal file prefix] [intra-chromosomal file prefix] [inter-chromosomal resolution] [intra-chromosomal resolution]``
 
 For example, if your files are stored in the directory _data_:
 
 ``python minimds_inter.py data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
 
-Because of the challenges of inter-chromosomal inference, it is recommended that 1-Mbp-resolution be used for inter-chromosomal data. 
+Because of the challenges of inter-chromosomal inference, it is recommended that a resolution no greaer than 1-Mbp be used for inter-chromosomal data. 
 
 By default, partitioned MDS is not performed. To perform partitioned MDS on each intra-chromosomal structure, use the option -l followed by the resolution of the low-res intra-chromosomal files. (It is assumed that the naming of these files is otherwise identical to that of the high-res intra-chromosomal files.)
 
