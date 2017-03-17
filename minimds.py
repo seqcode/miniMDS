@@ -150,7 +150,7 @@ def main():
 			r = args.r
 
 		if args.n is None:
-			n = multiprocessing.cpu_count()
+			n = 3	#safe for standard 4-core desktop
 		else:
 			n = args.n
 
