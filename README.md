@@ -171,7 +171,7 @@ To perform interchromosomal analysis on chromosomes 1 and 8:
 
 ``python minimds_inter.py -l 100000 -c 1 8 data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
 
-Note: it is necessary to use this option if you are using a genome other than human, so that it won't search for chromosomes that don't exist.
+Note: it is often necessary to use this option if you are using a genome other than human, so that it won't search for chromosomes that don't exist.
 
 ### Plotting
 
