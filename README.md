@@ -17,7 +17,7 @@ Prerequisites:
 
 ## TLDR
 
-python minimds.py -l {path to low-res BED} -o {output file} {path to high-res BED}
+python minimds.py -l [path to low-res BED] -o [output path] [path to high-res BED]
 
 ## Usage
 
