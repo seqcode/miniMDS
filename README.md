@@ -99,11 +99,11 @@ You can limit the maximum RAM (in Kb) used by any given partition using -R (defa
 
 ##### Number of threads
 
-miniMDS uses multithreading to achieve greater speed. By default, it uses the number of CPUs or number of partitions (whichever is smaller). You can set the number of threads to be smaller (but not greater) than the default using -n.
+miniMDS uses multithreading to achieve greater speed. By default, 3 threads are requested, because this is safe for standard 4-core desktop computers. However, the number of threads used will never exceed the number of processors or the number of partitions, regardless of what is requested. You can change the number of requested threads using -n.
 
-For example, to run miniMDS with three threads:
+For example, to run miniMDS with four threads:
 
-``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_10kb_structure.tsv -n 3 GM12878_combined_22_10kb.bed``
+``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_10kb_structure.tsv -n 4 GM12878_combined_22_10kb.bed``
 
 ##### Classical MDS
 
