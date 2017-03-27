@@ -15,9 +15,15 @@ Prerequisites:
 * scipy (optional; for creating figures from paper)
 * matplotlib (optional; for creating figures from paper)
 
+## Testing
+
+Please run the following code and report any issues:
+
+``python minimds.py -o test_output.tsv data/GM12878_combined_22_100kb.bed``
+
 ## TLDR
 
-python minimds.py -l [path to low-res BED] -o [output path] [path to high-res BED]
+``python minimds.py -l [path to low-res BED] -o [output path] [path to high-res BED]``
 
 ## Usage
 
