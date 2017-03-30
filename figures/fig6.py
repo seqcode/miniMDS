@@ -1,4 +1,3 @@
-import sys
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -8,7 +7,7 @@ def parse_time(time_string):
 	secs = float(split[1].split("s")[0])
 	return mins + secs/60
 
-res_kb = int(sys.argv[1])
+res_kb = 10
 
 chrom_sizes = np.loadtxt("chrom_sizes_{}kb.txt".format(res_kb))
 
@@ -30,11 +29,18 @@ with open("minimds_{}kb_times.txt".format(res_kb)) as in_file:
 		minimds_times.append(parse_time(line.strip()))
 in_file.close()
 
+mogen_times = []
+with open("mogen_{}kb_times.txt".format(res_kb)) as in_file:
+	for line in in_file:
+		mogen_times.append(parse_time(line.strip()))
+in_file.close()
+
 fig = plt.figure()
 ax = fig.add_subplot(111, frameon=False)
 ax.plot(chrom_sizes, mmds_times, linestyle="None", marker="o", markerfacecolor="r", mec="r", markersize=10, label="Standard metric MDS")
 ax.plot(chrom_sizes, cmds_times, linestyle="None", marker="o", markerfacecolor="g", mec="g", markersize=10, label="Classical MDS")
-ax.plot(chrom_sizes, minimds_times, linestyle="None", marker="o",markerfacecolor="b", mec="b", markersize=10, label="miniMDS")
+ax.plot(chrom_sizes, minimds_times, linestyle="None", marker="o", markerfacecolor="b", mec="b", markersize=10, label="miniMDS")
+ax.plot(chrom_sizes, mogen_times, linestyle="None", marker="o", markerfacecolor="m", mec="m", markersize=10, label="MOGEN")
 x_offset = 1000		#small number to prevent things from getting cut off
 y_offset = 5
 xmin = min(chrom_sizes) - x_offset
@@ -49,4 +55,4 @@ plt.xlabel("Number of genomic loci", fontsize=16)
 plt.ylabel("Time (minutes)", fontsize=16)
 plt.legend(loc=0, numpoints=1)
 plt.tight_layout()
-plt.savefig("time_{}kb.png".format(res_kb))
+plt.savefig("Fig7.png".format(res_kb))

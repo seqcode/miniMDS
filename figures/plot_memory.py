@@ -1,21 +1,21 @@
-import sys
 import numpy as np
 from matplotlib import pyplot as plt
 
-res_kb = int(sys.argv[1])
+res_kb = 10
 
 chrom_sizes = np.loadtxt("chrom_sizes_{}kb.txt".format(res_kb))
 
 mmds_memories = np.loadtxt("mmds_{}kb_memory.txt".format(res_kb))/10**6
 cmds_memories = np.loadtxt("cmds_{}kb_memory.txt".format(res_kb))/10**6
 minimds_memories = np.loadtxt("minimds_{}kb_memory.txt".format(res_kb))/10**6
+mogen_memories = np.loadtxt("mogen_{}kb_memory.txt".format(res_kb))/10**6
 
 fig = plt.figure()
 ax = fig.add_subplot(111, frameon=False)
 ax.plot(chrom_sizes, mmds_memories, linestyle="None", marker="o", markerfacecolor="r", mec="r", markersize=10, label="Standard metric MDS")
 ax.plot(chrom_sizes, cmds_memories, linestyle="None", marker="o", markerfacecolor="g", mec="g", markersize=10, label="Classical MDS")
 ax.plot(chrom_sizes, minimds_memories, linestyle="None", marker="o",markerfacecolor="b", mec="b", markersize=10, label="miniMDS")
-
+ax.plot(chrom_sizes, mogen_memories, linestyle="None", marker="o",markerfacecolor="m", mec="m", markersize=10, label="MOGEN")
 x_offset = 300		#small number to prevent things from getting cut off
 y_offset = 3
 xmin = min(chrom_sizes) - x_offset
