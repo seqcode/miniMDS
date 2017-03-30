@@ -1,7 +1,7 @@
-import sys
-sys.path.append("../..")
-import data_tools as dt
 import numpy as np
+import sys
+sys.path.append("..")
+import data_tools as dt
 
 in_path = sys.argv[1]
 out_path = sys.argv[2]

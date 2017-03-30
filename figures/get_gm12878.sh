@@ -1,13 +1,14 @@
 set -e
 
 RES=$1
+CHROM=$2
 
-if [ ! -e ../data ]
+if [ ! -e hic_data ]
 	then
-		mkdir ../data
+		mkdir hic_data
 fi
 
-cd ../data
+cd hic_data
 
 if [ ! -e GSE63525_GM12878_combined_intrachromosomal_contact_matrices.tar.gz ]
 	then
@@ -21,7 +22,14 @@ if [ ! -e "GM12878_combined/"$DIR ]
 		tar xzf GSE63525_GM12878_combined_intrachromosomal_contact_matrices.tar.gz $DIR
 fi
 
-for CHROM in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X
-do
-  	python ../figures/normalize.py GM12878_combined $RES $CHROM
-done
+if [ $CHROM -eq 0 ]
+
+	for CHROM in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X
+	do
+  		python ../normalize.py GM12878_combined $RES $CHROM
+	done
+
+else
+	python ../normalize.py GM12878_combined $RES $CHROM
+
+fi

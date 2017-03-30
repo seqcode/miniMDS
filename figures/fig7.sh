@@ -7,13 +7,6 @@ TIME=/usr/bin/time
 DOMAIN_SIZE_PARAMETER=0.01
 MIN_DOMAIN_SIZE=0.01
 
-#install MOGEN
-bash install_mogen.sh
-
-#get data
-bash get_gm12878.sh $RES
-bash get_gm12878.sh 100000
-
 #results files
 MINI_OUT="minimds_"$RES_KB"kb_memory.txt"
 MMDS_OUT="mmds_"$RES_KB"kb_memory.txt"
@@ -41,17 +34,28 @@ if [ -e $MOGEN_OUT ]
 		rm $MOGEN_OUT
 fi
 
+#install MOGEN
+bash install_mogen.sh
+
+#get data
+bash get_gm12878.sh $RES 0
+bash get_gm12878.sh 100000 0
+
 #run algorithms
-for CHROM in X 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+for CHROM in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X
 do
-	INPATH="data/GM12878_combined_"$CHROM"_"$RES_KB"kb.bed"
-       	$TIME -f "%M" -o $CMDS_OUT -a python ../minimds.py --classical $INPATH
-	$TIME -f "%M" -o $MMDS_OUT -a python ../minimds.py $INPATH
-	$TIME -f "%M" -o $MINI_OUT -a python ../minimds.py -l "data/GM12878_combined_"$CHROM"_100kb.bed" -p $DOMAIN_SIZE_PARAMETER -m $MIN_DOMAIN_SIZE $INPATH 
+	BEDPATH="data/GM12878_combined_"$CHROM"_"$RES_KB"kb.bed"
+       	$TIME -f "%M" -o $CMDS_OUT -a python ../minimds.py --classical $BEDPATH
+	$TIME -f "%M" -o $MMDS_OUT -a python ../minimds.py $BEDPATH
+	$TIME -f "%M" -o $MINI_OUT -a python ../minimds.py -l "data/GM12878_combined_"$CHROM"_100kb.bed" -p $DOMAIN_SIZE_PARAMETER -m $MIN_DOMAIN_SIZE $BEDPATH
+	python mogen_input.py $BEDPATH "MOGEN/examples/hiC/input/GM12878_combined_"$CHROM"_"$RES_KB"kb.tsv" 
 	$TIME -f "%M" -o $MINI_OUT -a java -jar MOGEN/examples/hiC/3DGenerator.jar "parameters_chr"$CHROM"_"$RES_KB"kb.txt"
 done
 
-python get_chrom_sizes.py $RES_KB
+if [ ! -e "chrom_sizes_"$RES_KB"kb.txt" ]
+	then
+		python get_chrom_sizes.py $RES_KB
+fi
 
 #plot
-python plot_memory.py
+python fig7.py

@@ -4,5 +4,5 @@ if [ ! -e ChromSDE ]
 		unzip ChromSDE_program2.2.zip
 		rm ChromSDE_program2.2.zip
 		mv program ChromSDE
-		mv run_chromsde.m ChromSDE
+		mv *.m ChromSDE
 fi

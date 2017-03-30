@@ -1,11 +1,16 @@
+set -e
+
 bash install_mogen.sh
 
-bash get_gm12878.sh 100000
-bash get_gm12878.sh 10000
+bash get_gm12878.sh 100000 22
+bash get_gm12878.sh 10000 22
 
-python minimds.py -o hic_data/GM12878_combined_22_10kb_mmds_coords.tsv hic_data/GM12878_combined_22_10kb.bed
-python minimds.py --classical -o hic_data/GM12878_combined_22_10kb_cmds_coords.tsv hic_data/GM12878_combined_22_10kb.bed
-python minimds.py -l hic_data/GM12878_combined_22_100kb.bed -o hic_data/GM12878_combined_22_10kb_mmds_coords.tsv hic_data/GM12878_combined_22_10kb.bed
+BEDPATH=hic_data/GM12878_combined_22_10kb.bed
+
+python ../minimds.py -o hic_data/GM12878_combined_22_10kb_mmds_coords.tsv $BEDPATH
+python ../minimds.py --classical -o hic_data/GM12878_combined_22_10kb_cmds_coords.tsv $BEDPATH
+python ../minimds.py -l hic_data/GM12878_combined_22_100kb.bed -o hic_data/GM12878_combined_22_10kb_mmds_coords.tsv $BEDPATH
+python mogen_input.py $BEDPATH MOGEN/examples/hiC/input/GM12878_combined_22_10kb.tsv
 java -jar MOGEN/examples/hiC/3DGenerator.jar parameters_chr22_10kb.txt
 
 #process MOGEN output

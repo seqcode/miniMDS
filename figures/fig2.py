@@ -3,7 +3,7 @@ sys.path.append("..")
 from data_tools import ChromParameters
 from tools import Tracker
 import heatmap as hm
-import tad
+import simple_tad as tad
 import numpy as np
 
 def matFromDixon(path, chrom):

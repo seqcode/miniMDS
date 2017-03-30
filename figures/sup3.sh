@@ -1,5 +1,7 @@
-bash get_gm12878.sh 1000000
-bash get_gm12878.sh 100000
+set -e
+
+bash get_gm12878.sh 1000000 22
+bash get_gm12878.sh 100000 22
 
 BEDPATH=hic_data/GM12878_combined_22_100kb.bed
 
@@ -69,16 +71,16 @@ cd ..
 #install
 bash install_chromsde.sh
 
-cd ChromSDE
-
 #create input
-python chromsde_input.py $BEDPATH chr22_100kb_contacts.dat chr22_100kb_ids.dat
+python chromsde_input.py $BEDPATH ChromSDE/chr22_100kb_contacts.dat ChromSDE/chr22_100kb_ids.dat
+
+cd ChromSDE
 
 #run
 matlab -nodisplay -nosplash -nodesktop -r "run('run_chromsde_100kb(22)')"
 
 #process output
-cat contacts_chr22_100kb.pos.pdb | awk '$1 == "ATOM" {print $6"\t"$7"\t"$8}' > GM12878_combined_22_100kb_coords.tsv
+cat contacts_100kb.pos.pdb | awk '$1 == "ATOM" {print $6"\t"$7"\t"$8}' > GM12878_combined_22_100kb_coords.tsv
 
 cd ..
 

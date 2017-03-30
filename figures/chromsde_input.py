@@ -1,8 +1,7 @@
 import numpy as np
 import sys
-sys.path.append("../..")
+sys.path.append("..")
 import data_tools as dt
-import array_tools as at
 
 in_path = sys.argv[1]
 mat_path = sys.argv[2]
@@ -10,7 +9,6 @@ id_path = sys.argv[3]
 
 cluster = dt.clusterFromBed(in_path, None, None)
 contactMat = dt.matFromBed(in_path, cluster)
-at.makeSymmetric(contactMat)
 n = len(contactMat)
 maxNumDigits = int(np.ceil(np.log10(np.amax(contactMat))))
 formatstring = "%" + str(maxNumDigits) + "d"

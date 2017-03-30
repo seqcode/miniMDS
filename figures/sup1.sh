@@ -1,3 +1,5 @@
+set -e
+
 #results files
 CHROMOSOME3D_OUT="chromosome3d_chr22_100kb_output.txt"
 MOGEN_OUT="mogen_chr22_100kb_output.txt"
@@ -6,8 +8,8 @@ MMDS_OUT="mmds_chr22_100kb_output.txt"
 CMDS_OUT="cmds_chr22_100kb_output.txt"
 CHROMSDE_OUT="chromsde_chr22_100kb_output.txt"
 
-bash get_gm12878.sh 1000000
-bash get_gm12878.sh 100000
+bash get_gm12878.sh 1000000 22
+bash get_gm12878.sh 100000 22
 
 BEDPATH=hic_data/GM12878_combined_22_100kb.bed
 
@@ -66,10 +68,10 @@ cd ..
 #install
 bash install_chromsde.sh
 
-cd ChromSDE
-
 #create input
-python chromsde_input.py $BEDPATH chr22_100kb_contacts.dat chr22_100kb_ids.dat
+python chromsde_input.py $BEDPATH ChromSDE/chr22_100kb_contacts.dat ChromSDE/chr22_100kb_ids.dat
+
+cd ChromSDE
 
 #run
 time matlab -nodisplay -nosplash -nodesktop -r "run('run_chromsde_100kb(22)')" > "../"$CHROMSDE_OUT

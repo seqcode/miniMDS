@@ -1,8 +1,8 @@
 import sys
 sys.path.append("..")
-from data_tools import ChromParameters
+import data_tools as dt
 from tools import Tracker
-import tad
+import simple_tad as tad
 import heatmap as hm
 import numpy as np
 
@@ -49,8 +49,8 @@ name = "chr22"
 size = 30949158
 path = "mESC_chr6.tsv"
 
-chrom = ChromParameters(minPos, maxPos, res, name, size)
+chrom = dt.ChromParameters(minPos, maxPos, res, name, size)
 
 mat = matFromDixon(path, chrom)
 plotDixon(mat)
-plotMovingAverage(mat)
+plotMovingAverage(mat, cluster)

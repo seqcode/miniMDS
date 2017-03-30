@@ -2,12 +2,12 @@ set -e
 
 RES=$1
 
-if [ ! -e ../data ]
+if [ ! -e ../hic_data ]
 	then
-		mkdir ../data
+		mkdir ../hic_data
 fi
 
-cd ../data
+cd ../hic_data
 
 if [ ! -e GSE63525_GM12878_combined_interchromosomal_contact_matrices.tar.gz ]
 	then
@@ -25,6 +25,6 @@ for CHROM1 in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X
 do
 	for CHROM2 in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X
 	do
-  		python ../figures/normalize.py GM12878_combined $RES $CHROM1 --inter -chrom2 $CHROM2
+  		python normalize.py GM12878_combined $RES $CHROM1 -chrom2 $CHROM2
 	done
 done

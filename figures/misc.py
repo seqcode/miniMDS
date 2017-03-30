@@ -60,3 +60,9 @@ def pearson(true, embedded):
 
 	r, p = st.pearsonr(true, embedded)
 	return r
+
+def parse_time(time_string):
+	split = time_string.split("m")
+	mins = int(split[0])
+	secs = float(split[1].split("s")[0])
+	return mins + secs/60

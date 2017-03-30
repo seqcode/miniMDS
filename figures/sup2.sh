@@ -1,3 +1,5 @@
+set -e
+
 TIME=/usr/bin/time
 
 BEDPATH=hic_data/GM12878_combined_22_100kb.bed
@@ -42,16 +44,14 @@ $TIME -f "%M" -o mogen_chr22_100kb_memory.txt java -jar MOGEN/examples/hiC/3DGen
 #install
 bash install_chromsde.sh
 
+#create input
+python chromsde_input.py $BEDPATH ChromSDE/chr22_100kb_contacts.dat ChromSDE/chr22_100kb_ids.dat
+
 cd ChromSDE
 
-#create input
-python chromsde_input.py $BEDPATH chr22_100kb_contacts.dat chr22_100kb_ids.dat
-
 #run
-$TIME -f "%M" -o chromsde_chr22_100kb_memory.txt matlab -nodisplay -nosplash -nodesktop -r "run('run_chromsde(22)')"
+$TIME -f "%M" -o chromsde_chr22_100kb_memory.txt matlab -nodisplay -nosplash -nodesktop -r "run('run_chromsde('chr22_100kb_contacts.dat', 'chr22_100kb_ids.dat')')"
 
 cd ..
-
-python get_chrom_sizes.py 100
 
 python sup2.py

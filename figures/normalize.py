@@ -1,6 +1,5 @@
 import numpy as np
 import argparse
-import sys
 
 def normalize(chrom1, chrom2, rawpath, krpath1, krpath2, res, outpath):
 	kr1 = np.loadtxt(krpath1)
@@ -55,10 +54,10 @@ def main():
 	parser.add_argument("-chrom2", help="second chromosome (e.g. 1)")
 	args = parser.parse_args()
 
-	if args.chrom2 is not None:
-		normalize_inter(args.hic_id, args.res, args.chrom1, args.chrom2)
-	else:
+	if args.chrom2 is None:
 		normalize_intra(args.hic_id, args.res, args.chrom1)
+	else:
+		normalize_inter(args.hic_id, args.res, args.chrom1, args.chrom2)
 
 if __name__ == "__main__":
 	main()

@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 import misc
 
 def rep_correlation(coords1, coords2):
@@ -22,7 +22,7 @@ def rep_correlation(coords1, coords2):
 	return r
 
 
-labels = ('Chromosome3D', 'mMDS', 'miniMDS', 'MOGEN', 'HSA', 'ChromSDE')
+labels = ("Chromosome3D", "mMDS", "miniMDS", "MOGEN", "HSA", "ChromSDE")
 n = len(labels)
 rs = np.zeros(n)
 
@@ -57,11 +57,10 @@ coords2 = np.loadtxt("ChromSDE/GM12878_combined_22_10kb_rep2_coords.tsv")
 rs[5] = rep_correlation(coords1, coords2)
 
 x_pos = range(n) 
-colors = ['y', 'r', 'b', 'c', 'm', 'blueviolet']
-rects = plt.bar(x_pos, rs, align='center', color = colors)
-plt.axis([-0.5, len(objects) - 0.5, 0, 1.1])
+colors = ["y", "r", "b", "c", "m", "blueviolet"]
+rects = plt.bar(x_pos, rs, align="center", color = colors)
 plt.tick_params(top=False,bottom=False,right=False,left=False, labelbottom=False)
 plt.legend((rects[0], rects[1], rects[2], rects[3], rects[4], rects[5]), labels, fontsize=8, loc=3)
-plt.ylabel('Correlation between iterations')
+plt.ylabel("Correlation between iterations")
  
 plt.savefig("Fig5.png")
