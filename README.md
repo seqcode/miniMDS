@@ -15,9 +15,15 @@ Prerequisites:
 * scipy (optional; for creating figures from paper)
 * matplotlib (optional; for creating figures from paper)
 
+## Testing
+
+Please run the following code and report any issues:
+
+``python minimds.py -o test_output.tsv data/GM12878_combined_22_100kb.bed``
+
 ## TLDR
 
-python minimds.py -l [path to low-res BED] -o [output path] [path to high-res BED]
+``python minimds.py -l [path to low-res BED] -o [output path] [path to high-res BED]``
 
 ## Usage
 
@@ -45,13 +51,13 @@ To view help:
 
 By default, standard MDS (not partitioned MDS) is used:
 
-``python minimds.py GM12878_combined_22_10kb.bed``
+``python minimds.py GM12878_combined_22_100kb.bed``
 
 However, this will not offer the benefits of miniMDS and is not recommended. 
 
 Structures are not saved by default. Use the -o option with the path where you want to save the structure.
 
-``python minimds.py -o GM12878_combined_22_10kb_structure.tsv GM12878_combined_22_10kb.bed``
+``python minimds.py -o GM12878_combined_22_100kb_structure.tsv GM12878_combined_22_100kb.bed``
 
 Structures are saved to tsv files. The header contains the name of the chromosome, the resolution, and the starting genomic coordinate. Each line in the file contains the point number followed by the 3D coordinates (with "nan" for missing data). 
 
