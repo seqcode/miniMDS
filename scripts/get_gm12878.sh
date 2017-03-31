@@ -25,7 +25,7 @@ fi
 
 if [ ! -e "GM12878_combined/"$DIR ]
 	then
-		tar xzf GSE63525_GM12878_combined_intrachromosomal_contact_matrices.tar.gz $DIR
+		tar xzf GSE63525_GM12878_combined_intrachromosomal_contact_matrices.tar.gz "GM12878_combined/"$DIR
 fi
 
 if [ $CHROM -eq 0 ]
