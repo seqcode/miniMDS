@@ -9,3 +9,5 @@ Requirements:
 	- Java
 	- MATLAB
 	- R
+
+Chromosome3D can't be installed programmatically, so it must be installed according to the instructions here (https://github.com/multicom-toolbox/Chromosome3D) prior to running fig4.sh, fig5.sh, sup1.sh, sup2.sh, or sup3.sh. 

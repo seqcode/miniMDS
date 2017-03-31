@@ -15,15 +15,12 @@ BEDPATH=hic_data/GM12878_combined_22_10kb.bed
 
 #Chromosome3D
 
-#install
-bash install_chromosome3d.sh
-
 #create input
 INPUT_PATH=Chromosome3D/input/GM12878_combined_22_10kb.txt
 python chromosome3d_input.py $BEDPATH $INPUT_PATH
 
 #run
-time perl Chromosome3D/chromosome3D.pl -i $INPUT_PATH -o Chromosome3D/output/chr22_10kb -m 1 > $CHROMOSOME3D_OUT
+time perl Chromosome3D/chromosome3D.pl -i $INPUT_PATH -o Chromosome3D/output_models/chr22_10kb -m 1 > $CHROMOSOME3D_OUT
 
 #mMDS
 
