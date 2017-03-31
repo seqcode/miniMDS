@@ -41,7 +41,7 @@ def plotLevels(mat):
 		tads = tad.getDomains(mat, smoothingFactor, 0)
 		for index in indices:
 			all_tads.append(tads[index])
-	heatMapFromMat(mat, 100, all_tads, "Fig2")	#all levels combined
+	hm.heatMapFromMat(mat, 100, all_tads, "Fig2")	#all levels combined
 
 minPos = 49000000	#from Dixon
 maxPos = 54066692	#from Dixon

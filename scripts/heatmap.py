@@ -53,7 +53,7 @@ def createHeatmap(mat, domains, outpath, colors=None):
 		if colors is None:	#default is black
 			colors = ["k" for domain in domains]
 
-		for (domain, color) in zip((domains, colors)):
+		for (domain, color) in zip(domains, colors):
 			lowerBound = domain[0]
 			upperBound = domain[1]
 			plt.plot([lowerBound, upperBound], [lowerBound, lowerBound], c=color, lw=5)	#horizontal
@@ -63,7 +63,6 @@ def createHeatmap(mat, domains, outpath, colors=None):
 	
 	if outpath is not None:
 		plt.savefig(outpath)
-	plt.show()
 
 def heatMapFromMat(mat, maxvalue, tads, outpath):
 	at.makeSymmetric(mat)

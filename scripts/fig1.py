@@ -53,4 +53,4 @@ chrom = dt.ChromParameters(minPos, maxPos, res, name, size)
 
 mat = matFromDixon(path, chrom)
 plotDixon(mat)
-plotMovingAverage(mat, cluster)
+plotMovingAverage(mat)
