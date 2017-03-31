@@ -45,7 +45,7 @@ bash install_mogen.sh
 
 #create input
 INPUT_PATH=MOGEN/examples/hiC/input/GM12878_combined_22_10kb.tsv
-if [ ! -e $INPUT_PATH]
+if [ ! -e $INPUT_PATH ]
 	then
 		python mogen_input.py $BEDPATH $INPUT_PATH
 fi

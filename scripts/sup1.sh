@@ -62,7 +62,7 @@ bash install_hsa.sh
 #create input
 INPUT_PATH=hsa/GM12878_combined_22_100kb.tsv
 
-if [ ! -e $INPUT_PATH]
+if [ ! -e $INPUT_PATH ]
 	then
 		python hsa_input.py $BEDPATH $INPUT_PATH
 fi

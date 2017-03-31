@@ -10,7 +10,7 @@ BEDPATH=hic_data/GM12878_combined_22_10kb.bed
 #create input
 INPUT_PATH=Chromosome3D/input/GM12878_combined_22_10kb.txt
 
-if [ ! -e $INPUT_PATH]
+if [ ! -e $INPUT_PATH ]
 	then
 		python chromosome3d_input.py $BEDPATH $INPUT_PATH
 fi
