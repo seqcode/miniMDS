@@ -10,7 +10,13 @@ BEDPATH=hic_data/GM12878_combined_22_10kb.bed
 python ../minimds.py -o hic_data/GM12878_combined_22_10kb_mmds_coords.tsv $BEDPATH
 python ../minimds.py --classical -o hic_data/GM12878_combined_22_10kb_cmds_coords.tsv $BEDPATH
 python ../minimds.py -l hic_data/GM12878_combined_22_100kb.bed -o hic_data/GM12878_combined_22_10kb_mmds_coords.tsv $BEDPATH
-python mogen_input.py $BEDPATH MOGEN/examples/hiC/input/GM12878_combined_22_10kb.tsv
+
+INPUT_PATH=MOGEN/examples/hiC/input/GM12878_combined_22_10kb.tsv
+if [ ! -e $INPUT_PATH ]
+	then
+		python mogen_input.py $BEDPATH $INPUT_PATH
+fi
+
 java -jar MOGEN/examples/hiC/3DGenerator.jar parameters_chr22_10kb.txt
 
 #process MOGEN output

@@ -9,7 +9,11 @@ BEDPATH=hic_data/GM12878_combined_22_10kb.bed
 
 #create input
 INPUT_PATH=Chromosome3D/input/GM12878_combined_22_10kb.txt
-python chromosome3d_input.py $BEDPATH $INPUT_PATH
+
+if [ ! -e $INPUT_PATH]
+	then
+		python chromosome3d_input.py $BEDPATH $INPUT_PATH
+fi
 
 #rep 1
 perl Chromosome3D/chromosome3D.pl -i $INPUT_PATH -o Chromosome3D/output_models/chr22_10kb_rep1 -m 1
@@ -43,7 +47,11 @@ python ../minimds.py -l data/GM12878_combined_22_100kb.bed -p 0.01 -m 0.01 -o hi
 bash install_mogen.sh
 
 #create input
-python mogen_input.py $BEDPATH MOGEN/examples/hiC/input/GM12878_combined_22_10kb.tsv
+INPUT_PATH=MOGEN/examples/hiC/input/GM12878_combined_22_10kb.tsv
+if [ ! -e $INPUT_PATH]
+	then
+		python mogen_input.py $BEDPATH $INPUT_PATH
+fi
 
 #rep 1
 java -jar MOGEN/examples/hiC/3DGenerator.jar parameters_chr22_10kb.txt
@@ -65,7 +73,12 @@ done
 bash install_hsa.sh
 
 #create input
-python hsa_input.py $BEDPATH hsa/GM12878_combined_22_10kb.tsv
+INPUT_PATH=hsa/GM12878_combined_22_10kb.tsv
+
+if [ ! -e $INPUT_PATH ]
+	then
+		python hsa_input.py $BEDPATH $INPUT_PATH
+fi
 
 cd hsa
 
@@ -83,7 +96,13 @@ cd ..
 bash install_chromsde.sh
 
 #create input
-python chromsde_input.py $BEDPATH ChromSDE/chr22_100kb_contacts.dat ChromSDE/chr22_10kb_ids.dat
+CONTACTS_PATH=ChromSDE/chr22_10kb_contacts.dat
+IDS_PATH=ChromSDE/chr22_10kb_ids.dat
+
+if [ ! -e $CONTACTS_PATH ] || [ ! -e $IDS_PATH ]
+	then
+		python chromsde_input.py $BEDPATH $CONTACTS_PATH $IDS_PATH
+fi
 
 cd ChromSDE
 

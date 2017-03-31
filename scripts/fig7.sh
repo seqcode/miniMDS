@@ -48,7 +48,12 @@ do
        	$TIME -f "%M" -o $CMDS_OUT -a python ../minimds.py --classical $BEDPATH
 	$TIME -f "%M" -o $MMDS_OUT -a python ../minimds.py $BEDPATH
 	$TIME -f "%M" -o $MINI_OUT -a python ../minimds.py -l "data/GM12878_combined_"$CHROM"_100kb.bed" -p $DOMAIN_SIZE_PARAMETER -m $MIN_DOMAIN_SIZE $BEDPATH
-	python mogen_input.py $BEDPATH "MOGEN/examples/hiC/input/GM12878_combined_"$CHROM"_"$RES_KB"kb.tsv" 
+
+	INPUT_PATH="MOGEN/examples/hiC/input/GM12878_combined_"$CHROM"_"$RES_KB"kb.tsv" 
+	if [ ! -e $INPUT_PATH ]
+		then
+			python mogen_input.py $BEDPATH $INPUT_PATH
+	fi
 	$TIME -f "%M" -o $MINI_OUT -a java -jar MOGEN/examples/hiC/3DGenerator.jar "parameters_chr"$CHROM"_"$RES_KB"kb.txt"
 done
 

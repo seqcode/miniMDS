@@ -10,7 +10,12 @@ do
 	python ../minimds.py -o "hic_data/GM12878_combined_"$CHROM"_10kb_mmds_coords.tsv" "hic_data/GM12878_combined_"$CHROM"_10kb.bed"
 	python ../minimds.py --classical -o "hic_data/GM12878_combined_"$CHROM"_10kb_cmds_coords.tsv" "hic_data/GM12878_combined_"$CHROM"_10kb.bed"
 	python ../minimds.py -l "hic_data/GM12878_combined_"$CHROM"_100kb.bed" -o "hic_data/GM12878_combined_"$CHROM"_10kb_mmds_coords.tsv" "hic_data/GM12878_combined_"$CHROM"_10kb.bed"
-	python mogen_input.py $BEDPATH "MOGEN/examples/hiC/input/GM12878_combined_"$CHROM"_"$RES_KB"kb.tsv" 
+
+	INPUT_PATH="MOGEN/examples/hiC/input/GM12878_combined_"$CHROM"_"$RES_KB"kb.tsv" 
+	if [ ! -e $INPUT_PATH ]
+		then
+			python mogen_input.py $BEDPATH $INPUT_PATH
+	fi
 	java -jar MOGEN/examples/hiC/3DGenerator.jar "parameters_chr"$CHROM"_10kb.txt"
 
 	#process MOGEN output
