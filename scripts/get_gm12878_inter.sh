@@ -20,7 +20,7 @@ if [ $RES_KB -lt 1000 ]
 	then
 		RES_STRING=$RES_KB"kb"
 else
-	RES_STRING= $(($RES_KB/1000))"mb"
+	RES_STRING=$(($RES_KB/1000))"mb"
 fi
 
 DIR=$RES_STRING"_resolution_interchromosomal"
