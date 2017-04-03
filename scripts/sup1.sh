@@ -77,23 +77,23 @@ cd ..
 #ChromSDE
 
 #install
-bash install_chromsde.sh
+#bash install_chromsde.sh
 
 #create input
-CONTACTS_PATH=ChromSDE/chr22_100kb_contacts.dat
-IDS_PATH=ChromSDE/chr22_100kb_ids.dat
+#CONTACTS_PATH=ChromSDE/chr22_100kb_contacts.dat
+#IDS_PATH=ChromSDE/chr22_100kb_ids.dat
 
-if [ ! -e $CONTACTS_PATH ] || [ ! -e $IDS_PATH ]
-	then
-		python chromsde_input.py $BEDPATH $CONTACTS_PATH $IDS_PATH
-fi
+#if [ ! -e $CONTACTS_PATH ] || [ ! -e $IDS_PATH ]
+#	then
+#		python chromsde_input.py $BEDPATH $CONTACTS_PATH $IDS_PATH
+#fi
 
-cd ChromSDE
+#cd ChromSDE
 
 #run
-time matlab -nodisplay -nosplash -nodesktop -r "run('run_chromsde_100kb(22)')" > "../"$CHROMSDE_OUT
+#time matlab -nodisplay -nosplash -nodesktop -r "run('run_chromsde_100kb(22)')" > "../"$CHROMSDE_OUT
 
-cd ..
+#cd ..
 
 python get_chrom_sizes.py 10
 

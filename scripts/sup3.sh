@@ -82,22 +82,22 @@ cd ..
 #ChromSDE
 
 #install
-bash install_chromsde.sh
+#bash install_chromsde.sh
 
 #create input
-CONTACTS_PATH=ChromSDE/chr22_100kb_contacts.dat
-IDS_PATH=ChromSDE/chr22_100kb_ids.dat
+#CONTACTS_PATH=ChromSDE/chr22_100kb_contacts.dat
+#IDS_PATH=ChromSDE/chr22_100kb_ids.dat
 
-python chromsde_input.py $BEDPATH $CONTACTS_PATH $IDS_PATH
+#python chromsde_input.py $BEDPATH $CONTACTS_PATH $IDS_PATH
 
-cd ChromSDE
+#cd ChromSDE
 
 #run
-matlab -nodisplay -nosplash -nodesktop -r "run('run_chromsde_100kb(22)')"
+#matlab -nodisplay -nosplash -nodesktop -r "run('run_chromsde_100kb(22)')"
 
 #process output
-cat contacts_100kb.pos.pdb | awk '$1 == "ATOM" {print $6"\t"$7"\t"$8}' > GM12878_combined_22_100kb_coords.tsv
+#cat contacts_100kb.pos.pdb | awk '$1 == "ATOM" {print $6"\t"$7"\t"$8}' > GM12878_combined_22_100kb_coords.tsv
 
-cd ..
+#cd ..
 
 python sup3.py

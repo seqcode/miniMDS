@@ -93,29 +93,29 @@ cd ..
 #ChromSDE
 
 #install
-bash install_chromsde.sh
+#bash install_chromsde.sh
 
 #create input
-CONTACTS_PATH=ChromSDE/chr22_10kb_contacts.dat
-IDS_PATH=ChromSDE/chr22_10kb_ids.dat
+#CONTACTS_PATH=ChromSDE/chr22_10kb_contacts.dat
+#IDS_PATH=ChromSDE/chr22_10kb_ids.dat
 
-if [ ! -e $CONTACTS_PATH ] || [ ! -e $IDS_PATH ]
-	then
-		python chromsde_input.py $BEDPATH $CONTACTS_PATH $IDS_PATH
-fi
-
-cd ChromSDE
+#if [ ! -e $CONTACTS_PATH ] || [ ! -e $IDS_PATH ]
+#	then
+#		python chromsde_input.py $BEDPATH $CONTACTS_PATH $IDS_PATH
+#fi
+#
+#cd ChromSDE
 
 #rep 1
-matlab -nodisplay -nosplash -nodesktop -r "run('run_chromsde_rep1')"
+#matlab -nodisplay -nosplash -nodesktop -r "run('run_chromsde_rep1')"
 
 #rep 2
-matlab -nodisplay -nosplash -nodesktop -r "run('run_chromsde_rep2')"
+#matlab -nodisplay -nosplash -nodesktop -r "run('run_chromsde_rep2')"
 
 #process output
-cat contacts_rep1.pos.pdb | awk '$1 == "ATOM" {print $6"\t"$7"\t"$8}' > GM12878_combined_22_10kb_rep1_coords.tsv
-cat contacts_rep2.pos.pdb | awk '$1 == "ATOM" {print $6"\t"$7"\t"$8}' > GM12878_combined_22_10kb_rep2_coords.tsv
+#cat contacts_rep1.pos.pdb | awk '$1 == "ATOM" {print $6"\t"$7"\t"$8}' > GM12878_combined_22_10kb_rep1_coords.tsv
+#cat contacts_rep2.pos.pdb | awk '$1 == "ATOM" {print $6"\t"$7"\t"$8}' > GM12878_combined_22_10kb_rep2_coords.tsv
 
-cd ..
+#cd ..
 
 python fig5.py
