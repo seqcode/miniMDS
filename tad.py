@@ -74,7 +74,7 @@ def domainsFromScores(scores, minSizeFraction):
 			end = i + 1
 			domains.append([start,end])
 			start = i + 1
-		elif (score > 0 and prevScore < 0):	#current is downstream, previous was upstream
+		elif score > 0 and prevScore < 0 and i-start >= minNumLoc:	#current is downstream, previous was upstream
 			end = i
 			domains.append([start,end])
 			start = i
@@ -82,19 +82,31 @@ def domainsFromScores(scores, minSizeFraction):
 	return np.array(domains)
 
 def getDomains(contactMat, cluster, sizeParameter, minSizeFraction):
-	"""Create subclusters from cluster according to TADs"""
+	"""Identify TADs in contact matrix"""
 	scores = allScores(contactMat, cluster, 50)	#50 is from Dixon 2012 supplemental
 	smoothingFactor = max((int(len(contactMat)*sizeParameter), 1))	#must be >= 1
 	smoothed = st.smoothWithMovingAverage(scores, smoothingFactor)
-	domains = domainsFromScores(smoothed, minSizeFraction)
-	return domains
+	return domainsFromScores(smoothed, minSizeFraction)
 
-def subclustersFromTads(cluster, domains):
-        offset = 0
-        for domain in domains:
-		start = domain[0]
-		end = domain[1]
-                points = cluster.points[(start-cluster.offset):(end-cluster.offset)]
-		if len(np.where(points != 0)[0]) > 0:	#non-empty
-                	cluster.createSubcluster(points, offset)
-                offset = end
+def subclustersFromTads(high_cluster, low_cluster, low_tads):
+	"""Create compatible subclusters from TADs in high-res cluster and low-res cluster"""
+	res_ratio = low_cluster.chrom.res/high_cluster.chrom.res
+	high_tads = low_tads * res_ratio
+        high_offset = 0
+	low_offset = 0
+        for high_tad, low_tad in zip(high_tads, low_tads):
+		high_start = high_tad[0]
+		high_end = high_tad[1]
+		low_start = low_tad[0]
+		low_end = low_tad[1]
+                high_points = high_cluster.points[(high_start-high_cluster.offset):(high_end-high_cluster.offset)]
+		low_points = low_cluster.points[(low_start-low_cluster.offset):(low_end-low_cluster.offset)]
+		high_nums = [high_point.num for high_point in high_points if high_point != 0]
+		inferred_low_nums = np.array(high_nums)/res_ratio
+		true_low_nums = [low_point.num for low_point in low_points if low_point != 0]
+		intersection = [num for num in true_low_nums if num in inferred_low_nums]
+		if len(intersection) > 0:	#compatible
+                	high_cluster.createSubcluster(high_points, high_offset)
+			low_cluster.createSubcluster(low_points, low_offset)
+                high_offset = high_end
+		low_offset = low_end
