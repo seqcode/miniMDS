@@ -14,7 +14,16 @@ if [ ! -e GSE63525_GM12878_combined_interchromosomal_contact_matrices.tar.gz ]
 		wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525%5FGM12878%5Fcombined%5Finterchromosomal%5Fcontact%5Fmatrices%2Etar%2Egz
 fi
 
-DIR=$(($RES/1000))"kb_resolution_interchromosomal"
+RES_KB=$(($RES/1000))
+
+if [ $RES_KB -l 1000 ]
+	then
+		RES_STRING=$RES_KB"kb"
+else
+	RES_STRING= $(($RES_KB/1000))"mb"
+fi
+
+DIR=$RES_STRING"_resolution_interchromosomal"
 
 if [ ! -e "GM12878_combined_interchromosomal/"$DIR ]
 	then
