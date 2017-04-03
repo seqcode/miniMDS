@@ -9,7 +9,7 @@ for CHROM in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X
 do
 	python ../minimds.py -o "hic_data/GM12878_combined_"$CHROM"_10kb_mmds_coords.tsv" "hic_data/GM12878_combined_"$CHROM"_10kb.bed"
 	python ../minimds.py --classical -o "hic_data/GM12878_combined_"$CHROM"_10kb_cmds_coords.tsv" "hic_data/GM12878_combined_"$CHROM"_10kb.bed"
-	python ../minimds.py -l "hic_data/GM12878_combined_"$CHROM"_100kb.bed" -o "hic_data/GM12878_combined_"$CHROM"_10kb_mmds_coords.tsv" "hic_data/GM12878_combined_"$CHROM"_10kb.bed"
+	python ../minimds.py -l "hic_data/GM12878_combined_"$CHROM"_100kb.bed" -o "hic_data/GM12878_combined_"$CHROM"_10kb_minimds_coords.tsv" "hic_data/GM12878_combined_"$CHROM"_10kb.bed"
 
 	INPUT_PATH="MOGEN/examples/hiC/input/GM12878_combined_"$CHROM"_"$RES_KB"kb.tsv" 
 	if [ ! -e $INPUT_PATH ]
