@@ -47,7 +47,7 @@ do
 	BEDPATH="data/GM12878_combined_"$CHROM"_"$RES_KB"kb.bed"
        	$TIME -f "%M" -o $CMDS_OUT -a python ../minimds.py --classical $BEDPATH
 	$TIME -f "%M" -o $MMDS_OUT -a python ../minimds.py $BEDPATH
-	$TIME -f "%M" -o $MINI_OUT -a python ../minimds.py -l "data/GM12878_combined_"$CHROM"_100kb.bed" -p $DOMAIN_SIZE_PARAMETER -m $MIN_DOMAIN_SIZE $BEDPATH
+	$TIME -f "%M" -o $MINI_OUT -a python ../minimds.py -l "hic_data/GM12878_combined_"$CHROM"_100kb.bed" -p $DOMAIN_SIZE_PARAMETER -m $MIN_DOMAIN_SIZE $BEDPATH
 
 	INPUT_PATH="MOGEN/examples/hiC/input/GM12878_combined_"$CHROM"_"$RES_KB"kb.tsv" 
 	if [ ! -e $INPUT_PATH ]

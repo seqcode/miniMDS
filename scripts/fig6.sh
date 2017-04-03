@@ -43,7 +43,7 @@ bash install_mogen.sh
 for CHROM in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X
 do
 	BEDPATH="data/GM12878_combined_"$CHROM"_"$RES_KB"kb.bed"
-	time python ../minimds.py -l "data/GM12878_combined_"$CHROM"_100kb.bed" -p $DOMAIN_SIZE_PARAMETER -m $MIN_DOMAIN_SIZE $BEDPATH >> $MINI_OUT
+	time python ../minimds.py -l "hic_data/GM12878_combined_"$CHROM"_100kb.bed" -p $DOMAIN_SIZE_PARAMETER -m $MIN_DOMAIN_SIZE $BEDPATH >> $MINI_OUT
 	time python ../minimds.py $BEDPATH >> $MMDS_OUT
 	time python ../minimds.py --classical $BEDPATH >> $CMDS_OUT
 

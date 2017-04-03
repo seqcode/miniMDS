@@ -27,7 +27,7 @@ $TIME -f "%M" -o cmds_chr22_100kb_memory.txt python ../minimds.py --classical $B
 
 #miniMDS
 
-$TIME -f "%M" -o minimds_chr22_100kb_memory.txt python ../minimds.py -l data/GM12878_combined_22_100kb.bed $BEDPATH
+$TIME -f "%M" -o minimds_chr22_100kb_memory.txt python ../minimds.py -l hic_data/GM12878_combined_22_100kb.bed $BEDPATH
 
 #MOGEN
 

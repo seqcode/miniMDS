@@ -33,7 +33,7 @@ python ../minimds.py --classical $BEDPATH
 
 #miniMDS
 
-python ../minimds.py -l data/GM12878_combined_22_1mb.bed -p 0.01 -m 0.01 $BEDPATH
+python ../minimds.py -l hic_data/GM12878_combined_22_1mb.bed -p 0.01 -m 0.01 $BEDPATH
 
 #MOGEN
 

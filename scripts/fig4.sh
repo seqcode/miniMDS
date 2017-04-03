@@ -36,7 +36,7 @@ time python ../minimds.py --classical $BEDPATH > $CMDS_OUT
 
 #miniMDS
 
-time python ../minimds.py -l data/GM12878_combined_22_100kb.bed -p 0.01 -m 0.01 $BEDPATH > $MINI_OUT
+time python ../minimds.py -l hic_data/GM12878_combined_22_100kb.bed -p 0.01 -m 0.01 $BEDPATH > $MINI_OUT
 
 #MOGEN
 
