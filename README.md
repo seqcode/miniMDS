@@ -4,9 +4,8 @@ miniMDS is a tool for inferring and plotting 3D structures from normalized Hi-C 
 
 ## Installation
 
-Tested on python 2.7
-
 Prerequisites:
+* python 2.7
 * numpy
 * scikit-learn
 * pymp
