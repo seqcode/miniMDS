@@ -21,19 +21,19 @@ NEG_MAX_DIST_INTRA = 30
 #NEG_MAX_DIST_INTER = 150
 
 #increase this parameter to improve contact score, (but will decrease non-contact score)
-POS_MAX_DIST_WEIGHT_FILE = parameters/100kb/chr1_normal/pos_max_dist_weight_1_normal.txt
+POS_MAX_DIST_WEIGHT_FILE = MOGEN/examples/hiC/parameters/100kb/chr1_normal/pos_max_dist_weight_1_normal.txt
 #increase this parameter if adjacent points are to close to each other
-POS_MIN_DIST_WEIGHT_FILE = parameters/100kb/chr1_normal/pos_min_dist_weight_1_normal.txt
+POS_MIN_DIST_WEIGHT_FILE = MOGEN/examples/hiC/parameters/100kb/chr1_normal/pos_min_dist_weight_1_normal.txt
 #increase this parameter to improve non-contact score, (but will decrease contact score)
-NEG_MIN_DIST_WEIGHT_FILE = parameters/100kb/chr1_normal/neg_min_dist_weight_1_normal.txt
+NEG_MIN_DIST_WEIGHT_FILE = MOGEN/examples/hiC/parameters/100kb/chr1_normal/neg_min_dist_weight_1_normal.txt
 #increase this parameter to prevent the structure from spanning too much (make the structure smaller)
-NEG_MAX_DIST_WEIGHT_FILE = parameters/100kb/chr1_normal/neg_max_dist_weight_1_normal.txt
+NEG_MAX_DIST_WEIGHT_FILE = MOGEN/examples/hiC/parameters/100kb/chr1_normal/neg_max_dist_weight_1_normal.txt
 
 
 
-OUTPUT_FOLDER = output
+OUTPUT_FOLDER = MOGEN/examples/hiC/output
 
-INPUT_FILE = input/GM12878_combined_7_10kb.tsv
+INPUT_FILE = MOGEN/examples/hiC/input/GM12878_combined_7_10kb.tsv
 
 #set VERBOSE = true for information during optimization printed out
 VERBOSE = true
