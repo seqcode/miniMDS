@@ -17,9 +17,7 @@ Prerequisites:
 
 ## Testing
 
-Please run the following code and report any issues:
-
-``python minimds.py -o test_output.tsv data/GM12878_combined_22_100kb.bed``
+Please run test.sh (in the scripts directory) and report any issues.
 
 ## TLDR
 
