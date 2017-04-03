@@ -16,7 +16,7 @@ fi
 
 RES_KB=$(($RES/1000))
 
-if [ $RES_KB -l 1000 ]
+if [ $RES_KB -lt 1000 ]
 	then
 		RES_STRING=$RES_KB"kb"
 else
