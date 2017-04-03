@@ -2,12 +2,12 @@ set -e
 
 RES=$1
 
-if [ ! -e ../hic_data ]
+if [ ! -e hic_data ]
 	then
-		mkdir ../hic_data
+		mkdir hic_data
 fi
 
-cd ../hic_data
+cd hic_data
 
 if [ ! -e GSE63525_GM12878_combined_interchromosomal_contact_matrices.tar.gz ]
 	then
