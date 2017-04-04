@@ -9,7 +9,7 @@ import linear_algebra as la
 import tools
 import stats_tools as st
 import pymp
-import multiprocessing
+import multiprocessing as mp
 
 def infer_clusters(contactMat, clusters, offsets, classical=False):
 	"""Infers 3D coordinates for multiple clusters with same contact matrix"""
@@ -93,7 +93,7 @@ def partitionedMDS(path, lowpath, args):
 	lowSubclusters = pymp.shared.list(lowCluster.clusters)
 
 	numSubclusters = len(highCluster.clusters)
-	num_threads = min((num_threads, multiprocessing.cpu_count(), numSubclusters))	#don't exceed number of requested threads, available threads, or clusters
+	num_threads = min((num_threads, mp.cpu_count(), numSubclusters))	#don't exceed number of requested threads, available threads, or clusters
 	with pymp.Parallel(num_threads) as p:
 		for subclusternum in p.range(numSubclusters):
 			highSubcluster = highSubclusters[subclusternum]
