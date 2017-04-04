@@ -130,7 +130,7 @@ def main():
 			r = args.r
 
 		if args.n is None:
-			n = multiprocessing.cpu_count()
+			n = 3	#safe for standard 4-core desktop
 		else:
 			n = args.n
 
@@ -140,7 +140,7 @@ def main():
 		if not tools.args_are_valid(params, names, intervals):
 			sys.exit(0)
 
-		clusters = interMDS(chrom_names, args.inter_prefix, args.intra_prefix, args.inter_res, args.intra_res, args.l, args.params)
+		clusters = interMDS(chrom_names, args.inter_prefix, args.intra_prefix, args.inter_res, args.intra_res, args.l, params)
 
 	if args.o is not None:
 		for cluster in clusters:
