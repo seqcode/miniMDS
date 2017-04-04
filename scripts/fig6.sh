@@ -49,7 +49,7 @@ do
 
 
 	INPUT_PATH="MOGEN/examples/hiC/input/GM12878_combined_"$CHROM"_10kb.tsv"
-	if [ ! -e $INPUT_PATH]
+	if [ ! -e $INPUT_PATH ]
 		then
 			python mogen_input.py $BEDPATH $INPUT_PATH
 	fi
