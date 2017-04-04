@@ -27,7 +27,7 @@ def normalize_inter(hic_id, res, chrom_a, chrom_b):
 	else:
 		res_string = str(res_kb/1000) + "mb"
 
-	if chrom_b == "X" or chrom_a < chrom_b:
+	if chrom_b == "X" or int(chrom_a) < int(chrom_b):
 		chrom1 = chrom_a
 		chrom2 = chrom_b
 	else:
