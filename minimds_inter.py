@@ -62,8 +62,6 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, intra_low_
 
 	#perform MDS at low resolution on all chroms
 	mm.infer_clusters(inter_mat, low_clusters, offsets)
-	for cluster in low_clusters:
-		cluster.write("data/GM12878_combined_{}_1mb_cluster.tsv".format(cluster.chrom.name))
 
 	#perform MDS at high resolution on each chrom
 	high_clusters = []
@@ -83,7 +81,7 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, intra_low_
 		high_cluster.transform(r, None, reflect)	#do not translate now (need to rescale)
 		ts.append(t)	
 
-	#transform (with rescaling)
+	#translate (with rescaling)
 	low_rgs = np.array([la.radius_of_gyration(cluster) for cluster in low_clusters])
 	high_rgs = np.array([la.radius_of_gyration(cluster) for cluster in high_clusters])
 	scaling_factor = np.mean(high_rgs/low_rgs)
