@@ -1,6 +1,12 @@
 import numpy as np
 import argparse
 
+def get_chrom_num(chrom):
+	if chrom == "X":
+		return 23
+	else:
+		return int(chrom)
+
 def normalize(chrom1, chrom2, rawpath, krpath1, krpath2, res, outpath):
 	kr1 = np.loadtxt(krpath1)
 	if krpath2 is None:
@@ -27,12 +33,12 @@ def normalize_inter(hic_id, res, chrom_a, chrom_b):
 	else:
 		res_string = str(res_kb/1000) + "mb"
 
-	if chrom_b == "X" or int(chrom_a) < int(chrom_b):
+	if get_chrom_num(chrom_a) < get chrom_num(chrom_b):
 		chrom1 = chrom_a
 		chrom2 = chrom_b
 	else:
 		chrom1 = chrom_b
-		chrom2 = chrom_a	
+		chrom2 = chrom_a
 
 	rawpath = "{}/{}_resolution_interchromosomal/chr{}_chr{}/MAPQGE30/chr{}_{}_{}.RAWobserved".format(hic_id, res_string, chrom1, chrom2, chrom1, chrom2, res_string)
 	krpath1 = "{}/{}_resolution_interchromosomal/chr{}_chr{}/MAPQGE30/chr{}_{}.KRnorm".format(hic_id, res_string, chrom1, chrom2, chrom1, res_string)
