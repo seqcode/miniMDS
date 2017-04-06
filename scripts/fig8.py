@@ -17,6 +17,7 @@ mogen_rs = np.zeros(n)
 
 for i, chrom in enumerate(chroms):
 	#"true" distance matrix
+	bedpath = "hic_data/GM12878_combined_{}_10kb.bed".format(chrom)
 	cluster = dt.clusterFromBed(bedpath, None, None)
 	contactMat = dt.matFromBed(bedpath, cluster)
 	distMat = at.contactToDist(contactMat)
