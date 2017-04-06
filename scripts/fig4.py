@@ -18,7 +18,8 @@ colors = ["r", "g", "b", "m"]
 rects = plt.bar(x_pos, times, align="center", color = colors)
 plt.yscale("log", subsy=[])
 plt.tick_params(top=False,bottom=False,right=False,left=False, labelbottom=False)
-plt.legend((rects[0], rects[1], rects[2], rects[3], rects[4], rects[5]), labels, fontsize=9, loc=0)
+#plt.legend((rects[0], rects[1], rects[2], rects[3], rects[4], rects[5]), labels, fontsize=9, loc=0)
+plt.legend((rects[0], rects[1], rects[2], rects[3]), labels, fontsize=9, loc=0)
 plt.ylabel("Computational time (minutes)")
  
 plt.savefig("Fig4.png")
