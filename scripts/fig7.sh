@@ -55,7 +55,7 @@ do
 	$TIME -f "%M" -o $MINI_OUT -a java -jar MOGEN/examples/hiC/3DGenerator.jar "parameters_chr"$CHROM"_10kb.txt"
 done
 
-if [ ! -e chrom_sizes_10kb.txt ]
+if [ ! -e chrom_sizes_10kb.txt ] || [[ ! -s chrom_size_10kb.txt ]
 	then
 		python get_chrom_sizes.py 10
 fi
