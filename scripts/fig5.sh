@@ -8,22 +8,22 @@ BEDPATH=hic_data/GM12878_combined_22_10kb.bed
 #Chromosome3D
 
 #create input
-INPUT_PATH=Chromosome3D/input/GM12878_combined_22_10kb.txt
+#INPUT_PATH=Chromosome3D/input/GM12878_combined_22_10kb.txt
 
-if [ ! -e $INPUT_PATH ]
-	then
-		python chromosome3d_input.py $BEDPATH $INPUT_PATH
-fi
+#if [ ! -e $INPUT_PATH ]
+#	then
+#		python chromosome3d_input.py $BEDPATH $INPUT_PATH
+#fi
 
 #rep 1
-perl Chromosome3D/chromosome3D.pl -i $INPUT_PATH -o Chromosome3D/output_models/chr22_10kb_rep1 -m 1
+#perl Chromosome3D/chromosome3D.pl -i $INPUT_PATH -o Chromosome3D/output_models/chr22_10kb_rep1 -m 1
 
 #rep 2
-perl Chromosome3D/chromosome3D.pl -i $INPUT_PATH -o Chromosome3D/output_models/chr22_10kb_rep2 -m 1
+#perl Chromosome3D/chromosome3D.pl -i $INPUT_PATH -o Chromosome3D/output_models/chr22_10kb_rep2 -m 1
 
 #process output
-cat Chromosome3D/output_models/chr22_10kb_rep1/GM12878_combined_22_10kb_1.pdb | awk '$1 == "ATOM" {print $6"\t"$7"\t"$8}' > Chromosome3D/output_models/chr22_10kb_rep1/rep1_coords.tsv
-cat Chromosome3D/output_models/chr22_10kb_rep2/GM12878_combined_22_10kb_1.pdb | awk '$1 == "ATOM" {print $6"\t"$7"\t"$8}' > Chromosome3D/output_models/chr22_10kb_rep2/rep2_coords.tsv
+#cat Chromosome3D/output_models/chr22_10kb_rep1/GM12878_combined_22_10kb_1.pdb | awk '$1 == "ATOM" {print $6"\t"$7"\t"$8}' > Chromosome3D/output_models/chr22_10kb_rep1/rep1_coords.tsv
+#cat Chromosome3D/output_models/chr22_10kb_rep2/GM12878_combined_22_10kb_1.pdb | awk '$1 == "ATOM" {print $6"\t"$7"\t"$8}' > Chromosome3D/output_models/chr22_10kb_rep2/rep2_coords.tsv
 
 #mMDS
 
