@@ -2,7 +2,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 import misc
 
-labels = ("Chromosome3D", "mMDS", "cMDS", "miniMDS", "MOGEN", "ChromSDE")
+#labels = ("Chromosome3D", "mMDS", "cMDS", "miniMDS", "MOGEN", "ChromSDE")
+labels = ("mMDS", "cMDS", "miniMDS", "MOGEN")
 x_pos = np.arange(len(labels))
 
 times = [] 
@@ -11,7 +12,8 @@ with open("chr22_10kb_times.txt") as in_file:
 		times.append(misc.parse_time(line.strip()))
 in_file.close()
  
-colors = ["y", "r", "g", "b", "m", "blueviolet"]
+#colors = ["y", "r", "g", "b", "m", "blueviolet"]
+colors = ["r", "g", "b", "m"]
 
 rects = plt.bar(x_pos, times, align="center", color = colors)
 plt.yscale("log", subsy=[])
