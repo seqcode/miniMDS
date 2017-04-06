@@ -16,15 +16,15 @@ BEDPATH=hic_data/GM12878_combined_22_100kb.bed
 #Chromosome3D
 
 #create input
-#INPUT_PATH=Chromosome3D/input/GM12878_combined_22_100kb.txt
+INPUT_PATH=Chromosome3D/input/GM12878_combined_22_100kb.txt
 
-#if [ ! -e $INPUT_PATH ]
-#	then
-#		python chromosome3d_input.py $BEDPATH $INPUT_PATH
-#fi
+if [ ! -e $INPUT_PATH ]
+	then
+		python chromosome3d_input.py $BEDPATH $INPUT_PATH
+fi
 
 #run
-#time perl Chromosome3D/chromosome3D.pl -i $INPUT_PATH -o Chromosome3D/output_models/chr22_100kb -m 1 > $CHROMOSOME3D_OUT
+time perl Chromosome3D/chromosome3D.pl -i $INPUT_PATH -o Chromosome3D/output_models/chr22_100kb -m 1 > $CHROMOSOME3D_OUT
 
 #mMDS
 
