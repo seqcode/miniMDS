@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn import manifold
+from scipy import stats as st
 import sys
 sys.path.append("../minimds")
 import array_tools as at
