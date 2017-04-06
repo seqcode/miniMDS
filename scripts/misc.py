@@ -2,7 +2,7 @@ import numpy as np
 from sklearn import manifold
 from scipy import stats as st
 import sys
-sys.path.append("../minimds")
+sys.path.append("..")
 import array_tools as at
 import linear_algebra as la
 
