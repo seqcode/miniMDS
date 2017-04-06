@@ -6,7 +6,7 @@ labels = ("Chromosome3D", "mMDS", "cMDS", "miniMDS", "MOGEN", "ChromSDE")
 x_pos = np.arange(len(labels))
 
 times = [] 
-with open("chr22_10kb_times.txt".format(res_kb)) as in_file:
+with open("chr22_10kb_times.txt") as in_file:
 	for line in in_file:
 		times.append(misc.parse_time(line.strip()))
 in_file.close()
