@@ -16,7 +16,7 @@ for i, pointNum in enumerate(cluster.getPointNums()):
 	fullMat[i,0] = cluster.chrom.minPos + cluster.chrom.res * pointNum
 	fullMat[i,1] = cluster.chrom.minPos + cluster.chrom.res * (pointNum + 1)
 
-fullMat[:,2:n] = contactMat
+fullMat[:,2:n+2] = contactMat
 
 maxNumDigits = int(np.ceil(np.log10(np.amax(contactMat))))
 formatstring = "%" + str(maxNumDigits) + "d"
