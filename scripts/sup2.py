@@ -27,7 +27,7 @@ in_file.close()
  
 #labels = ("Chromosome3D", "mMDS", "cMDS", "miniMDS", "MOGEN", "ChromSDE")
 labels = ("Chromosome3D", "mMDS", "cMDS", "miniMDS", "MOGEN")
-x_pos = np.arange(len(objects))
+x_pos = np.arange(len(labels))
 #memory = [chromthreed_mem, mmds_mem, cmds_mem, minimds_mem, mogen_mem, chromsde_mem] 
 memory = [chromthreed_mem, mmds_mem, cmds_mem, minimds_mem, mogen_mem]
  
