@@ -18,6 +18,6 @@ for i, pointNum in enumerate(cluster.getPointNums()):
 
 fullMat[:,2:n+2] = contactMat
 
-maxNumDigits = int(np.ceil(np.log10(np.amax(contactMat))))
+maxNumDigits = int(np.ceil(np.log10(np.amax(fullMat))))
 formatstring = "%" + str(maxNumDigits) + "d"
-np.savetxt(outpath, contactMat, formatstring, delimiter="\t")
+np.savetxt(outpath, fullMat, formatstring, delimiter="\t")
