@@ -1,6 +1,6 @@
 set -e
 
-$TIME=/usr/bin/time
+TIME=/usr/bin/time
 
 bash get_gm12878.sh 1000000 22
 bash get_gm12878.sh 100000 22

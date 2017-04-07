@@ -45,7 +45,7 @@ if [ ! -e $INPUT_PATH ]
 fi
 
 #run
-$TIME -o mogen_chr22_10kb_time.txt -f %e java -jar MOGEN/examples/hiC/3DGenerator.jar parameters_chr22_10kb.txt > $MOGEN_OUT
+$TIME -o mogen_chr22_10kb_time.txt -f %e java -jar MOGEN/examples/hiC/3DGenerator.jar parameters_chr22_10kb.txt
 
 #ChromSDE
 
