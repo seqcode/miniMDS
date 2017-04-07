@@ -6,11 +6,32 @@ import misc
 labels = ("mMDS", "cMDS", "miniMDS", "MOGEN")
 x_pos = np.arange(len(labels))
 
-times = [] 
-with open("chr22_10kb_times.txt") as in_file:
-	for line in in_file:
-		times.append(misc.parse_time(line.strip()))
+#with open("chromosome3d_chr22_10kb_time.txt") as in_file:
+#	chromosomethreed_time = float(in_file.readline().strip())/60	#time in minutes
+#in_file.close()
+
+with open("mmds_chr22_10kb_time.txt") as in_file:
+	mmds_time = float(in_file.readline().strip())/60	#time in minutes
 in_file.close()
+
+with open("cmds_chr22_10kb_time.txt") as in_file:
+	cmds_time = float(in_file.readline().strip())/60	#time in minutes
+in_file.close()
+
+with open("minimds_chr22_10kb_time.txt") as in_file:
+	minimds_time = float(in_file.readline().strip())/60	#time in minutes
+in_file.close()
+
+with open("mogen_chr22_10kb_time.txt") as in_file:
+	mogen_time = float(in_file.readline().strip())/60	#time in minutes
+in_file.close()
+
+#with open("chromsde_chr22_10kb_time.txt") as in_file:
+#	chromsde_time = float(in_file.readline().strip())/60	#time in minutes
+#in_file.close()
+
+#times = [chromosomethreed_time, mmds_time, cmds_time, minimds_time, mogen_time, chromsde_time]
+times = [mmds_time, cmds_time, minimds_time, mogen_time]
  
 #colors = ["y", "r", "g", "b", "m", "blueviolet"]
 colors = ["r", "g", "b", "m"]

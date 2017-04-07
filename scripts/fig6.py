@@ -1,12 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-def parse_time(time_string):
-	split = time_string.split("m")
-	mins = int(split[0])
-	secs = float(split[1].split("s")[0])
-	return mins + secs/60
-
 res_kb = 10
 
 chrom_sizes = np.loadtxt("chrom_sizes_{}kb.txt".format(res_kb))
@@ -14,25 +8,25 @@ chrom_sizes = np.loadtxt("chrom_sizes_{}kb.txt".format(res_kb))
 mmds_times = []
 with open("mmds_{}kb_times.txt".format(res_kb)) as in_file:
 	for line in in_file:
-		mmds_times.append(parse_time(line.strip()))
+		mmds_times.append(float(line.strip())/60)
 in_file.close()
 
 cmds_times = []
 with open ("cmds_{}kb_times.txt".format(res_kb)) as in_file:
 	for line in in_file:
-		cmds_times.append(parse_time(line.strip()))
+		cmds_times.append(float(line.strip())/60)
 in_file.close()
 
 minimds_times = []
 with open("minimds_{}kb_times.txt".format(res_kb)) as in_file:
 	for line in in_file:
-		minimds_times.append(parse_time(line.strip()))
+		minimds_times.append(float(line.strip())/60)
 in_file.close()
 
 mogen_times = []
 with open("mogen_{}kb_times.txt".format(res_kb)) as in_file:
 	for line in in_file:
-		mogen_times.append(parse_time(line.strip()))
+		mogen_times.append(float(line.strip())/60)
 in_file.close()
 
 fig = plt.figure()
