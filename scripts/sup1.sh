@@ -64,7 +64,7 @@ fi
 cd hsa
 
 #run
-$TIME -f %e -o hsa_chr22_100kb_time.txt Rscript myR.R GM12878_combined_22_100kb.tsv 0 GM12878_combined_22_100kb_coords.tsv 1
+$TIME -f %e -o ../hsa_chr22_100kb_time.txt Rscript myR.R GM12878_combined_22_100kb.tsv 0 GM12878_combined_22_100kb_coords.tsv 1
 
 cd ..
 
