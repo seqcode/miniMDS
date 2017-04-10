@@ -48,9 +48,9 @@ def plot_clusters_gif(clusters, outname, colors=default_colors, radius=None, inc
 	if radius is None:
 		radius = calculateRadius(clusters)
 	for i in range(0, 360, increment):
+		mlab.figure(bgcolor=(1,1,1))
 		for j, cluster in enumerate(clusters):
 			coords = np.array(cluster.getCoords())
-			mlab.figure(bgcolor=(1,1,1))
 			s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], tube_radius=radius, color=colors[j])
 		mlab.view(i)
 		mlab.savefig("{}_{:>03}.png".format(outname, i))
