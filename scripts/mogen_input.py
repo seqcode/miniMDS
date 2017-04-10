@@ -1,4 +1,3 @@
-import numpy as np
 import sys
 sys.path.append("..")
 import data_tools as dt
