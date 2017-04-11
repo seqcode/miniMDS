@@ -12,24 +12,6 @@ class ChromParameters(object):
 		self.name = name	#e.g. "chr22"
 		self.size = size	#number of lines in file
 
-	def getPointNum(self, genCoord):
-		"""Converts genomic coordinate into point number"""
-		if genCoord < self.minPos or genCoord > self.maxPos:
-			return None
-		else:
-			return int((genCoord - self.minPos)/self.res) 
-
-	def getLength(self):
-		"""Number of possible loci"""
-		return (self.maxPos - self.minPos)/self.res + 1
-	
-	def reduceRes(self, resRatio):
-		"""Creates low-res version of this chromosome"""
-		lowRes = self.res * resRatio
-		lowMinPos = (self.minPos/lowRes)*lowRes		#approximate at low resolution
-		lowMaxPos = (self.maxPos/lowRes)*lowRes
-		return ChromParameters(lowMinPos, lowMaxPos, lowRes, self.name, self.size)
-
 class Cluster(object):
 	"""Intrachromosomal cluster of points or subclusters in 3-D space"""
 	def __init__(self, points, clusters, chrom, offset):
@@ -73,16 +55,6 @@ class Cluster(object):
 			for point in cluster.points:
 				if point != 0:
 					self.points[point.num] = point
-
-	def distMat(self):
-		"""Creates distance matrix from cluster"""
-		points = self.getPoints()
-		numPoints = len(points)
-		mat = np.zeros((numPoints, numPoints))
-		for i in range(numPoints):
-			for j in range(i):
-				mat[i,j] = la.calcDistance(points[i].pos, points[j].pos)
-		return mat
 
 	def createSubcluster(self, points, offset):
 		"""Creates subcluster containing pointsToAdd"""

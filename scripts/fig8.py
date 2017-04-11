@@ -25,13 +25,13 @@ for i, chrom in enumerate(chroms):
 	for j in range(len(distMat)):	#remove diagonal
 		distMat[j,j] = 0
 
-	mmds_distMat = dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_mmds_coords.tsv".format(chrom)).distMat()
+	mmds_distMat = misc.distMat(dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_mmds_coords.tsv".format(chrom)))
 	mmds_rs[i] = misc.pearson(distMat, mmds_distMat)
 	
-	cmds_distMat = dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_cmds_coords.tsv".format(chrom)).distMat()
+	cmds_distMat = misc.distMat(dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_cmds_coords.tsv".format(chrom)))
 	cmds_rs[i] = misc.pearson(distMat, cmds_distMat)
 
-	minimds_distMat = dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_minimds_coords.tsv".format(chrom)).distMat()
+	minimds_distMat = misc.distMat(dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_minimds_coords.tsv".format(chrom)))
 	minimds_rs[i] = misc.pearson(distMat, minimds_distMat)
 
 	mogen_distMat = misc.distsFromCoords("MOGEN/examples/hiC/output/GM12878_combined_{}_10kb_rep1_coords.tsv".format(chrom))

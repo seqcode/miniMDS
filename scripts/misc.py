@@ -5,6 +5,7 @@ import sys
 sys.path.append("..")
 import array_tools as at
 import linear_algebra as la
+from matplotlib import pyplot as plt
 
 def distToContact(distMat, alpha=-1./3):
 	"""Convert distance matrix to contact matrix. Matrix must be symmetric."""
@@ -67,3 +68,24 @@ def parse_time(time_string):
 	mins = int(split[0])
 	secs = float(split[1].split("s")[0])
 	return mins + secs/60
+
+def getPointNum(chrom, genCoord):
+	"""Converts genomic coordinate into point number"""
+	if genCoord < chrom.minPos or genCoord > chrom.maxPos:
+		return None
+	else:
+		return int((genCoord - chrom.minPos)/chrom.res) 
+
+def getLength(chrom):
+	"""Number of possible loci"""
+	return (chrom.maxPos - chrom.minPos)/chrom.res + 1
+
+def distMat(cluster):
+	"""Creates distance matrix from cluster"""
+	points = cluster.getPoints()
+	numPoints = len(points)
+	mat = np.zeros((numPoints, numPoints))
+	for i in range(numPoints):
+		for j in range(i):
+			mat[i,j] = la.calcDistance(points[i].pos, points[j].pos)
+	return mat

@@ -17,13 +17,13 @@ for j in range(len(distMat)):	#remove diagonal
 chromthreed_distMat = misc.distsFromCoords("Chromosome3D/output/chr22_100kb/chr22_100kb_coords.tsv")
 chromthreed_r = misc.pearson(distMat, chromthreed_distMat)
 
-mmds_distMat = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_mmds_coords.tsv").distMat()
+mmds_distMat = misc.distMat(dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_mmds_coords.tsv"))
 mmds_r = misc.pearson(distMat, mmds_distMat)
 
-cmds_distMat = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_cmds_coords.tsv").distMat()
+cmds_distMat = misc.distMat(dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_cmds_coords.tsv"))
 cmds_r = misc.pearson(distMat, cmds_distMat)
 
-minimds_distMat = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_minimds_coords.tsv").distMat()
+minimds_distMat = misc.distMat(dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_minimds_coords.tsv"))
 minimds_r = misc.pearson(distMat, minimds_distMat)
 
 mogen_distMat = misc.distsFromCoords("MOGEN/examples/hiC/output/GM12878_combined_22_10kb_rep1_coords.tsv")
