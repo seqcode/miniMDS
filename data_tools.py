@@ -231,7 +231,7 @@ def basicParamsFromBed(path):
 	infile.close()
 	return size, res
 
-def matFromBed(path, cluster, interpolate=True):	
+def matFromBed(path, cluster):	
 	"""Converts BED file to matrix. Only includes loci in cluster."""
 	cluster.indexPoints()
 	pointNums = cluster.getPointNums()
@@ -265,9 +265,6 @@ def matFromBed(path, cluster, interpolate=True):
 	rowsums = np.array([sum(row) for row in mat])
 	empty = np.where(rowsums == 0)[0]
 	assert len(np.where(rowsums == 0)[0]) == 0
-
-	#if interpolate:
-	#	mat = at.sp_interpolate(mat)
 
 	at.makeSymmetric(mat)
 
