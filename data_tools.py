@@ -23,6 +23,13 @@ class ChromParameters(object):
 		else:
 			return int((genCoord - self.minPos)/self.res) 
 
+	def reduceRes(self, resRatio):
+		"""Creates low-res version of this chromosome"""
+		lowRes = self.res * resRatio
+		lowMinPos = (self.minPos/lowRes)*lowRes		#approximate at low resolution
+		lowMaxPos = (self.maxPos/lowRes)*lowRes
+		return ChromParameters(lowMinPos, lowMaxPos, lowRes, self.name, self.size)
+
 class Cluster(object):
 	"""Intrachromosomal cluster of points or subclusters in 3-D space"""
 	def __init__(self, points, clusters, chrom, offset):
