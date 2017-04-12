@@ -69,13 +69,6 @@ def parse_time(time_string):
 	secs = float(split[1].split("s")[0])
 	return mins + secs/60
 
-def getPointNum(chrom, genCoord):
-	"""Converts genomic coordinate into point number"""
-	if genCoord < chrom.minPos or genCoord > chrom.maxPos:
-		return None
-	else:
-		return int((genCoord - chrom.minPos)/chrom.res) 
-
 def distMat(cluster):
 	"""Creates distance matrix from cluster"""
 	points = cluster.getPoints()

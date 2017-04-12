@@ -16,6 +16,13 @@ class ChromParameters(object):
 		"""Number of possible loci"""
 		return (self.maxPos - self.minPos)/self.res + 1
 
+	def getPointNum(self, genCoord):
+		"""Converts genomic coordinate into point number"""
+		if genCoord < self.minPos or genCoord > self.maxPos:
+			return None
+		else:
+			return int((genCoord - self.minPos)/self.res) 
+
 class Cluster(object):
 	"""Intrachromosomal cluster of points or subclusters in 3-D space"""
 	def __init__(self, points, clusters, chrom, offset):
