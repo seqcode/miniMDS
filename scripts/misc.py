@@ -76,10 +76,6 @@ def getPointNum(chrom, genCoord):
 	else:
 		return int((genCoord - chrom.minPos)/chrom.res) 
 
-def getLength(chrom):
-	"""Number of possible loci"""
-	return (chrom.maxPos - chrom.minPos)/chrom.res + 1
-
 def distMat(cluster):
 	"""Creates distance matrix from cluster"""
 	points = cluster.getPoints()

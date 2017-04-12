@@ -9,7 +9,7 @@ import misc
 
 def matFromDixon(path, chrom):
 	"""Creates contact matrix from Dixon tsv data"""
-	numBins = misc.getLength(chrom)
+	numBins = chrom.getLength()
 	mat = np.zeros((numBins, numBins))
 	tracker = Tracker("Reading " + path, chrom.size)
 	with open(path) as infile:

@@ -12,6 +12,10 @@ class ChromParameters(object):
 		self.name = name	#e.g. "chr22"
 		self.size = size	#number of lines in file
 
+	def getLength(self):
+	"""Number of possible loci"""
+		return (self.maxPos - self.minPos)/self.res + 1
+
 class Cluster(object):
 	"""Intrachromosomal cluster of points or subclusters in 3-D space"""
 	def __init__(self, points, clusters, chrom, offset):
