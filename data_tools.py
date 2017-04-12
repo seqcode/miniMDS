@@ -13,7 +13,7 @@ class ChromParameters(object):
 		self.size = size	#number of lines in file
 
 	def getLength(self):
-	"""Number of possible loci"""
+		"""Number of possible loci"""
 		return (self.maxPos - self.minPos)/self.res + 1
 
 class Cluster(object):
