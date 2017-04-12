@@ -2,10 +2,6 @@ set -e
 
 TIME=/usr/bin/time
 
-#parameters
-DOMAIN_SIZE_PARAMETER=0.01
-MIN_DOMAIN_SIZE=0.01
-
 #results files
 MINI_OUT=minimds_10kb_times.txt
 MMDS_OUT=mmds_10kb_times.txt
@@ -44,7 +40,7 @@ bash install_mogen.sh
 for CHROM in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X
 do
 	BEDPATH="hic_data/GM12878_combined_"$CHROM"_10kb.bed"
-	$TIME -o $MINI_OUT -a -f %e python ../minimds.py -l "hic_data/GM12878_combined_"$CHROM"_100kb.bed" -p $DOMAIN_SIZE_PARAMETER -m $MIN_DOMAIN_SIZE $BEDPATH
+	$TIME -o $MINI_OUT -a -f %e python ../minimds.py -l "hic_data/GM12878_combined_"$CHROM"_100kb.bed" $BEDPATH
 	$TIME -o $MMDS_OUT -a -f %e python ../minimds.py $BEDPATH
 	$TIME -o $CMDS_OUT -a -f %e python ../minimds.py --classical $BEDPATH
 
