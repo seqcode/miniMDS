@@ -253,7 +253,6 @@ def matFromBed(path, cluster):
 
 	at.makeSymmetric(mat)
 	rowsums = np.array([sum(row) for row in mat])
-	empty = np.where(rowsums == 0)[0]
 	assert len(np.where(rowsums == 0)[0]) == 0
 
 	at.makeSymmetric(mat)
