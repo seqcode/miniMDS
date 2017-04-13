@@ -18,19 +18,19 @@ def distsFromCoords(coords):
 				sys.exit(0)
 	return distMat
 
-def pearson(true, embedded):
+def pearson(mat1, mat2):
 	"""Root mean square error between two matrices, ignoring zeroes"""
-	assert true.shape == embedded.shape
+	assert mat1.shape == mat2.shape
 	#convert to vectors
-	true = true.flatten()
-	embedded = embedded.flatten()
+	vec1 = mat1.flatten()
+	vec2 = mat2.flatten()
 
 	#remove zeroes
-	indices = np.where(true != 0)[0]
-	true = true[indices]
-	embedded = embedded[indices]
+	nonzero = [i for i in range(len(vec1)) if vec1[i] != 0 and vec2[i] != 0]
+	vec1 = vec1[nonzero]
+	vec2 = vec2[nonzero]
 
-	r, p = st.pearsonr(true, embedded)
+	r, p = st.pearsonr(vec1, vec2)
 	return r
 
 def parse_time(time_string):
