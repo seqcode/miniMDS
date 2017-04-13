@@ -6,6 +6,8 @@ import data_tools as dt
 import array_tools as at
 import misc
 
+bedpath = "hic_data/GM12878_combined_22_10kb.bed"
+
 #"true" distance matrix
 cluster = dt.clusterFromBed(bedpath, None, None)
 contactMat = dt.matFromBed(bedpath, cluster)
