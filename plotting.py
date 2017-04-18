@@ -11,7 +11,7 @@ default_colors = np.array([[255,0,0], [255,238,0], [0,255,238], [0,102,255], [25
 
 default_colors = [tuple(color) for color in default_colors]	#convert to tuple
 
-def plot_clusters_interactive(clusters, colors=default_colors, radius=None, cut=False):
+def plot_clusters_interactive(clusters, colors=default_colors, radius=None, cut=False, out_path=None):
 	mlab.close(all=True)
 	mlab.figure(bgcolor=(1,1,1))
 	if radius is None:
@@ -27,10 +27,12 @@ def plot_clusters_interactive(clusters, colors=default_colors, radius=None, cut=
 			xs = xs[indices]
 			ys = ys[indices]
 			zs = zs[indices]	
-		mlab.plot3d(xs, ys, zs, tube_radius=radius, color=colors[i])	
+		mlab.plot3d(xs, ys, zs, tube_radius=radius, color=colors[i])
+	if out_path is not None:
+		mlab.savefig(out_path)		
 	mlab.show()
 
-def plot_cluster_interactive(cluster, color=(1,0,0), radius=None):
+def plot_cluster_interactive(cluster, color=(1,0,0), radius=None, out_path=None):
 	if radius is None:
 		radius = calculateRadius([cluster])
 	coords = np.array(cluster.getCoords())
@@ -38,7 +40,9 @@ def plot_cluster_interactive(cluster, color=(1,0,0), radius=None):
 	ys = coords[:,1]
 	zs = coords[:,2]
 	mlab.figure(bgcolor=(1,1,1))
-	mlab.plot3d(xs, ys, zs, tube_radius=radius, color=color)	
+	mlab.plot3d(xs, ys, zs, tube_radius=radius, color=color)
+	if out_path is not None:
+		mlab.savefig(out_path)	
 	mlab.show()
 
 def plot_clusters_gif(clusters, outname, colors=default_colors, radius=None, increment=10):
