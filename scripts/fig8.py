@@ -46,7 +46,8 @@ for i, chrom in enumerate(chroms):
 	minimds_distMat = misc.distMat(minimds_cluster)
 	minimds_rs[i] = misc.pearson(minimds_true_mat, minimds_distMat)
 
-	mogen_distMat = misc.distsFromCoords("MOGEN/examples/hiC/output/GM12878_combined_{}_10kb_rep1_coords.tsv".format(chrom))
+	mogen_coords = np.loadtxt("MOGEN/examples/hiC/output/GM12878_combined_{}_10kb_rep1_coords.tsv".format(chrom))
+	mogen_distMat = misc.distsFromCoords(mogen_coords)
 	mogen_rs[i] = misc.pearson(mmds_true_mat, mogen_distMat)	#mMDS and MOGEN use the same matrix input procedure
 
 chrom_sizes = np.loadtxt("chrom_sizes_10kb.txt")
