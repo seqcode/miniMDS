@@ -18,24 +18,36 @@ mogen_rs = np.zeros(n)
 for i, chrom in enumerate(chroms):
 	#"true" distance matrix
 	bedpath = "hic_data/GM12878_combined_{}_10kb.bed".format(chrom)
-	cluster = dt.clusterFromBed(bedpath, None, None)
-	contactMat = dt.matFromBed(bedpath, cluster)
-	distMat = at.contactToDist(contactMat)
-	at.makeSymmetric(distMat)
-	for j in range(len(distMat)):	#remove diagonal
-		distMat[j,j] = 0
 
-	mmds_distMat = misc.distMat(dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_mmds_coords.tsv".format(chrom)))
-	mmds_rs[i] = misc.pearson(distMat, mmds_distMat)
+	mmds_cluster = dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_mmds_coords.tsv".format(chrom))
+	contactMat = dt.matFromBed(bedpath, mmds_cluster)
+	mmds_true_mat = at.contactToDist(contactMat)
+	at.makeSymmetric(mmds_true_mat)
+	for j in range(len(mmds_true_mat)):	#remove diagonal
+		mmds_true_mat[j,j] = 0
+	mmds_distMat = misc.distMat(mmds_cluster)
+	mmds_rs[i] = misc.pearson(mmds_true_mat, mmds_distMat)
 	
-	cmds_distMat = misc.distMat(dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_cmds_coords.tsv".format(chrom)))
-	cmds_rs[i] = misc.pearson(distMat, cmds_distMat)
+	cmds_cluster = dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_cmds_coords.tsv".format(chrom))
+	contactMat = dt.matFromBed(bedpath, cmds_cluster)
+	cmds_true_mat = at.contactToDist(contactMat)
+	at.makeSymmetric(cmds_true_mat)
+	for j in range(len(cmds_true_mat)):	#remove diagonal
+		cmds_true_mat[j,j] = 0
+	cmds_distMat = misc.distMat(cmds_cluster)
+	cmds_rs[i] = misc.pearson(cmds_true_mat, cmds_distMat)
 
-	minimds_distMat = misc.distMat(dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_minimds_coords.tsv".format(chrom)))
-	minimds_rs[i] = misc.pearson(distMat, minimds_distMat)
+	minimds_cluster = dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_minimds_coords.tsv".format(chrom))
+	contactMat = dt.matFromBed(bedpath, minimds_cluster)
+	minimds_true_mat = at.contactToDist(contactMat)
+	at.makeSymmetric(minimds_true_mat)
+	for j in range(len(minimds_true_mat)):	#remove diagonal
+		minimds_true_mat[j,j] = 0
+	minimds_distMat = misc.distMat(minimds_cluster)
+	minimds_rs[i] = misc.pearson(minimds_true_mat, minimds_distMat)
 
 	mogen_distMat = misc.distsFromCoords("MOGEN/examples/hiC/output/GM12878_combined_{}_10kb_rep1_coords.tsv".format(chrom))
-	mogen_rs[i] = misc.pearson(distMat, mogen_distMat)
+	mogen_rs[i] = misc.pearson(mmds_true_mat, mogen_distMat)	#mMDS and MOGEN use the same matrix input procedure
 
 chrom_sizes = np.loadtxt("chrom_sizes_10kb.txt")
 
