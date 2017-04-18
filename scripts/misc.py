@@ -51,7 +51,6 @@ def distMat(cluster):
 	return mat
 
 def plot_coords_interactive(coords, res, color=(1,0,0), radius=None, out_path=None):
-	coords = np.array(cluster.getCoords())
 	if radius is None:
 		radius = calculateRadius(coords, res)
 	xs = coords[:,0]
