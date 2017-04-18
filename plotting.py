@@ -81,7 +81,7 @@ def plot_cluster_gif(cluster, outname, color=(1,0,0), radius=None, increment=10)
 def calculateRadius(clusters):
 	"""Calculate to-scale radius based on Kuhn length and diameter of chromatin"""
 	conversionFactors = np.zeros(len(clusters))
-	for i, cluster in enumerate(clusters):
+	for j, cluster in enumerate(clusters):
 		totDist = 0
 		count = 0
 		coords = cluster.getCoords()
@@ -91,6 +91,6 @@ def calculateRadius(clusters):
 			count += 1
 		avgDist = totDist/count		#average distance between neighboring loci
 		physicalDist = kl * (cluster.chrom.res/bpPerKL)**(1./2)		#physical distance between neighboring loci (nm)
-		conversionFactors[i] = avgDist/physicalDist
+		conversionFactors[j] = avgDist/physicalDist
 	conversionFactor = np.mean(conversionFactors)
 	return chromatinDiameter/2 * conversionFactor

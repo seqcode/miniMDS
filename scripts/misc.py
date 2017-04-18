@@ -78,5 +78,5 @@ def calculateRadius(coords, res):
 		count += 1
 	avgDist = totDist/count		#average distance between neighboring loci
 	physicalDist = kl * (res/bpPerKL)**(1./2)		#physical distance between neighboring loci (nm)
-	conversionFactors = avgDist/physicalDist
+	conversionFactor = avgDist/physicalDist
 	return chromatinDiameter/2 * conversionFactor
