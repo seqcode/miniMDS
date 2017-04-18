@@ -48,8 +48,8 @@ coords2 = np.loadtxt("MOGEN/examples/hiC/output/GM12878_combined_22_10kb_rep2_co
 rs[3] = rep_correlation(coords1, coords2)
 
 #HSA
-coords1 = np.loadtxt("hsa/GM12878_combined_22_10kb_rep1_coords.tsv")
-coords2 = np.loadtxt("hsa/GM12878_combined_22_10kb_rep2_coords.tsv")
+coords1 = np.loadtxt("hsa/GM12878_combined_22_10kb_rep1_coords.txt")
+coords2 = np.loadtxt("hsa/GM12878_combined_22_10kb_rep2_coords.txt")
 rs[4] = rep_correlation(coords1, coords2)
 
 #ChromSDE

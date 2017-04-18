@@ -83,10 +83,10 @@ fi
 cd hsa
 
 #rep 1
-Rscript myR.R GM12878_combined_22_10kb.tsv 0 GM12878_combined_22_10kb_rep1_coords.tsv 1
+Rscript myR.R GM12878_combined_22_10kb.tsv 0 GM12878_combined_22_10kb_rep1_coords 1
 
 #rep 2
-Rscript myR.R GM12878_combined_22_10kb.tsv 0 GM12878_combined_22_10kb_rep2_coords.tsv 1
+Rscript myR.R GM12878_combined_22_10kb.tsv 0 GM12878_combined_22_10kb_rep2_coords 1
 
 cd ..
 
