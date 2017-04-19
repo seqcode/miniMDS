@@ -25,14 +25,14 @@ def infer_clusters(contactMat, clusters, offsets, classical=False):
 	if classical:	#classical MDS
 		coords = st.cmds(distMat)
 	else:
-		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(seed=3), verbose=0, dissimilarity="precomputed", n_jobs=-1)
+		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1)
 		coords = mds.fit_transform(distMat)
 
 	for offset, cluster in zip(offsets, clusters):
 		for i in range(len(cluster.getPoints())):	
 			cluster.getPoints()[i].pos = coords[i + offset]
 
-def infer_cluster(contactMat, cluster, classical=False):
+def infer_cluster(contactMat, cluster, classical):
 	"""Infers 3D coordinates for one cluster"""
 	assert len(cluster.getPointNums()) == len(contactMat)
 
@@ -46,13 +46,13 @@ def infer_cluster(contactMat, cluster, classical=False):
 	if classical:	#classical MDS
 		coords = st.cmds(distMat)
 	else:
-		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(seed=3), verbose=0, dissimilarity="precomputed", n_jobs=-1)
+		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1)
 		coords = mds.fit(distMat).embedding_
 
 	for i in range(len(cluster.getPoints())):	
 		cluster.getPoints()[i].pos = coords[i]
 
-def fullMDS(path, classical=False):
+def fullMDS(path, classical):
 	"""MDS without partitioning"""
 	cluster = dt.clusterFromBed(path, None, None)
 	contactMat = dt.matFromBed(path, cluster)
@@ -129,11 +129,15 @@ def main():
 	parser.add_argument("-m", type=float, help="minimum domain size parameter: prevents clusters from being too small (for partitioned MDS only)")
 	parser.add_argument("-o", help="path to output file")
 	parser.add_argument("-r", help="maximum RAM to use (in kb)")
-	parser.add_argument("-n", help="Number of threads")
+	parser.add_argument("-n", help="number of threads")
 	args = parser.parse_args()
 
 	if args.l is None:	#not partitioned
-		cluster = fullMDS(args.path, args.classical)
+		if args.classical is None:
+			classical = False
+		else:
+			classical = args.classical
+		cluster = fullMDS(args.path, classical)
 	else:	#partitioned
 		if args.p is None:
 			p = 0.1
@@ -160,7 +164,7 @@ def main():
 		if not tools.args_are_valid(params, names, intervals):
 			sys.exit(0)
 
-		cluster = partitionedMDS(args.path, args.l, params)
+		cluster = partitionedMDS(args.path, args.l, params, s)
 	
 	if args.o is not None:
 		cluster.write(args.o)
