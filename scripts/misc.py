@@ -44,33 +44,3 @@ def distMat(cluster):
 		for j in range(i):
 			mat[i,j] = la.calcDistance(points[i].pos, points[j].pos)
 	return mat
-
-def plot_coords_interactive(coords, res, color=(1,0,0), radius=None, out_path=None):
-	if radius is None:
-		radius = calculateRadius(coords, res)
-	xs = coords[:,0]
-	ys = coords[:,1]
-	zs = coords[:,2]
-	mlab.figure(bgcolor=(1,1,1))
-	mlab.plot3d(xs, ys, zs, tube_radius=radius, color=color)
-	if out_path is not None:
-		mlab.savefig(out_path)	
-	mlab.show()
-
-def calculateRadius(coords, res):
-	"""Calculate to-scale radius based on Kuhn length and diameter of chromatin"""
-	#from Rippe (2001)
-	kl = 289	#Kuhn length (nm)
-	bpPerKL = 30000.	#base pairs per Kuhn length 
-	chromatinDiameter = 30	#diameter of heterochromatin (nm)
-
-	totDist = 0
-	count = 0
-	n = len(coords)
-	for i in range(1, n):
-		totDist += la.calcDistance(coords[i-1], coords[i])
-		count += 1
-	avgDist = totDist/count		#average distance between neighboring loci
-	physicalDist = kl * (res/bpPerKL)**(1./2)		#physical distance between neighboring loci (nm)
-	conversionFactor = avgDist/physicalDist
-	return chromatinDiameter/2 * conversionFactor
