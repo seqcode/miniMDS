@@ -3,6 +3,7 @@ import sys
 sys.path.append("..")
 import data_tools as dt
 import plotting as plot
+import linear_algebra as la
 import numpy as np
 
 def plot_coords_interactive(coords, res, color=(1,0,0), radius=None, out_path=None):
