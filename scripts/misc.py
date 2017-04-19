@@ -12,11 +12,6 @@ def distsFromCoords(coords):
 	for i in range(n):
 		for j in range(i):
 			distMat[i,j] = la.calcDistance(coords[i], coords[j])
-			if distMat[i,j] == 0:
-				print "Error. Duplicate coordinates."
-				print coords[i]
-				print coords[j]
-				sys.exit(0)
 	return distMat
 
 def pearson(mat1, mat2):
