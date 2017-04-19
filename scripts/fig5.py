@@ -5,21 +5,7 @@ def rep_correlation(coords1, coords2):
 	dists1 = misc.distsFromCoords(coords1)
 	dists2 = misc.distsFromCoords(coords2)
 
-	assert dists1.shape == dists2.shape
-
-	#convert to vectors
-	dists1 = dists1.flatten()
-	dists2 = dists2.flatten()
-
-	#remove zeroes
-	indices = np.where(dists1 != 0)[0]
-	dists1 = dists1[indices]
-	dists2 = dists2[indices]
-
-	assert len(np.where(dists2 == 0)[0]) == 0
-
-	r, p = st.pearsonr(dists1, dists2)
-	return r
+	return misc.pearson(dists1, dists2)
 
 
 #labels = ("Chromosome3D", "mMDS", "miniMDS", "MOGEN", "HSA", "ChromSDE")
