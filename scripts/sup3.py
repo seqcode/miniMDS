@@ -16,7 +16,7 @@ at.makeSymmetric(distMat)
 for j in range(len(distMat)):	#remove diagonal
 	distMat[j,j] = 0
 
-chromthreed_coords = np.loadtxt("Chromosome3D/output/chr22_100kb/chr22_100kb_coords.tsv")
+chromthreed_coords = np.loadtxt("Chromosome3D/output_models/chr22_100kb/chr22_100kb_coords.tsv")
 chromthreed_distMat = misc.distsFromCoords(chromthreed_coords)
 chromthreed_r = misc.pearson(distMat, chromthreed_distMat)
 
