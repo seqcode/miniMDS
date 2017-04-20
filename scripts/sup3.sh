@@ -23,15 +23,15 @@ cat Chromosome3D/output_models/chr22_100kb/GM12878_combined_22_100kb_1.pdb | awk
 
 #mMDS
 
-python ../minimds.py $BEDPATH
+python ../minimds.py -o hic_data/GM12878_combined_22_100kb_mmds_coords.tsv $BEDPATH
 
 #cMDS
 
-python ../minimds.py --classical $BEDPATH
+python ../minimds.py --classical -o hic_data/GM12878_combined_22_100kb_cmds_coords.tsv $BEDPATH
 
 #miniMDS
 
-python ../minimds.py -l hic_data/GM12878_combined_22_1mb.bed -p 0.01 -m 0.01 $BEDPATH
+python ../minimds.py -l hic_data/GM12878_combined_22_1mb.bed -p 0.01 -m 0.01 -o hic_data/GM12878_combined_22_100kb_minimds_coords.tsv $BEDPATH
 
 #MOGEN
 
@@ -73,7 +73,7 @@ fi
 cd hsa
 
 #run
-Rscript myR.R GM12878_combined_22_100kb.tsv 0 GM12878_combined_22_100kb_coords.tsv 1
+Rscript myR.R GM12878_combined_22_100kb.tsv 0 GM12878_combined_22_100kb_coords 1
 
 cd ..
 
