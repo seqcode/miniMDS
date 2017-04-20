@@ -1,4 +1,3 @@
-from mayavi import mlab	#this must be first
 import numpy as np
 from scipy import stats as st
 import sys
