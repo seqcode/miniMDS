@@ -164,7 +164,7 @@ def main():
 		if not tools.args_are_valid(params, names, intervals):
 			sys.exit(0)
 
-		cluster = partitionedMDS(args.path, args.l, params, s)
+		cluster = partitionedMDS(args.path, args.l, params)
 	
 	if args.o is not None:
 		cluster.write(args.o)
