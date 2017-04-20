@@ -16,7 +16,6 @@ minimds_rs = np.zeros(n)
 mogen_rs = np.zeros(n)
 
 for i, chrom in enumerate(chroms):
-	#"true" distance matrix
 	bedpath = "hic_data/GM12878_combined_{}_10kb.bed".format(chrom)
 
 	mmds_cluster = dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_mmds_coords.tsv".format(chrom))
