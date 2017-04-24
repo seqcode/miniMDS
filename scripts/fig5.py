@@ -1,6 +1,9 @@
 from matplotlib import pyplot as plt
 import misc
 import numpy as np
+import sys
+sys.path.append("..")
+import data_tools as dt
 
 def rep_correlation(coords1, coords2):
 	dists1 = misc.distsFromCoords(coords1)
@@ -20,13 +23,13 @@ rs = np.zeros(n)
 #rs[0] = rep_correlation(coords1, coords2)
 
 #mMDS
-coords1 = np.loadtxt("hic_data/GM12878_combined_22_10kb_mmds_rep1.tsv")
-coords2 = np.loadtxt("hic_data/GM12878_combined_22_10kb_mmds_rep2.tsv")
+coords1 = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_mmds_rep1.tsv").getCoords()
+coords2 = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_mmds_rep2.tsv").getCoords()
 rs[1] = rep_correlation(coords1, coords2)
 
 #miniMDS
-coords1 = np.loadtxt("hic_data/GM12878_combined_22_10kb_minimds_rep1.tsv")
-coords2 = np.loadtxt("hic_data/GM12878_combined_22_10kb_minimds_rep2.tsv")
+coords1 = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_minimds_rep1.tsv").getCoords()
+coords2 = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_minimds_rep2.tsv").getCoords()
 rs[2] = rep_correlation(coords1, coords2)
 
 #MOGEN
