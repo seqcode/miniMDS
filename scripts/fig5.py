@@ -25,22 +25,26 @@ rs = np.zeros(n)
 #mMDS
 coords1 = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_mmds_rep1.tsv").getCoords()
 coords2 = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_mmds_rep2.tsv").getCoords()
-rs[1] = rep_correlation(coords1, coords2)
+#rs[1] = rep_correlation(coords1, coords2)
+rs[0] = rep_correlation(coords1, coords2)
 
 #miniMDS
 coords1 = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_minimds_rep1.tsv").getCoords()
 coords2 = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_minimds_rep2.tsv").getCoords()
-rs[2] = rep_correlation(coords1, coords2)
+#rs[2] = rep_correlation(coords1, coords2)
+rs[1] = rep_correlation(coords1, coords2)
 
 #MOGEN
 coords1 = np.loadtxt("MOGEN/examples/hiC/output/GM12878_combined_22_10kb_rep1_coords.tsv")
 coords2 = np.loadtxt("MOGEN/examples/hiC/output/GM12878_combined_22_10kb_rep2_coords.tsv")
-rs[3] = rep_correlation(coords1, coords2)
+#rs[3] = rep_correlation(coords1, coords2)
+rs[2] = rep_correlation(coords1, coords2)
 
 #HSA
 coords1 = np.loadtxt("hsa/GM12878_combined_22_10kb_rep1_coords.txt")
 coords2 = np.loadtxt("hsa/GM12878_combined_22_10kb_rep2_coords.txt")
-rs[4] = rep_correlation(coords1, coords2)
+#rs[4] = rep_correlation(coords1, coords2)
+rs[3] = rep_correlation(coords1, coords2)
 
 #ChromSDE
 #coords1 = np.loadtxt("ChromSDE/GM12878_combined_22_10kb_rep1_coords.tsv")
