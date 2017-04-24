@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import misc
+import numpy as np
 
 def rep_correlation(coords1, coords2):
 	dists1 = misc.distsFromCoords(coords1)
