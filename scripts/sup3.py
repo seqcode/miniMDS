@@ -39,7 +39,7 @@ mogen_coords = np.loadtxt("MOGEN/examples/hiC/output/GM12878_combined_22_100kb_r
 mogen_distMat = misc.distsFromCoords(mogen_coords)
 mogen_r = misc.pearson(mmds_true_mat, mogen_distMat)	#mMDS and MOGEN use the same matrix input procedure
 
-hsa_coords = np.loadtxt("hsa/GM12878_combined_22_100kb.txt")
+hsa_coords = np.loadtxt("hsa/GM12878_combined_22_100kb_coords.txt")
 hsa_distMat = misc.distsFromCoords(hsa_coords)
 hsa_r = misc.pearson(mmds_true_mat, hsa_distMat)
 
