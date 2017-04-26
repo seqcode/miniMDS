@@ -53,7 +53,7 @@ hsa_r = misc.pearson(mmds_true_mat, hsa_distMat)
 
 #labels = ("Chromosome3D", "mMDS", "cMDS", "miniMDS", "MOGEN", "HSA", "ChromSDE")
 labels = ("mMDS", "cMDS", "miniMDS", "MOGEN", "HSA")
-x_pos = np.arange(len(objects))
+x_pos = np.arange(len(labels))
 #rs = [chromthreed_r, mmds_r, cmds_r, minimds_r, mogen_r, hsa_r, chromsde_r] 
 rs = [mmds_r, cmds_r, minimds_r, mogen_r, hsa_r] 
 #colors = ["y", "r", "g", "b", "c", "m", "blueviolet"]
