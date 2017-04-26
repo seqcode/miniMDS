@@ -77,6 +77,13 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, intra_low_
 		high_clusters.append(high_cluster)
 		inferred_low = dt.highToLow(high_cluster, true_low.chrom.res/high_cluster.chrom.res)
 		inferred_low_clusters.append(inferred_low)
+
+		#rescale
+		rescaling_factor = la.radius_of_gyration(true_low)/la.radius_of_gyration(inferred_low)
+		rescaled_coords = [rescaling_factor * coord for coord in inferred_low.getCoords()]
+		for i, point in enumerate(inferred_low.getPoints()):
+			point.pos = rescaled_coords[i]
+
 		r, t, reflect = la.getTransformation(inferred_low, true_low)
 		high_cluster.transform(r, None, reflect)	#do not translate now (need to rescale)
 		ts.append(t)	
