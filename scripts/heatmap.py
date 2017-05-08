@@ -60,7 +60,7 @@ def createHeatmap(mat, domains, outpath, colors=None):
 			plt.plot([lowerBound, upperBound], [upperBound, upperBound], c=color, lw=5)	#lower horizontal
 			plt.plot([upperBound, upperBound], [lowerBound, upperBound], c=color, lw=5)	#vertical
 			plt.plot([lowerBound, lowerBound], [lowerBound, upperBound], c=color, lw=5)	#left vertical
-	
+
 	if outpath is not None:
 		plt.savefig(outpath)
 
