@@ -162,11 +162,9 @@ def clusterFromBed(path, chrom, tads):
 				tadNum1 = tadNums[min(pointNum1, maxIndex)]
 				tadNum2 = tadNums[min(pointNum2, maxIndex)]
 				if pointNum1 != pointNum2 and tadNum1 == tadNum2:		#must be in same TAD
-					if points_to_add[pointNum1] == False:
-						points_to_add[pointNum1] = True
-					if points_to_add[pointNum2] == False:
-						points_to_add[pointNum2] = True
-			tracker.increment()
+					points_to_add[pointNum1] = True
+					points_to_add[pointNum2] = True
+			#tracker.increment()
 	listFile.close()
 
 	#create points
@@ -250,12 +248,9 @@ def matFromBed(path, cluster):
 				mat[row, col] += float(linearray[6])
 	infile.close()
 
-
 	at.makeSymmetric(mat)
 	rowsums = np.array([sum(row) for row in mat])
 	assert len(np.where(rowsums == 0)[0]) == 0
-
-	at.makeSymmetric(mat)
 
 	return mat
 
