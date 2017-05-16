@@ -164,7 +164,7 @@ def clusterFromBed(path, chrom, tads):
 				if pointNum1 != pointNum2 and tadNum1 == tadNum2:		#must be in same TAD
 					points_to_add[pointNum1] = True
 					points_to_add[pointNum2] = True
-			#tracker.increment()
+			tracker.increment()
 	listFile.close()
 
 	#create points
