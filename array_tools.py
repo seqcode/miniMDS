@@ -14,4 +14,4 @@ def makeSymmetric(mat):
 	"""Make below-diagonal matrix symmetric, in place"""
 	for row in range(len(mat)):
 		for col in range(row):
-			mat[col][row] = mat[row][col]
+			mat[col,row] = mat[row,col]
