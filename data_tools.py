@@ -56,7 +56,7 @@ class Cluster(object):
 		if pointNum is None:
 			return None
 		else:
-			pointNum = pointNum - self.offset
+			pointNum -= self.offset
 			if pointNum >= 0 and pointNum < len(self.points):
 				point = self.points[pointNum]
 				if point == 0:
@@ -225,10 +225,9 @@ def matFromBed(path, cluster):
 	pointNums = cluster.getPointNums()
 
 	numpoints = len(pointNums)
-	maxPointNum = max(pointNums)
-	minPointNum = min(pointNums)
 	mat = np.zeros((numpoints, numpoints))	
 
+	maxPointNum = max(pointNums)
 	assert maxPointNum - cluster.offset < len(cluster.points)
 
 	with open(path) as infile:
