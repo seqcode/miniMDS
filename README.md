@@ -78,7 +78,7 @@ To run partitioned MDS, you must have a normalized BED file at a lower resolutio
 
 ``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_10kb_structure.tsv GM12878_combined_22_10kb.bed``
 
-The resolution you choose for the low-res file depends on your tradeoff between speed and accuracy. Lower resolutions are faster but less accurate. 
+The resolution you choose for the low-res file depends on your tradeoff between speed and accuracy. Lower resolutions are faster but less accurate. For now, the high resolution must be a factor of the low resolution. For example, a 500-Kb-resolution file can be used to infer a 100-Kb-resolution structure, but a 250-Kb-resolution file cannot. 
 
 #### Other parameters (optional)
 
