@@ -70,7 +70,7 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, intra_low_
 	for true_low, name in zip(low_clusters, names):
 		path = "{}_{}_{}.bed".format(intra_prefix, name, intra_res_string)
 		if intra_low_res_string is None:
-			high_cluster = mm.fullMDS(path)
+			high_cluster = mm.fullMDS(path, False)
 		else:
 			low_path = "{}_{}_{}.bed".format(intra_prefix, name, intra_low_res_string)
 			high_cluster = mm.partitionedMDS(path, low_path, args)
