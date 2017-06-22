@@ -13,7 +13,8 @@ def get_inter_mat(intra_prefix, inter_prefix, res, clusters, offsets):
 	names = [cluster.chrom.name for cluster in clusters]
 	n = len(names)
 	for i in range(n):
-		names[i] = names[i][3:len(names[i])]	#remove "chr"
+		if names[i].startswith("chr"):
+			names[i] = names[i][3:len(names[i])]	#remove "chr"
 
 	#fill matrix
 	total_len = sum([len(cluster.getPoints()) for cluster in clusters])
