@@ -1,7 +1,6 @@
 import sys
 sys.path.append("..")
 import data_tools as dt
-import misc
 
 in_path = sys.argv[1]
 out_path = sys.argv[2]
@@ -14,8 +13,8 @@ with open(in_path) as in_file:
 			line = line.strip().split()
 			loc1 = int(line[1])
 			loc2 = int(line[4])
-			num1 = misc.getPointNum(chrom, loc1)
-			num2 = misc.getPointNum(chrom, loc2)
+			num1 = chrom.getPointNum(loc1)
+			num2 = chrom.getPointNum(loc2)
 			out_file.write("\t".join((str(num1), str(num2), line[6])) + "\n")
 	out_file.close()
 in_file.close()

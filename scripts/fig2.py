@@ -5,7 +5,6 @@ from tools import Tracker
 import heatmap as hm
 import simple_tad as tad
 import numpy as np
-import misc
 
 def matFromDixon(path, chrom):
 	"""Creates contact matrix from Dixon tsv data"""
@@ -19,8 +18,8 @@ def matFromDixon(path, chrom):
 			pos2 = int(line[1])
 			if pos1 != pos2:
 				if pos1 >= chrom.minPos and pos1 <= chrom.maxPos and pos2 >= chrom.minPos and pos2 <= chrom.maxPos:
-					bin1 = misc.getPointNum(chrom, pos1)	
-					bin2 = misc.getPointNum(chrom, pos2)
+					bin1 = chrom.getPointNum(pos1)	
+					bin2 = chrom.getPointNum(pos2)
 					if bin1 > bin2:
 						row = bin1
 						col = bin2
