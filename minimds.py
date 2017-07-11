@@ -47,7 +47,7 @@ def infer_cluster(contactMat, cluster, classical):
 		coords = st.cmds(distMat)
 	else:
 		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1)
-		coords = mds.fit(distMat).embedding_
+		coords = mds.fit_transform(distMat)
 
 	for i in range(len(cluster.getPoints())):	
 		cluster.getPoints()[i].pos = coords[i]
@@ -73,7 +73,7 @@ def partitionedMDS(path, lowpath, args):
 	#get TADs
 	low_contactMat = dt.matFromBed(lowpath, lowCluster)
 	lowTads = tad.getDomains(low_contactMat, lowCluster, domainSmoothingParameter, minSizeFraction)		#low subclusters
-	
+
 	#create high-res chrom
 	size, res = dt.basicParamsFromBed(path)
 	highChrom = dt.ChromParameters(lowCluster.chrom.minPos, lowCluster.chrom.maxPos, res, lowCluster.chrom.name, size)
@@ -102,7 +102,7 @@ def partitionedMDS(path, lowpath, args):
 			#perform MDS individually
 			cluster_contactMat = dt.matFromBed(path, highSubcluster)	#contact matrix for this cluster only
 			infer_cluster(cluster_contactMat, highSubcluster, False)
-
+		
 			#approximate as low resolution
 			inferredLow = dt.highToLow(highSubcluster, resRatio)
 
@@ -125,11 +125,11 @@ def main():
 	parser.add_argument("path", help="path to intrachromosomal Hi-C BED file")
 	parser.add_argument("--classical", action="store_true", help="use classical MDS (default: metric MDS)")
 	parser.add_argument("-l", help="path to low-resolution intrachromosomal Hi-C BED file")
-	parser.add_argument("-p", type=float, help="domain size parameter: larger value means fewer clusters created (for partitioned MDS only)")
-	parser.add_argument("-m", type=float, help="minimum domain size parameter: prevents clusters from being too small (for partitioned MDS only)")
+	parser.add_argument("-p", type=float, default=0.1, help="domain size parameter: larger value means fewer clusters created (for partitioned MDS only)")
+	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents clusters from being too small (for partitioned MDS only)")
 	parser.add_argument("-o", help="path to output file")
-	parser.add_argument("-r", help="maximum RAM to use (in kb)")
-	parser.add_argument("-n", help="number of threads")
+	parser.add_argument("-r", default=32000000, help="maximum RAM to use (in kb)")
+	parser.add_argument("-n", default=3, help="number of threads")
 	args = parser.parse_args()
 
 	if args.l is None:	#not partitioned
@@ -139,26 +139,7 @@ def main():
 			classical = args.classical
 		cluster = fullMDS(args.path, classical)
 	else:	#partitioned
-		if args.p is None:
-			p = 0.1
-		else:
-			p = args.p
-		if args.m is None:
-			m = 0.05
-		else:
-			m = args.m
-
-		if args.r is None:
-			r = 32000000
-		else:
-			r = args.r
-
-		if args.n is None:
-			n = 3	#safe for standard 4-core desktop
-		else:
-			n = args.n
-
-		params = (p, m, r, n)
+		params = (args.p, args.m, args.r, args.n)
 		names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads")
 		intervals = ((0,1), (0,1), (0, None), (0, None))
 		if not tools.args_are_valid(params, names, intervals):

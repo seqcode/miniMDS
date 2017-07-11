@@ -106,11 +106,11 @@ def main():
 	parser.add_argument("intra_res", type=int, help="resolution of intrachromosomal BED files (bp)")
 	parser.add_argument("-c", action="append", default=[], help="Names of chromosomes to use, e.g. 1 (default: all human chromosomes other than Y)")
 	parser.add_argument("-l", type=int, help="resolution of low-res intrachromosomal files (bp) (for partitioned MDS only)")
-	parser.add_argument("-p", type=float, help="domain size parameter: larger value means fewer clusters created (for partitioned MDS only)")
-	parser.add_argument("-m", type=float, help="minimum domain size parameter: prevents clusters from being too small (for partitioned MDS only)")
+	parser.add_argument("-p", type=float, default=0.1, help="domain size parameter: larger value means fewer clusters created (for partitioned MDS only)")
+	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents clusters from being too small (for partitioned MDS only)")
 	parser.add_argument("-o", help="prefix of output file")
-	parser.add_argument("-r", help="maximum RAM to use (in kb)")
-	parser.add_argument("-n", help="Number of threads")
+	parser.add_argument("-r", default=32000000, help="maximum RAM to use (in kb)")
+	parser.add_argument("-n", default=3, help="Number of threads")
 	args = parser.parse_args()
 
 	if len(args.c) == 0:
@@ -121,26 +121,7 @@ def main():
 	if args.l is None:	#not partitioned
 		clusters = interMDS(chrom_names, args.inter_prefix, args.intra_prefix, args.inter_res, args.intra_res)
 	else:	#partitioned
-		if args.p is None:
-			p = 0.1
-		else:
-			p = args.p
-		if args.m is None:
-			m = 0.05
-		else:
-			m = args.m
-
-		if args.r is None:
-			r = 32000000
-		else:
-			r = args.r
-
-		if args.n is None:
-			n = 3	#safe for standard 4-core desktop
-		else:
-			n = args.n
-
-		params = (p, m, r, n)
+		params = (args.p, args.m, args.r, args.n)
 		names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads")
 		intervals = ((0,1), (0,1), (0, None), (0, None))
 		if not tools.args_are_valid(params, names, intervals):
