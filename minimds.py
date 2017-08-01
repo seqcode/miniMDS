@@ -11,6 +11,9 @@ import stats_tools as st
 import pymp
 import multiprocessing as mp
 
+import plotting as plot
+import copy
+
 def infer_clusters(contactMat, clusters, offsets, classical=False):
 	"""Infers 3D coordinates for multiple clusters with same contact matrix"""
 	assert sum([len(cluster.getPointNums()) for cluster in clusters]) == len(contactMat)
@@ -52,11 +55,30 @@ def infer_cluster(contactMat, cluster, classical):
 	for i in range(len(cluster.getPoints())):	
 		cluster.getPoints()[i].pos = coords[i]
 
+def test_infer_cluster(contactMat, cluster, classical):
+	"""Infers 3D coordinates for one cluster"""
+	assert len(cluster.getPointNums()) == len(contactMat)
+
+	at.makeSymmetric(contactMat)
+	rowsums = np.array([sum(row) for row in contactMat])
+	assert len(np.where(rowsums == 0)[0]) == 0 
+
+	distMat = at.contactToDist(contactMat, -1./(2.5))
+	at.makeSymmetric(distMat)
+
+	if classical:	#classical MDS
+		coords = st.cmds(distMat)
+	else:
+		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1)
+		coords = mds.fit_transform(distMat)
+
+	for i in range(len(cluster.getPoints())):	
+		cluster.getPoints()[i].pos = coords[i]
+
 def fullMDS(path, classical):
 	"""MDS without partitioning"""
 	cluster = dt.clusterFromBed(path, None, None)
 	contactMat = dt.matFromBed(path, cluster)
-	distMat = at.contactToDist(contactMat)
 	infer_cluster(contactMat, cluster, classical)
 	return cluster
 	
@@ -89,6 +111,15 @@ def partitionedMDS(path, lowpath, args):
 	infer_cluster(low_contactMat, lowCluster, False)
 	print "Low-resolution MDS complete"
 
+	#high_contactMat = dt.matFromBed(path, highCluster)
+	#infer_cluster(high_contactMat, highCluster, False)
+
+	curr_tad = lowTads[len(lowTads)-1]
+	colors = np.ones(len(lowCluster.getPoints()))
+	colors[curr_tad[0]:curr_tad[1]] = 0
+
+	#highSubclusters = highCluster.clusters
+	#lowSubclusters = lowCluster.clusters
 	highSubclusters = pymp.shared.list(highCluster.clusters)
 	lowSubclusters = pymp.shared.list(lowCluster.clusters)
 
@@ -96,16 +127,19 @@ def partitionedMDS(path, lowpath, args):
 	num_threads = min((num_threads, mp.cpu_count(), numSubclusters))	#don't exceed number of requested threads, available threads, or clusters
 	with pymp.Parallel(num_threads) as p:
 		for subclusternum in p.range(numSubclusters):
+	#for subclusternum in range(numSubclusters):
 			highSubcluster = highSubclusters[subclusternum]
 			trueLow = lowSubclusters[subclusternum]
 
 			#perform MDS individually
 			cluster_contactMat = dt.matFromBed(path, highSubcluster)	#contact matrix for this cluster only
-			infer_cluster(cluster_contactMat, highSubcluster, False)
-		
+			#true_high = copy.deepcopy(highSubcluster)
+			test_infer_cluster(cluster_contactMat, highSubcluster, False)
+			#r, t, reflect = la.getTransformation(highSubcluster, true_high)
+
 			#approximate as low resolution
 			inferredLow = dt.highToLow(highSubcluster, resRatio)
-
+	
 			#recover the transformation for inferred from true low cluster
 			r, t, reflect = la.getTransformation(inferredLow, trueLow)
 			t *= resRatio**(2./3)	#rescale
@@ -117,6 +151,12 @@ def partitionedMDS(path, lowpath, args):
 			print "MDS performed on cluster {} of {}".format(subclusternum + 1, numSubclusters)
 
 	highCluster.setClusters(highSubclusters)
+
+	#plot.plot_cluster_interactive(highCluster)
+	#plot.plot_cluster_interactive(lowCluster)
+	#inferred_low_global = dt.highToLow(highCluster, resRatio)
+	#plot.plot_cluster_interactive(inferred_low_global)
+	#sys.exit(0)
 
 	return highCluster
 
