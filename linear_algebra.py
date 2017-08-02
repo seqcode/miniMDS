@@ -1,5 +1,4 @@
 import numpy as np
-import copy
 import stats_tools as st
 
 def getTransformation(cluster1, cluster2):
@@ -34,24 +33,13 @@ def getTransformation(cluster1, cluster2):
 	r = vt.T * u.T
 
 	# special reflection case
-	if np.linalg.det(r) < 0:
-		vt[2,:] *= -1
-		r = vt.T * u.T
+	#if np.linalg.det(r) < 0:
+	#	vt[2,:] *= -1
+	#	r = vt.T * u.T
 
 	t = -r*centroid_a.T + centroid_b.T
 
-	#determine if reflection is necessary
-	cluster_copy = copy.deepcopy(cluster1)
-	cluster_copy.transform(r, t, False)
-	unreflected_rmsd = st.rmsd(cluster_copy, cluster2)
-	cluster_copy.reflection(0)
-	reflected_rmsd = st.rmsd(cluster_copy, cluster2)
-	if reflected_rmsd < unreflected_rmsd:
-		reflect = True
-	else:
-		reflect = False
-
-	return r, t, reflect
+	return r, t
 
 def calcDistance(coord1, coord2):
 	"""Euclidean distance between coordinates"""

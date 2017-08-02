@@ -1,21 +1,4 @@
 import numpy as np
-import linear_algebra as la
-
-def rmsd(cluster1, cluster2):
-	"""Root mean square distance"""
-	assert cluster1.chrom.res == cluster2.chrom.res
-	res = cluster1.chrom.res
-	assert cluster1.chrom.minPos/res == cluster2.chrom.minPos/res	#indexing must be same	
-
-	intersection = [num for num in cluster1.getPointNums() if num in cluster2.getPointNums()]
-
-	dist_sum = 0
-	for num in intersection:
-		point1 = cluster1.points[num - cluster1.offset]
-		point2 = cluster2.points[num - cluster2.offset]
-		dist_sum += la.calcDistance(point1.pos, point2.pos)**2
-	msd = dist_sum/len(intersection)	#mean square distance
-	return msd**(1./2)	#root mean square distance
 
 def movingAverage(signal, size_of_window):
 	"""Modified from http://beauty-of-imagination.blogspot.fr/2012/09/fun-with-signal-processing-and.html"""

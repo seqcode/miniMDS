@@ -79,7 +79,7 @@ class Cluster(object):
 		subcluster = Cluster(points, [], self.chrom, offset)
 		self.clusters.append(subcluster)
 
-	def transform(self, r, t, reflect=False):
+	def transform(self, r, t):
 		"""Rotates by r; translates by t; reflect if True"""
 		if r is None:	#default: no rotation
 			r = np.mat(np.identity(3))
@@ -90,15 +90,6 @@ class Cluster(object):
 		a_transformed = np.array(((r*a.T) + np.tile(t, (1, n))).T)
 		for i, pointNum in enumerate(self.getPointNums()):
 			self.points[pointNum - self.offset].pos = a_transformed[i]
-		if reflect:
-			self.reflection(0)
-
-	def reflection(self, axis):
-		"""Reflects cluster across given axis"""
-		reflectionVector = np.ones(3)
-		reflectionVector[axis] = -1
-		for point in self.getPoints():
-			point.pos = np.multiply(reflectionVector, point.pos)
 
 	def write(self, outpath):
 		with open(outpath, "w") as out:
@@ -113,6 +104,7 @@ class Cluster(object):
 					out.write("\t".join((str(num), str(point.pos[0]), str(point.pos[1]), str(point.pos[2]))) + "\n")
 				num += 1
 		out.close()
+
 	def indexPoints(self):
 		i = 0
 		for point in self.points:
@@ -202,8 +194,8 @@ def intraChromFromBed(path, res):
 				res = (int(line[2]) - pos1)	
 			count += 1
 	infile.close()
-	minPos = minPos/res * res	#round
-	maxPos = maxPos/res * res
+	minPos = int(np.floor(float(minPos)/res)) * res	#round
+	maxPos = int(np.ceil(float(maxPos)/res)) * res
 	return ChromParameters(minPos, maxPos, res, name, count)
 
 def basicParamsFromBed(path):
@@ -230,6 +222,8 @@ def matFromBed(path, cluster):
 	maxPointNum = max(pointNums)
 	assert maxPointNum - cluster.offset < len(cluster.points)
 
+	tot = 0
+
 	with open(path) as infile:
 		for line in infile:
 			linearray = line.strip().split()	#line as array of strings
@@ -245,6 +239,7 @@ def matFromBed(path, cluster):
 					row = index2
 					col = index1
 				mat[row, col] += float(linearray[6])
+				tot += float(linearray[6])
 	infile.close()
 
 	at.makeSymmetric(mat)
