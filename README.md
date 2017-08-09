@@ -108,6 +108,14 @@ For example, to run miniMDS with four threads:
 
 ``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_10kb_structure.tsv -n 4 GM12878_combined_22_10kb.bed``
 
+##### Scaling factor
+
+The scaling factor a describes the assumed relationship between contact frequencies and physical distances: distance = contact_frequency^(-1/a). The default value is 4, based on Wang et al 2016. You can change the scaling factor using -a. 
+
+``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_10kb_structure.tsv -a 3 GM12878_combined_22_10kb.bed``
+
+a can be any value >1, including non-integer.
+
 ##### Classical MDS
 
 Classical MDS (cMDS), also called principal coordinates analysis, is a variant of MDS that is faster under certain circumstances. The miniMDS tool supports cMDS but NOT with partitioned MDS. Use the --classical option. 
