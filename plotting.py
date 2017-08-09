@@ -2,6 +2,7 @@ from mayavi import mlab	#this must be first
 import numpy as np
 import linear_algebra as la
 import os
+import sys
 
 #from Rippe (2001)
 kl = 289	#Kuhn length (nm)
@@ -11,7 +12,7 @@ default_colors = np.array([[255,0,0], [255,238,0], [0,255,238], [0,102,255], [25
 
 default_colors = [tuple(color) for color in default_colors]	#convert to tuple
 
-def plot_clusters_interactive(clusters, colors=default_colors, radius=None, cut=False, out_path=None):
+def plot_clusters_interactive(clusters, all_enrichments=None, colors=default_colors, radius=None, cut=False, out_path=None):
 	mlab.close(all=True)
 	mlab.figure(bgcolor=(1,1,1))
 	if radius is None:
@@ -27,12 +28,15 @@ def plot_clusters_interactive(clusters, colors=default_colors, radius=None, cut=
 			xs = xs[indices]
 			ys = ys[indices]
 			zs = zs[indices]	
-		mlab.plot3d(xs, ys, zs, tube_radius=radius, color=colors[i])
+		if all_enrichments is None:
+			mlab.plot3d(xs, ys, zs, tube_radius=radius, color=colors[i])
+		else:
+			mlab.plot3d(xs, ys, zs, all_enrichments[i], tube_radius=radius)
 	if out_path is not None:
 		mlab.savefig(out_path)		
 	mlab.show()
 
-def plot_cluster_interactive(cluster, color=(1,0,0), radius=None, out_path=None):
+def plot_cluster_interactive(cluster, enrichments=None, color=(1,0,0), radius=None, out_path=None):
 	if radius is None:
 		radius = calculateRadius([cluster])
 	coords = np.array(cluster.getCoords())
@@ -40,12 +44,15 @@ def plot_cluster_interactive(cluster, color=(1,0,0), radius=None, out_path=None)
 	ys = coords[:,1]
 	zs = coords[:,2]
 	mlab.figure(bgcolor=(1,1,1))
-	mlab.plot3d(xs, ys, zs, tube_radius=radius, color=color)
+	if enrichments is None:
+		mlab.plot3d(xs, ys, zs, tube_radius=radius, color=color)
+	else:
+		mlab.plot3d(xs, ys, zs, enrichments, tube_radius=radius)
 	if out_path is not None:
 		mlab.savefig(out_path)	
 	mlab.show()
 
-def plot_clusters_gif(clusters, outname, colors=default_colors, radius=None, increment=10):
+def plot_clusters_gif(clusters, outname, all_enrichments=None, colors=default_colors, radius=None, increment=10):
 	if 360%increment != 0:
 		print "Error. Increment must be factor of 360."
 		sys.exit(0)
@@ -55,27 +62,34 @@ def plot_clusters_gif(clusters, outname, colors=default_colors, radius=None, inc
 		mlab.figure(bgcolor=(1,1,1))
 		for j, cluster in enumerate(clusters):
 			coords = np.array(cluster.getCoords())
-			s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], tube_radius=radius, color=colors[j])
+			if all_enrichments is None:
+				s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], tube_radius=radius, color=colors[j])
+			else:
+				s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], all_enrichments[j], tube_radius=radius)
 		mlab.view(i)
 		mlab.savefig("{}_{:>03}.png".format(outname, i))
 		mlab.close()
-	os.system("convert {}_*.png -loop 1 {}.gif".format(outname, outname))
+	os.system("convert {}_*.png {}.gif".format(outname, outname))
 	os.system("rm {}_*.png".format(outname))
 
-def plot_cluster_gif(cluster, outname, color=(1,0,0), radius=None, increment=10):
+def plot_cluster_gif(cluster, outname, enrichments=None, color=(1,0,0), radius=None, increment=10):
 	if 360%increment != 0:
 		print "Error. Increment must be factor of 360."
 		sys.exit(0)
 	if radius is None:
 		radius = calculateRadius([cluster])
 	coords = np.array(cluster.getCoords())
-	for i in range(0, 360, increment):
-		mlab.figure(bgcolor=(1,1,1))
+	mlab.figure(bgcolor=(1,1,1))
+	if enrichments is None:
 		s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], tube_radius=radius, color=color)
+	else:
+		s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], enrichments, tube_radius=radius)
+	for i in range(0, 360, increment):
 		mlab.view(i)
 		mlab.savefig("{}_{:>03}.png".format(outname, i))
-		mlab.close()
-	os.system("convert {}_*.png -loop 1 {}.gif".format(outname, outname))
+		
+	mlab.close()
+	os.system("convert {}_*.png {}.gif".format(outname, outname))
 	os.system("rm {}_*.png".format(outname))
 
 def calculateRadius(clusters):
