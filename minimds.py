@@ -11,7 +11,7 @@ import stats_tools as st
 import pymp
 import multiprocessing as mp
 
-def infer_clusters(contactMat, clusters, offsets, classical=False):
+def infer_clusters(contactMat, clusters, offsets, alpha, classical=False):
 	"""Infers 3D coordinates for multiple clusters with same contact matrix"""
 	assert sum([len(cluster.getPointNums()) for cluster in clusters]) == len(contactMat)
 
@@ -19,7 +19,7 @@ def infer_clusters(contactMat, clusters, offsets, classical=False):
 	rowsums = np.array([sum(row) for row in contactMat])
 	assert len(np.where(rowsums == 0)[0]) == 0 
 
-	distMat = at.contactToDist(contactMat)
+	distMat = at.contactToDist(contactMat, alpha)
 	at.makeSymmetric(distMat)
 
 	if classical:	#classical MDS
@@ -32,7 +32,7 @@ def infer_clusters(contactMat, clusters, offsets, classical=False):
 		for i in range(len(cluster.getPoints())):	
 			cluster.getPoints()[i].pos = coords[i + offset]
 
-def infer_cluster(contactMat, cluster, classical):
+def infer_cluster(contactMat, cluster, alpha, classical=False):
 	"""Infers 3D coordinates for one cluster"""
 	assert len(cluster.getPointNums()) == len(contactMat)
 
@@ -40,7 +40,7 @@ def infer_cluster(contactMat, cluster, classical):
 	rowsums = np.array([sum(row) for row in contactMat])
 	assert len(np.where(rowsums == 0)[0]) == 0 
 
-	distMat = at.contactToDist(contactMat)
+	distMat = at.contactToDist(contactMat, alpha)
 	at.makeSymmetric(distMat)
 
 	if classical:	#classical MDS
@@ -52,11 +52,11 @@ def infer_cluster(contactMat, cluster, classical):
 	for i in range(len(cluster.getPoints())):	
 		cluster.getPoints()[i].pos = coords[i]
 
-def fullMDS(path, classical):
+def fullMDS(path, classical, alpha):
 	"""MDS without partitioning"""
 	cluster = dt.clusterFromBed(path, None, None)
 	contactMat = dt.matFromBed(path, cluster)
-	infer_cluster(contactMat, cluster, classical)
+	infer_cluster(contactMat, cluster, alpha, classical)
 	return cluster
 	
 def partitionedMDS(path, lowpath, args):
@@ -65,6 +65,7 @@ def partitionedMDS(path, lowpath, args):
 	minSizeFraction = args[1]
 	maxmemory = args[2]
 	num_threads = args[3]
+	alpha = args[4]
 
 	#create low-res cluster
 	lowCluster = dt.clusterFromBed(lowpath, None, None)
@@ -85,7 +86,7 @@ def partitionedMDS(path, lowpath, args):
 	#create compatible subclusters
 	tad.subclustersFromTads(highCluster, lowCluster, lowTads)
 
-	infer_cluster(low_contactMat, lowCluster, False)
+	infer_cluster(low_contactMat, lowCluster, alpha)
 	print "Low-resolution MDS complete"
 
 	curr_tad = lowTads[len(lowTads)-1]
@@ -104,7 +105,7 @@ def partitionedMDS(path, lowpath, args):
 
 			#perform MDS individually
 			cluster_contactMat = dt.matFromBed(path, highSubcluster)	#contact matrix for this cluster only
-			infer_cluster(cluster_contactMat, highSubcluster, False)
+			infer_cluster(cluster_contactMat, highSubcluster, alpha)
 
 			#approximate as low resolution
 			inferredLow = dt.highToLow(highSubcluster, resRatio)
@@ -133,18 +134,16 @@ def main():
 	parser.add_argument("-o", help="path to output file")
 	parser.add_argument("-r", default=32000000, help="maximum RAM to use (in kb)")
 	parser.add_argument("-n", default=3, help="number of threads")
+	parser.add_argument("-a", type=float, default=4, help="alpha factor for converting contact frequencies to physical distances")
 	args = parser.parse_args()
 
 	if args.l is None:	#not partitioned
-		if args.classical is None:
-			classical = False
-		else:
-			classical = args.classical
-		cluster = fullMDS(args.path, classical)
+		cluster = fullMDS(args.path, args.classical, args.a)
+
 	else:	#partitioned
-		params = (args.p, args.m, args.r, args.n)
-		names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads")
-		intervals = ((0,1), (0,1), (0, None), (0, None))
+		params = (args.p, args.m, args.r, args.n, args.a)
+		names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha")
+		intervals = ((0,1), (0,1), (0, None), (0, None), (1, None))
 		if not tools.args_are_valid(params, names, intervals):
 			sys.exit(0)
 

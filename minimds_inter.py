@@ -42,7 +42,7 @@ def get_inter_mat(intra_prefix, inter_prefix, res, clusters, offsets):
 			bed.close()
 	return mat
 
-def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, intra_low_res=None, args=None):
+def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, intra_low_res, args):
 	inter_res_string = tools.get_res_string(inter_res)
 	intra_res_string = tools.get_res_string(intra_res)
 	if intra_low_res is None:
@@ -62,7 +62,7 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, intra_low_
 	inter_mat = get_inter_mat(intra_prefix, inter_prefix, inter_res, low_clusters, offsets)
 
 	#perform MDS at low resolution on all chroms
-	mm.infer_clusters(inter_mat, low_clusters, offsets)
+	mm.infer_clusters(inter_mat, low_clusters, offsets, args[4])
 
 	#perform MDS at high resolution on each chrom
 	high_clusters = []
@@ -71,7 +71,7 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, intra_low_
 	for true_low, name in zip(low_clusters, names):
 		path = "{}_{}_{}.bed".format(intra_prefix, name, intra_res_string)
 		if intra_low_res_string is None:
-			high_cluster = mm.fullMDS(path, False)
+			high_cluster = mm.fullMDS(path, False, args[4])
 		else:
 			low_path = "{}_{}_{}.bed".format(intra_prefix, name, intra_low_res_string)
 			high_cluster = mm.partitionedMDS(path, low_path, args)
@@ -85,8 +85,8 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, intra_low_
 		for i, point in enumerate(inferred_low.getPoints()):
 			point.pos = rescaled_coords[i]
 
-		r, t, reflect = la.getTransformation(inferred_low, true_low)
-		high_cluster.transform(r, None, reflect)	#do not translate now (need to rescale)
+		r, t = la.getTransformation(inferred_low, true_low)
+		high_cluster.transform(r, None)	#do not translate now (need to rescale)
 		ts.append(t)	
 
 	#translate (with rescaling)
@@ -94,7 +94,7 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, intra_low_
 	high_rgs = np.array([la.radius_of_gyration(cluster) for cluster in high_clusters])
 	scaling_factor = np.mean(high_rgs/low_rgs)
 	for high_cluster, t in zip(high_clusters, ts):
-		high_cluster.transform(None, scaling_factor*t, False)	#rescale translation
+		high_cluster.transform(None, scaling_factor*t)	#rescale translation
 
 	return high_clusters
 
@@ -111,6 +111,7 @@ def main():
 	parser.add_argument("-o", help="prefix of output file")
 	parser.add_argument("-r", default=32000000, help="maximum RAM to use (in kb)")
 	parser.add_argument("-n", default=3, help="Number of threads")
+	parser.add_argument("-a", type=float, default=4, help="alpha factor for converting contact frequencies to physical distances")
 	args = parser.parse_args()
 
 	if len(args.c) == 0:
@@ -118,16 +119,13 @@ def main():
 	else:
 		chrom_names = args.c
 
-	if args.l is None:	#not partitioned
-		clusters = interMDS(chrom_names, args.inter_prefix, args.intra_prefix, args.inter_res, args.intra_res)
-	else:	#partitioned
-		params = (args.p, args.m, args.r, args.n)
-		names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads")
-		intervals = ((0,1), (0,1), (0, None), (0, None))
-		if not tools.args_are_valid(params, names, intervals):
-			sys.exit(0)
+	params = (args.p, args.m, args.r, args.n, args.a)
+	names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha")
+	intervals = ((0,1), (0,1), (0, None), (0, None), (1, None))
+	if not tools.args_are_valid(params, names, intervals):
+		sys.exit(0)
 
-		clusters = interMDS(chrom_names, args.inter_prefix, args.intra_prefix, args.inter_res, args.intra_res, args.l, params)
+	clusters = interMDS(chrom_names, args.inter_prefix, args.intra_prefix, args.inter_res, args.intra_res, args.l, params)
 
 	if args.o is not None:
 		for cluster in clusters:

@@ -1,13 +1,13 @@
 import numpy as np
 
-def contactToDist(contactMat, alpha=-1./4):
+def contactToDist(contactMat, alpha):
 	"""Convert contact matrix to distance matrix."""
 	distMat = np.zeros_like(contactMat)
 	numRows = len(contactMat)
 	for i in range(numRows):
 		for j in range(i+1):
 			if contactMat[i,j] != 0:
-				distMat[i,j] = contactMat[i,j]**alpha		#see Varoquaux, et al (2014)
+				distMat[i,j] = contactMat[i,j]**(-1./alpha)
 	return distMat
 
 def makeSymmetric(mat):
