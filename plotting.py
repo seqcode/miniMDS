@@ -58,8 +58,8 @@ def plot_clusters_gif(clusters, outname, all_enrichments=None, colors=default_co
 		sys.exit(0)
 	if radius is None:
 		radius = calculateRadius(clusters)
+	mlab.figure(bgcolor=(1,1,1))
 	for i in range(0, 360, increment):
-		mlab.figure(bgcolor=(1,1,1))
 		for j, cluster in enumerate(clusters):
 			coords = np.array(cluster.getCoords())
 			if all_enrichments is None:
@@ -68,8 +68,9 @@ def plot_clusters_gif(clusters, outname, all_enrichments=None, colors=default_co
 				s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], all_enrichments[j], tube_radius=radius)
 		mlab.view(i)
 		mlab.savefig("{}_{:>03}.png".format(outname, i))
-		mlab.close()
-	os.system("convert {}_*.png {}.gif".format(outname, outname))
+
+	mlab.close()
+	os.system("convert -loop 1 {}_*.png {}.gif".format(outname, outname))
 	os.system("rm {}_*.png".format(outname))
 
 def plot_cluster_gif(cluster, outname, enrichments=None, color=(1,0,0), radius=None, increment=10):
@@ -89,7 +90,7 @@ def plot_cluster_gif(cluster, outname, enrichments=None, color=(1,0,0), radius=N
 		mlab.savefig("{}_{:>03}.png".format(outname, i))
 		
 	mlab.close()
-	os.system("convert {}_*.png {}.gif".format(outname, outname))
+	os.system("convert -loop 1 {}_*.png {}.gif".format(outname, outname))
 	os.system("rm {}_*.png".format(outname))
 
 def calculateRadius(clusters):
