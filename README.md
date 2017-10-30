@@ -4,19 +4,16 @@ miniMDS is a tool for inferring and plotting 3D structures from normalized Hi-C 
 
 ## Installation
 
-Prerequisites:
+Requirements:
 * python 2.7
-* numpy
-* scikit-learn
-* pymp
-* mayavi (optional; for plotting)
-* ImageMagick (optional; for creating gifs)
-* scipy (optional; for creating figures from paper)
-* matplotlib (optional; for creating figures from paper)
+* Python dependencies can be installed using pip install -r requirements.txt
+* The following optional dependencies can be installed manually:
+    * [mayavi](http://docs.enthought.com/mayavi/mayavi/) (for plotting)
+    * [ImageMagick](https://www.imagemagick.org/script/index.php) (for creating gifs)
 
 ## Testing
 
-Please run test.sh (in the scripts directory) and report any issues.
+On Linux, please run test.sh (in the scripts directory) and report any issues. (miniMDS is compatible with Mac, but the shell scripts only run on Linux.) 
 
 ## TLDR
 
