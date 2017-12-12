@@ -89,10 +89,6 @@ def partitionedMDS(path, lowpath, args):
 	infer_cluster(low_contactMat, lowCluster, alpha)
 	print "Low-resolution MDS complete"
 
-	curr_tad = lowTads[len(lowTads)-1]
-	colors = np.ones(len(lowCluster.getPoints()))
-	colors[curr_tad[0]:curr_tad[1]] = 0
-
 	highSubclusters = pymp.shared.list(highCluster.clusters)
 	lowSubclusters = pymp.shared.list(lowCluster.clusters)
 
@@ -109,7 +105,14 @@ def partitionedMDS(path, lowpath, args):
 
 			#approximate as low resolution
 			inferredLow = dt.highToLow(highSubcluster, resRatio)
-	
+
+			#rescale
+			scaling_factor = la.radius_of_gyration(trueLow)/la.radius_of_gyration(inferredLow)
+			for i, point in enumerate(inferredLow.points):
+				if point != 0:
+					x, y, z = point.pos
+					inferredLow.points[i].pos = (x*scaling_factor, y*scaling_factor, z*scaling_factor)
+		
 			#recover the transformation for inferred from true low cluster
 			r, t = la.getTransformation(inferredLow, trueLow)
 			t *= resRatio**(2./3)	#rescale
