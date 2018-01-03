@@ -5,7 +5,7 @@ import data_tools as dt
 in_path = sys.argv[1]
 out_path = sys.argv[2]
 
-chrom = dt.intraChromFromBed(in_path, None)
+chrom = dt.chromFromBed(in_path)
 
 with open(in_path) as in_file:
 	with open(out_path, "w") as out_file:

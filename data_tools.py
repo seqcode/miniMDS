@@ -5,6 +5,7 @@ import linear_algebra as la
 import array_tools as at
 
 class ChromParameters(object):
+	"""Basic information on chromosome, inferred from input file"""
 	def __init__(self, minPos, maxPos, res, name, size):
 		self.minPos = minPos	#minimum genomic coordinate
 		self.maxPos = maxPos	#maximum genomic coordinate
@@ -38,11 +39,15 @@ class Cluster(object):
 		for cluster in self.clusters:	#auto-fill
 			for point in cluster.points:
 				self.points.append(point)	
-		self.chrom = chrom
+		self.chrom = chrom	#chromosome parameters
 		self.offset = offset	#indexing offset (for subclusters only)
 
 	def getCoords(self):
 		return [point.pos for point in self.getPoints()]
+
+	def setCoords(self, coords):
+		for coord, point_num in zip(coords, self.getPointNums()):
+			self.points[point_num].pos = coord
 
 	def getPointNums(self):
 		return np.array([point.num for point in self.getPoints()])
@@ -80,7 +85,7 @@ class Cluster(object):
 		self.clusters.append(subcluster)
 
 	def transform(self, r, t):
-		"""Rotates by r; translates by t; reflect if True"""
+		"""Rotates by r; translates by t"""
 		if r is None:	#default: no rotation
 			r = np.mat(np.identity(3))
 		if t is None:	#default: no translation
@@ -106,11 +111,9 @@ class Cluster(object):
 		out.close()
 
 	def indexPoints(self):
-		i = 0
-		for point in self.points:
+		for i, point in enumerate(self.points):
 			if point != 0:
 				point.index = i
-				i += 1
 
 class Point(object):
 	"""Point in 3-D space"""
@@ -123,7 +126,7 @@ class Point(object):
 def clusterFromBed(path, chrom, tads):
 	"""Initializes cluster from intrachromosomal BED file."""
 	if chrom is None:
-		chrom = intraChromFromBed(path, None)
+		chrom = chromFromBed(path)
 
 	cluster = Cluster([], [], chrom, 0)
 	
@@ -157,7 +160,7 @@ def clusterFromBed(path, chrom, tads):
 					points_to_add[pointNum1] = True
 					points_to_add[pointNum2] = True
 			tracker.increment()
-	listFile.close()
+		listFile.close()
 
 	#create points
 	points = np.zeros(cluster.chrom.getLength(), dtype=np.object)
@@ -169,17 +172,14 @@ def clusterFromBed(path, chrom, tads):
 	
 	return cluster
 
-def intraChromFromBed(path, res):
+def chromFromBed(path):
 	"""Initialize ChromParams from intrachromosomal file in BED format"""
-	count = 0
 	minPos = sys.float_info.max
 	maxPos = 0
 	print "Scanning {}".format(path)
 	with open(path) as infile:
-		for line in infile:
+		for i, line in enumerate(infile):
 			line = line.strip().split()
-			if count == 0:
-				name = line[0]
 			pos1 = int(line[1])
 			pos2 = int(line[4])
 			if pos1 < minPos:
@@ -190,29 +190,30 @@ def intraChromFromBed(path, res):
 				minPos = pos2
 			elif pos2 > maxPos:
 				maxPos = pos2
-			if res is None:
+			if i == 0:
+				name = line[0]
 				res = (int(line[2]) - pos1)	
-			count += 1
-	infile.close()
+		infile.close()
 	minPos = int(np.floor(float(minPos)/res)) * res	#round
 	maxPos = int(np.ceil(float(maxPos)/res)) * res
-	return ChromParameters(minPos, maxPos, res, name, count)
+	return ChromParameters(minPos, maxPos, res, name, i)
 
 def basicParamsFromBed(path):
-	size = 0
 	res = None
 	print "Scanning {}".format(path)
 	with open(path) as infile:
-		for line in infile:
-			size += 1
+		for i, line in enumerate(infile):
 			if res is None:
 				line = line.strip().split()
 				res = (int(line[2]) - int(line[1]))
-	infile.close()
-	return size, res
+		infile.close()
+	return i, res
 
 def matFromBed(path, cluster):	
 	"""Converts BED file to matrix. Only includes loci in cluster."""
+	if cluster is None:
+		cluster = clusterFromBed(path, None, None)
+
 	cluster.indexPoints()
 	pointNums = cluster.getPointNums()
 
@@ -222,13 +223,11 @@ def matFromBed(path, cluster):
 	maxPointNum = max(pointNums)
 	assert maxPointNum - cluster.offset < len(cluster.points)
 
-	tot = 0
-
 	with open(path) as infile:
 		for line in infile:
-			linearray = line.strip().split()	#line as array of strings
-			loc1 = int(linearray[1])
-			loc2 = int(linearray[4])
+			line = line.strip().split()
+			loc1 = int(line[1])
+			loc2 = int(line[4])
 			index1 = cluster.getIndex(loc1)
 			index2 = cluster.getIndex(loc2)
 			if index1 is not None and index2 is not None:
@@ -238,9 +237,8 @@ def matFromBed(path, cluster):
 				else:
 					row = index2
 					col = index1
-				mat[row, col] += float(linearray[6])
-				tot += float(linearray[6])
-	infile.close()
+				mat[row, col] += float(line[6])
+		infile.close()
 
 	at.makeSymmetric(mat)
 	rowsums = np.array([sum(row) for row in mat])
@@ -304,7 +302,7 @@ def clusterFromFile(path):
 					point = Point((x,y,z), num, chrom, index)
 					index += 1
 				cluster.points.append(point)
-	infile.close()
+		infile.close()
 	cluster.points = np.array(cluster.points)
 	cluster.chrom.maxPos = cluster.chrom.minPos + cluster.chrom.res*num	#max pos is last point num
 	return cluster
