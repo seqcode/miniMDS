@@ -111,9 +111,8 @@ class Cluster(object):
 		out.close()
 
 	def indexPoints(self):
-		for i, point in enumerate(self.points):
-			if point != 0:
-				point.index = i
+		for i, point in enumerate(self.getPoints()):
+			point.index = i
 
 class Point(object):
 	"""Point in 3-D space"""
