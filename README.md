@@ -14,6 +14,7 @@ Requirements:
 
 ## Testing
 
+2/15/18: Test scripts need to be updated, ignore for now. 
 On Linux, please run test.sh (in the scripts directory) and report any issues. (miniMDS is compatible with Mac, but the shell scripts only run on Linux.) 
 
 ## TLDR
@@ -98,11 +99,11 @@ The number of partitions cannot be set directly because partitions are created e
 
 Make these parameters smaller to increase the number of partitions. For very high resolution data (such as 5-Kbp), m=0.01 and p=0.01 is recommended:
 
-``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_5kb_structure.tsv -m 0.01 -p 0.01 GM12878_combined_22_5kb.bed``
+``python minimds.py -o GM12878_combined_22_5kb_structure.tsv -m 0.01 -p 0.01 GM12878_combined_22_5kb.bed``
 
 You can limit the maximum RAM (in Kb) used by any given partition using -R (default = 32000):
 
-``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_5kb_structure.tsv -R 50000 GM12878_combined_22_5kb.bed``
+``python minimds.py -o GM12878_combined_22_5kb_structure.tsv -R 50000 GM12878_combined_22_5kb.bed``
 
 ##### Number of threads
 
@@ -110,13 +111,13 @@ miniMDS uses multithreading to achieve greater speed. By default, 3 threads are 
 
 For example, to run miniMDS with four threads:
 
-``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_10kb_structure.tsv -n 4 GM12878_combined_22_10kb.bed``
+``python minimds.py -o GM12878_combined_22_10kb_structure.tsv -n 4 GM12878_combined_22_10kb.bed``
 
 ##### Scaling factor
 
 The scaling factor a describes the assumed relationship between contact frequencies and physical distances: distance = contact_frequency^(-1/a). The default value is 4, based on Wang et al 2016. You can change the scaling factor using -a. 
 
-``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_10kb_structure.tsv -a 3 GM12878_combined_22_10kb.bed``
+``python minimds.py -o GM12878_combined_22_10kb_structure.tsv -a 3 GM12878_combined_22_10kb.bed``
 
 a can be any value >1, including non-integer.
 
@@ -170,7 +171,7 @@ Because of the challenges of inter-chromosomal inference, it is recommended that
 
 By default, partitioned MDS is not performed. To perform partitioned MDS on each intra-chromosomal structure, use the option -l followed by the resolution of the low-res intra-chromosomal files. (It is assumed that the naming of these files is otherwise identical to that of the high-res intra-chromosomal files.)
 
-``python minimds_inter.py -l 100000 data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
+``python minimds_inter.py data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
 
 This will perform partitioned MDS on each of the intra-chromosomal structures at 10-Kbp resolution and then assemble the chromosomes into a whole-genome structure using 1-Mbp-resolution inter-chromosomal data. Remember that structures are not saved by default. 
 
@@ -184,7 +185,7 @@ By default, minimds_inter.py uses all human chromosomes other than Y. You can sp
 
 To perform interchromosomal analysis on chromosomes 1 and 8:
 
-``python minimds_inter.py -l 100000 -c 1 8 data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
+``python minimds_inter.py -c 1 8 data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
 
 Note: it is often necessary to use this option if you are using a genome other than human, so that it won't search for chromosomes that don't exist.
 
