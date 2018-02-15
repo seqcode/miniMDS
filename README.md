@@ -1,12 +1,13 @@
 # miniMDS
 
-miniMDS is a tool for inferring and plotting 3D structures from normalized Hi-C data, using partitioned MDS, a novel approximation to multidimensional scaling (MDS). It produces a single 3D structure from a Hi-C BED file, representing an ensemble average of chromosome conformations within the population of cells. Using parallelization, it is able to process high-resolution data quickly with limited memory requirements. The human genome can be inferred at kilobase-resolution within several hours on a desktop computer. Standard MDS results in inaccuracies for sparse high-resolution data, but miniMDS focuses on local substructures to achieve greater accuracy. miniMDS also supports interchromosomal structural inference. Together with Mayavi, miniMDS produces publication-quality images and gifs. 
+miniMDS is a tool for inferring and plotting 3D structures from normalized Hi-C data, using a novel approximation to multidimensional scaling (MDS). It produces a single 3D structure from a Hi-C BED file, representing an ensemble average of chromosome conformations within the population of cells. Using parallelization, it is able to process high-resolution data quickly with limited memory requirements. The human genome can be inferred at kilobase-resolution within several hours on a desktop computer. Standard MDS results in inaccuracies for sparse high-resolution data, but miniMDS focuses on local substructures to achieve greater accuracy. miniMDS also supports interchromosomal structural inference. Together with Mayavi, miniMDS produces publication-quality images and gifs. 
 
 ## Installation
 
 Requirements:
 * python 2.7
-* Python dependencies can be installed using pip install -r requirements.txt
+* Python dependencies can be installed using
+``pip install -r requirements.txt``
 * The following optional dependencies can be installed manually:
     * [mayavi](http://docs.enthought.com/mayavi/mayavi/) (for plotting)
     * [ImageMagick](https://www.imagemagick.org/script/index.php) (for creating gifs)
@@ -23,7 +24,7 @@ On Linux, please run test.sh (in the scripts directory) and report any issues. (
 
 ### Input file format
 
-miniMDS uses intra- or inter-chromosomal BED files as input. Data must be normalized prior to use (for example, using <https://bitbucket.org/mirnylab/hiclib>). 
+miniMDS uses intra- or inter-chromosomal BED files as input. Data must be normalized prior to use (for example, using [HiC-Pro](http://nservant.github.io/HiC-Pro/)). 
 
 Format:
 
