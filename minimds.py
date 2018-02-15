@@ -135,7 +135,7 @@ def main():
 	parser.add_argument("path", help="path to intrachromosomal Hi-C BED file")
 	parser.add_argument("--classical", action="store_true", help="use classical MDS (default: metric MDS)")
 	parser.add_argument("--full", action="store_true", help="use full MDS (default: partitioned MDS)")
-	parser.add_argument("-l", type=int, help="low resolution/high resolution")
+	parser.add_argument("-l", type=int, help="low resolution/high resolution", default=10)
 	parser.add_argument("-p", type=float, default=0.1, help="domain size parameter: larger value means fewer clusters created (for partitioned MDS only)")
 	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents clusters from being too small (for partitioned MDS only)")
 	parser.add_argument("-o", help="path to output file")

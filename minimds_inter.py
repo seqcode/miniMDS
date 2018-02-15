@@ -101,7 +101,7 @@ def main():
 	parser.add_argument("intra_res", type=int, help="resolution of intrachromosomal BED files (bp)")
 	parser.add_argument("--full", action="store_true", help="use full MDS (default: partitioned MDS)")
 	parser.add_argument("-c", action="append", default=[], help="Names of chromosomes to use, e.g. 1 (default: all human chromosomes other than Y)")
-	parser.add_argument("-l", type=int, help="low resolution/high resolution")
+	parser.add_argument("-l", type=int, help="low resolution/high resolution", default=10)
 	parser.add_argument("-p", type=float, default=0.1, help="domain size parameter: larger value means fewer clusters created (for partitioned MDS only)")
 	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents clusters from being too small (for partitioned MDS only)")
 	parser.add_argument("-o", help="prefix of output file")
