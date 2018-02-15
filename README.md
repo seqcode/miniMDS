@@ -17,7 +17,7 @@ On Linux, please run test.sh (in the scripts directory) and report any issues. (
 
 ## TLDR
 
-``python minimds.py -l [path to low-res BED] -o [output path] [path to high-res BED]``
+``python minimds.py -o [output path] [BED path]``
 
 ## Usage
 
@@ -43,17 +43,19 @@ To view help:
 
 ``python minimds.py -h``
 
-By default, standard MDS (not partitioned MDS) is used:
+By default, partitioned MDS is used:
 
 ``python minimds.py GM12878_combined_22_100kb.bed``
 
-However, this will not offer the benefits of miniMDS and is not recommended. 
+Full MDS is recommended for low-resolution high-quality (not sparse) files:
+
+``python minimds.py --full GM12878_combined_22_100kb.bed``
 
 Structures are not saved by default. Use the -o option with the path where you want to save the structure.
 
 ``python minimds.py -o GM12878_combined_22_100kb_structure.tsv GM12878_combined_22_100kb.bed``
 
-Structures are saved to tsv files. The header contains the name of the chromosome, the resolution, and the starting genomic coordinate. Each line in the file contains the point number followed by the 3D coordinates (with "nan" for missing data). 
+Structures are saved to tsv files. The header contains the name of the chromosome, the resolution, and the starting genomic coordinate. Each line in the file contains the genomic bin number followed by the 3D coordinates (with "nan" for missing data). 
 
 Example - chr22 at 10-Kbp resolution:
 
@@ -71,13 +73,17 @@ Example - chr22 at 10-Kbp resolution:
 > 
 >...
 
-To run partitioned MDS, you must have a normalized BED file at a lower resolution than the BED file you want to infer. For example, to use a 100-Kbp-resolution BED file to aid in the inference of a 10-Kbp-resolution file:
+0 corresponds to the bin 16050000-16060000, 1 corresponds to the bin 16060000-16070000, etc. 
 
-``python minimds.py -l GM12878_combined_22_100kb.bed -o GM12878_combined_22_10kb_structure.tsv GM12878_combined_22_10kb.bed``
+#### Parameters (optional)
 
-The resolution you choose for the low-res file depends on your tradeoff between speed and accuracy. Lower resolutions are faster but less accurate. For now, the high resolution must be a factor of the low resolution. For example, a 500-Kb-resolution file can be used to infer a 100-Kb-resolution structure, but a 250-Kb-resolution file cannot. 
+#### Resolution ratio
 
-#### Other parameters (optional)
+miniMDS first infers a global intrachromosomal structure at low resolution, which it uses as a scaffold for high-resolution inference. By default a resolution ratio of 10 is used. So if your input file is 100-kb resolution, a 1-Mb structure will be used for approximation. The resolution ratio can be changed with the l option. 
+
+``python minimds.py -l 20 -o GM12878_combined_22_10kb_structure.tsv GM12878_combined_22_10kb.bed``
+
+The resolution you choose for the low-res file depends on your tradeoff between speed and accuracy. Lower resolutions (i.e. higher ratios) are faster but less accurate. For now, the high resolution must be a factor of the low resolution. For example, a 500-Kb-resolution file can be used to infer a 100-Kb-resolution structure, but a 250-Kb-resolution file cannot. 
 
 ##### Controlling the number of partitions
 
