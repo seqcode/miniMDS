@@ -42,13 +42,9 @@ def get_inter_mat(intra_prefix, inter_prefix, res, clusters, offsets):
 			bed.close()
 	return mat
 
-def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, intra_low_res, args):
+def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, full, args):
 	inter_res_string = tools.get_res_string(inter_res)
 	intra_res_string = tools.get_res_string(intra_res)
-	if intra_low_res is None:
-		intra_low_res_string = None
-	else:
-		intra_low_res_string = tools.get_res_string(intra_low_res)
 
 	#get low-res clusters from intra files
 	low_clusters = [dt.clusterFromBed("{}_{}_{}.bed".format(intra_prefix, name, inter_res_string), None, None) for name in names]
@@ -70,11 +66,10 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, intra_low_
 	ts = []
 	for true_low, name in zip(low_clusters, names):
 		path = "{}_{}_{}.bed".format(intra_prefix, name, intra_res_string)
-		if intra_low_res_string is None:
+		if full:
 			high_cluster = mm.fullMDS(path, False, args[4])
 		else:
-			low_path = "{}_{}_{}.bed".format(intra_prefix, name, intra_low_res_string)
-			high_cluster = mm.partitionedMDS(path, low_path, args)
+			high_cluster = mm.partitionedMDS(path, args)
 		high_clusters.append(high_cluster)
 		inferred_low = dt.highToLow(high_cluster, true_low.chrom.res/high_cluster.chrom.res)
 		inferred_low_clusters.append(inferred_low)
@@ -104,8 +99,9 @@ def main():
 	parser.add_argument("intra_prefix", help="prefix of intrachromosomal Hi-C BED file")
 	parser.add_argument("inter_res", type=int, help="resolution of interchromosomal BED files (bp)")
 	parser.add_argument("intra_res", type=int, help="resolution of intrachromosomal BED files (bp)")
+	parser.add_argument("--full", action="store_true", help="use full MDS (default: partitioned MDS)")
 	parser.add_argument("-c", action="append", default=[], help="Names of chromosomes to use, e.g. 1 (default: all human chromosomes other than Y)")
-	parser.add_argument("-l", type=int, help="resolution of low-res intrachromosomal files (bp) (for partitioned MDS only)")
+	parser.add_argument("-l", type=int, help="low resolution/high resolution")
 	parser.add_argument("-p", type=float, default=0.1, help="domain size parameter: larger value means fewer clusters created (for partitioned MDS only)")
 	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents clusters from being too small (for partitioned MDS only)")
 	parser.add_argument("-o", help="prefix of output file")
@@ -119,13 +115,13 @@ def main():
 	else:
 		chrom_names = args.c
 
-	params = (args.p, args.m, args.r, args.n, args.a)
-	names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha")
-	intervals = ((0,1), (0,1), (0, None), (0, None), (1, None))
+	params = (args.p, args.m, args.r, args.n, args.a, args.l)
+	names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha", "Resolution ratio")
+		intervals = ((0, 1), (0, 1), (0, None), (0, None), (1, None), (1, None))
 	if not tools.args_are_valid(params, names, intervals):
 		sys.exit(0)
 
-	clusters = interMDS(chrom_names, args.inter_prefix, args.intra_prefix, args.inter_res, args.intra_res, args.l, params)
+	clusters = interMDS(chrom_names, args.inter_prefix, args.intra_prefix, args.inter_res, args.intra_res, args.full, params)
 
 	if args.o is not None:
 		for cluster in clusters:
