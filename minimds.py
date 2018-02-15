@@ -59,16 +59,19 @@ def fullMDS(path, classical, alpha):
 	infer_cluster(contactMat, cluster, alpha, classical)
 	return cluster
 	
-def partitionedMDS(path, lowpath, args):
+def partitionedMDS(path, args):
 	"""Partitions cluster into subclusters and performs MDS"""
 	domainSmoothingParameter = args[0]
 	minSizeFraction = args[1]
 	maxmemory = args[2]
 	num_threads = args[3]
 	alpha = args[4]
+	res_ratio = args[5]
 
 	#create low-res cluster
-	lowCluster = dt.clusterFromBed(lowpath, None, None)
+	low_chrom = dt.chromFromBed(path)
+	low_chrom.res *= res_ratio
+	lowCluster = dt.clusterFromBed(path, low_chrom, None)
 
 	#get TADs
 	low_contactMat = dt.matFromBed(lowpath, lowCluster)
@@ -79,8 +82,8 @@ def partitionedMDS(path, lowpath, args):
 	highChrom = dt.ChromParameters(lowCluster.chrom.minPos, lowCluster.chrom.maxPos, res, lowCluster.chrom.name, size)
 
 	#create high-res cluster
-	resRatio = lowCluster.chrom.res/highChrom.res
-	highTads = lowTads * resRatio
+	res_ratio = lowCluster.chrom.res/highChrom.res
+	highTads = lowTads * res_ratio
 	highCluster = dt.clusterFromBed(path, highChrom, highTads)
 
 	#create compatible subclusters
@@ -101,10 +104,10 @@ def partitionedMDS(path, lowpath, args):
 
 			#perform MDS individually
 			cluster_contactMat = dt.matFromBed(path, highSubcluster)	#contact matrix for this cluster only
-			infer_cluster(cluster_contactMat, highSubcluster, alpha)
+			infer_cluster(cluster_contactMat, highSubcluster, 2)
 
 			#approximate as low resolution
-			inferredLow = dt.highToLow(highSubcluster, resRatio)
+			inferredLow = dt.highToLow(highSubcluster, res_ratio)
 
 			#rescale
 			scaling_factor = la.radius_of_gyration(trueLow)/la.radius_of_gyration(inferredLow)
@@ -112,10 +115,10 @@ def partitionedMDS(path, lowpath, args):
 				if point != 0:
 					x, y, z = point.pos
 					inferredLow.points[i].pos = (x*scaling_factor, y*scaling_factor, z*scaling_factor)
-		
+	
 			#recover the transformation for inferred from true low cluster
 			r, t = la.getTransformation(inferredLow, trueLow)
-			t *= resRatio**(2./3)	#rescale
+			t *= res_ratio**(2./3)	#rescale
 
 			#transform high cluster
 			highSubcluster.transform(r, t)
@@ -131,7 +134,8 @@ def main():
 	parser = argparse.ArgumentParser(description="Reconstruct 3D coordinates from normalized intrachromosomal Hi-C BED files.")
 	parser.add_argument("path", help="path to intrachromosomal Hi-C BED file")
 	parser.add_argument("--classical", action="store_true", help="use classical MDS (default: metric MDS)")
-	parser.add_argument("-l", help="path to low-resolution intrachromosomal Hi-C BED file")
+	parser.add_argument("--full", action="store_true", help="use full MDS (default: partitioned MDS)")
+	parser.add_argument("-l", help="low resolution/high resolution")
 	parser.add_argument("-p", type=float, default=0.1, help="domain size parameter: larger value means fewer clusters created (for partitioned MDS only)")
 	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents clusters from being too small (for partitioned MDS only)")
 	parser.add_argument("-o", help="path to output file")
@@ -140,17 +144,17 @@ def main():
 	parser.add_argument("-a", type=float, default=4, help="alpha factor for converting contact frequencies to physical distances")
 	args = parser.parse_args()
 
-	if args.l is None:	#not partitioned
+	if args.full:	#not partitioned
 		cluster = fullMDS(args.path, args.classical, args.a)
 
 	else:	#partitioned
-		params = (args.p, args.m, args.r, args.n, args.a)
-		names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha")
-		intervals = ((0,1), (0,1), (0, None), (0, None), (1, None))
+		params = (args.p, args.m, args.r, args.n, args.a, args.l)
+		names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha", "Resolution ratio")
+		intervals = ((0, 1), (0, 1), (0, None), (0, None), (1, None), (1, None))
 		if not tools.args_are_valid(params, names, intervals):
 			sys.exit(0)
 
-		cluster = partitionedMDS(args.path, args.l, params)
+		cluster = partitionedMDS(args.path, params)
 	
 	if args.o is not None:
 		cluster.write(args.o)
