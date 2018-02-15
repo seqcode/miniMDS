@@ -167,13 +167,7 @@ For example, if your files are stored in the directory _data_:
 
 ``python minimds_inter.py data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
 
-Because of the challenges of inter-chromosomal inference, it is recommended that a resolution no greaer than 1-Mbp be used for inter-chromosomal data. 
-
-By default, partitioned MDS is not performed. To perform partitioned MDS on each intra-chromosomal structure, use the option -l followed by the resolution of the low-res intra-chromosomal files. (It is assumed that the naming of these files is otherwise identical to that of the high-res intra-chromosomal files.)
-
-``python minimds_inter.py data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
-
-This will perform partitioned MDS on each of the intra-chromosomal structures at 10-Kbp resolution and then assemble the chromosomes into a whole-genome structure using 1-Mbp-resolution inter-chromosomal data. Remember that structures are not saved by default. 
+Because of the challenges of inter-chromosomal inference, it is recommended that a resolution no greater than 1-Mbp be used for inter-chromosomal data. 
 
 #### Other parameters (optional)
 
