@@ -79,7 +79,7 @@ def interMDS(names, prefix, inter_res, intra_res, full, args):
 			point.pos = rescaled_coords[i]
 
 		r, t = la.getTransformation(inferred_low, true_low)
-		high_structure.transform(r, None)	#do not translate now (need to rescale)
+		high_structure.transform(r)	#do not translate now (need to rescale)
 		ts.append(t)	
 
 	#translate (with rescaling)
@@ -87,7 +87,7 @@ def interMDS(names, prefix, inter_res, intra_res, full, args):
 	high_rgs = np.array([la.radius_of_gyration(structure) for structure in high_structures])
 	scaling_factor = np.mean(high_rgs/low_rgs)
 	for high_structure, t in zip(high_structures, ts):
-		high_structure.transform(None, scaling_factor*t)	#rescale translation
+		high_structure.transform(t=scaling_factor*t)	#rescale translation
 
 	return high_structures
 

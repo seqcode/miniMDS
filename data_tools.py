@@ -127,7 +127,7 @@ def structureFromBed(path, chrom, tads):
 	if chrom is None:
 		chrom = chromFromBed(path)
 
-	structure = structure([], [], chrom, 0)
+	structure = Structure([], [], chrom, 0)
 	
 	#get TAD for every locus
 	if tads is None:
