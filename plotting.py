@@ -29,7 +29,7 @@ def plot_structures_interactive(structures, all_enrichments=None, colors=default
 			ys = ys[indices]
 			zs = zs[indices]	
 		if all_enrichments:
-			mlab.plot3d(xs, ys, zs, tube_radius=radius, all_enrichments[i])
+			mlab.plot3d(xs, ys, zs, all_enrichments[i], tube_radius=radius)
 		else:
 			mlab.plot3d(xs, ys, zs, tube_radius=radius, color=colors[i])
 	if out_path:
