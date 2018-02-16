@@ -31,16 +31,16 @@ class ChromParameters(object):
 		lowMaxPos = (self.maxPos/lowRes)*lowRes
 		return ChromParameters(lowMinPos, lowMaxPos, lowRes, self.name, self.size)
 
-class Cluster(object):
-	"""Intrachromosomal cluster of points or subclusters in 3-D space"""
-	def __init__(self, points, clusters, chrom, offset):
+class Structure(object):
+	"""Intrachromosomal structure of points or substructures in 3-D space"""
+	def __init__(self, points, structures, chrom, offset):
 		self.points = points
-		self.clusters = clusters	#subclusters
-		for cluster in self.clusters:	#auto-fill
-			for point in cluster.points:
+		self.structures = structures	#substructures
+		for structure in self.structures:	#auto-fill
+			for point in structure.points:
 				self.points.append(point)	
 		self.chrom = chrom	#chromosome parameters
-		self.offset = offset	#indexing offset (for subclusters only)
+		self.offset = offset	#indexing offset (for substructures only)
 
 	def getCoords(self):
 		return [point.pos for point in self.getPoints()]
@@ -71,18 +71,18 @@ class Cluster(object):
 			else:
 				return None
 	
-	def setClusters(self, clusters):
-		self.clusters = clusters
-		self.points = np.zeros(max([max(cluster.getPointNums()) for cluster in clusters]) + 1, dtype=np.object)	#reset
-		for cluster in self.clusters:
-			for point in cluster.points:
+	def setstructures(self, structures):
+		self.structures = structures
+		self.points = np.zeros(max([max(structure.getPointNums()) for structure in structures]) + 1, dtype=np.object)	#reset
+		for structure in self.structures:
+			for point in structure.points:
 				if point != 0:
 					self.points[point.num] = point
 
-	def createSubcluster(self, points, offset):
-		"""Creates subcluster containing pointsToAdd"""
-		subcluster = Cluster(points, [], self.chrom, offset)
-		self.clusters.append(subcluster)
+	def createSubstructure(self, points, offset):
+		"""Creates substructure containing pointsToAdd"""
+		substructure = structure(points, [], self.chrom, offset)
+		self.structures.append(substructure)
 
 	def transform(self, r, t):
 		"""Rotates by r; translates by t"""
@@ -122,16 +122,16 @@ class Point(object):
 		self.chrom = chrom	#chromosome parameters
 		self.index = index	#sequential
 
-def clusterFromBed(path, chrom, tads):
-	"""Initializes cluster from intrachromosomal BED file."""
+def structureFromBed(path, chrom, tads):
+	"""Initializes structure from intrachromosomal BED file."""
 	if chrom is None:
 		chrom = chromFromBed(path)
 
-	cluster = Cluster([], [], chrom, 0)
+	structure = structure([], [], chrom, 0)
 	
 	#get TAD for every locus
 	if tads is None:
-		tadNums = np.zeros(cluster.chrom.getLength())
+		tadNums = np.zeros(structure.chrom.getLength())
 	else:
 		tadNums = []
 		tadNum = 1
@@ -141,8 +141,8 @@ def clusterFromBed(path, chrom, tads):
 			tadNum += 1
 	maxIndex = len(tadNums) - 1
 
-	points_to_add = np.zeros(cluster.chrom.getLength(), dtype=np.bool)	#true if locus should be added
-	tracker = Tracker("Identifying loci", cluster.chrom.size)
+	points_to_add = np.zeros(structure.chrom.getLength(), dtype=np.bool)	#true if locus should be added
+	tracker = Tracker("Identifying loci", structure.chrom.size)
 
 	#find which loci should be added
 	with open(path) as listFile:
@@ -150,8 +150,8 @@ def clusterFromBed(path, chrom, tads):
 			line = line.strip().split()
 			pos1 = int(line[1])
 			pos2 = int(line[4])
-			pointNum1 = cluster.chrom.getPointNum(pos1)
-			pointNum2 = cluster.chrom.getPointNum(pos2)
+			pointNum1 = structure.chrom.getPointNum(pos1)
+			pointNum2 = structure.chrom.getPointNum(pos2)
 			if pointNum1 is not None and pointNum2 is not None:
 				tadNum1 = tadNums[min(pointNum1, maxIndex)]
 				tadNum2 = tadNums[min(pointNum2, maxIndex)]
@@ -162,14 +162,14 @@ def clusterFromBed(path, chrom, tads):
 		listFile.close()
 
 	#create points
-	points = np.zeros(cluster.chrom.getLength(), dtype=np.object)
+	points = np.zeros(structure.chrom.getLength(), dtype=np.object)
 	pointNums = np.where(points_to_add == True)[0]
 	for pointNum in pointNums:
-		points[pointNum] = Point((0,0,0), pointNum, cluster.chrom, None)
-	cluster.points = points
-	cluster.indexPoints()
+		points[pointNum] = Point((0,0,0), pointNum, structure.chrom, None)
+	structure.points = points
+	structure.indexPoints()
 	
-	return cluster
+	return structure
 
 def chromFromBed(path):
 	"""Initialize ChromParams from intrachromosomal file in BED format"""
@@ -193,7 +193,7 @@ def chromFromBed(path):
 				name = line[0]
 				res = (int(line[2]) - pos1)	
 		infile.close()
-	minPos = int(np.floor(float(minPos)/res)) * res	#round
+	minPos = int(np.ceil(float(minPos)/res)) * res	#round
 	maxPos = int(np.ceil(float(maxPos)/res)) * res
 	return ChromParameters(minPos, maxPos, res, name, i)
 
@@ -208,27 +208,27 @@ def basicParamsFromBed(path):
 		infile.close()
 	return i, res
 
-def matFromBed(path, cluster):	
-	"""Converts BED file to matrix. Only includes loci in cluster."""
-	if cluster is None:
-		cluster = clusterFromBed(path, None, None)
+def matFromBed(path, structure):	
+	"""Converts BED file to matrix. Only includes loci in structure."""
+	if structure is None:
+		structure = structureFromBed(path, None, None)
 
-	cluster.indexPoints()
-	pointNums = cluster.getPointNums()
+	structure.indexPoints()
+	pointNums = structure.getPointNums()
 
 	numpoints = len(pointNums)
 	mat = np.zeros((numpoints, numpoints))	
 
 	maxPointNum = max(pointNums)
-	assert maxPointNum - cluster.offset < len(cluster.points)
+	assert maxPointNum - structure.offset < len(structure.points)
 
 	with open(path) as infile:
 		for line in infile:
 			line = line.strip().split()
 			loc1 = int(line[1])
 			loc2 = int(line[4])
-			index1 = cluster.getIndex(loc1)
-			index2 = cluster.getIndex(loc2)
+			index1 = structure.getIndex(loc1)
+			index2 = structure.getIndex(loc2)
 			if index1 is not None and index2 is not None:
 				if index1 > index2:
 					row = index1
@@ -245,31 +245,31 @@ def matFromBed(path, cluster):
 
 	return mat
 
-def highToLow(highCluster, resRatio):
-	"""Reduces resolution of cluster"""
-	lowChrom = highCluster.chrom.reduceRes(resRatio)
+def highToLow(highstructure, resRatio):
+	"""Reduces resolution of structure"""
+	lowChrom = highstructure.chrom.reduceRes(resRatio)
 
-	low_n = int(np.ceil(len(highCluster.points)/float(resRatio)))
+	low_n = int(np.ceil(len(highstructure.points)/float(resRatio)))
 
-	lowCluster = Cluster(np.zeros(low_n, dtype=np.object), [], lowChrom, highCluster.offset/resRatio)
+	lowstructure = structure(np.zeros(low_n, dtype=np.object), [], lowChrom, highstructure.offset/resRatio)
 
 	allPointsToMerge = []
-	for i in range(len(lowCluster.points)):
+	for i in range(len(lowstructure.points)):
 		allPointsToMerge.append([])
 	
-	for highPoint in highCluster.getPoints():
+	for highPoint in highstructure.getPoints():
 		pointsToMerge = []
 		highNum = highPoint.num
 		lowNum = highNum/resRatio
-		allPointsToMerge[lowNum - lowCluster.offset].append(highPoint)
+		allPointsToMerge[lowNum - lowstructure.offset].append(highPoint)
 
-	index = lowCluster.offset
+	index = lowstructure.offset
 	for i, pointsToMerge in enumerate(allPointsToMerge):
 		if len(pointsToMerge) > 0:
-			lowCluster.points[i] = mergePoints(pointsToMerge, i + lowCluster.offset, lowChrom, index)
+			lowstructure.points[i] = mergePoints(pointsToMerge, i + lowstructure.offset, lowChrom, index)
 			index += 1
 
-	return lowCluster
+	return lowstructure
 
 def mergePoints(pointsToMerge, newPointNum, chrom, index):
 	"""Creates new point with average position of pointsToMerge"""
@@ -277,14 +277,14 @@ def mergePoints(pointsToMerge, newPointNum, chrom, index):
 	meanCoord = np.mean(coords, axis=0)
 	return Point(meanCoord, newPointNum, chrom, index)
 
-def clusterFromFile(path):
+def structure_from_file(path):
 	hasMore = True
 	with open(path) as infile:
 		name = infile.readline().strip()
 		res = int(infile.readline().strip())
 		minPos = int(infile.readline().strip())
 		chrom = ChromParameters(minPos, None, res, name, None)
-		cluster = Cluster([], [], chrom, 0)
+		structure = structure([], [], chrom, 0)
 		index = 0
 		while hasMore:
 			line = infile.readline().strip().split()
@@ -300,8 +300,8 @@ def clusterFromFile(path):
 					z = float(line[3])
 					point = Point((x,y,z), num, chrom, index)
 					index += 1
-				cluster.points.append(point)
+				structure.points.append(point)
 		infile.close()
-	cluster.points = np.array(cluster.points)
-	cluster.chrom.maxPos = cluster.chrom.minPos + cluster.chrom.res*num	#max pos is last point num
-	return cluster
+	structure.points = np.array(structure.points)
+	structure.chrom.maxPos = structure.chrom.minPos + structure.chrom.res*num	#max pos is last point num
+	return structure

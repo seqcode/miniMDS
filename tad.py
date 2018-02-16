@@ -53,14 +53,14 @@ def calcScore(pointNum, points, contactMat, numPoints):
 
 	return score 
 
-def allScores(contactMat, cluster, maxNumPoints):
+def allScores(contactMat, structure, maxNumPoints):
 	"""Calculates all directionality scores for chromosome"""
 	scores = []	
 	totNumLoc = len(contactMat)
-	for pointNum in cluster.getPointNums():
-		i = cluster.points[pointNum - cluster.offset].index
+	for pointNum in structure.getPointNums():
+		i = structure.points[pointNum - structure.offset].index
 		numPoints = min((maxNumPoints, totNumLoc - 1 - i, i))	#avoid going out of range of contact matrix 
-		scores.append(calcScore(pointNum, cluster.points, contactMat, numPoints))
+		scores.append(calcScore(pointNum, structure.points, contactMat, numPoints))
 	return scores
 
 def domainsFromScores(scores, minSizeFraction):
@@ -70,7 +70,7 @@ def domainsFromScores(scores, minSizeFraction):
 	domains = []
 	for i in range(len(scores)):
 		score = scores[i]
-		if i == len(scores) - 1:	
+		if i == len(scores) - 1:
 			end = i + 1
 			domains.append([start,end])
 			start = i + 1
@@ -81,16 +81,16 @@ def domainsFromScores(scores, minSizeFraction):
 		prevScore = score
 	return np.array(domains)
 
-def getDomains(contactMat, cluster, sizeParameter, minSizeFraction):
+def getDomains(contactMat, structure, sizeParameter, minSizeFraction):
 	"""Identify TADs in contact matrix"""
-	scores = allScores(contactMat, cluster, 50)	#50 is from Dixon 2012 supplemental
+	scores = allScores(contactMat, structure, 50)	#50 is from Dixon 2012 supplemental
 	smoothingFactor = max((int(len(contactMat)*sizeParameter), 1))	#must be >= 1
 	smoothed = st.smoothWithMovingAverage(scores, smoothingFactor)
 	return domainsFromScores(smoothed, minSizeFraction)
 
-def subclustersFromTads(high_cluster, low_cluster, low_tads):
-	"""Create compatible subclusters from TADs in high-res cluster and low-res cluster"""
-	res_ratio = low_cluster.chrom.res/high_cluster.chrom.res
+def substructuresFromTads(high_structure, low_structure, low_tads):
+	"""Create compatible substructures from TADs in high-res structure and low-res structure"""
+	res_ratio = low_structure.chrom.res/high_structure.chrom.res
 	high_tads = low_tads * res_ratio
         high_offset = 0
 	low_offset = 0
@@ -99,14 +99,14 @@ def subclustersFromTads(high_cluster, low_cluster, low_tads):
 		high_end = high_tad[1]
 		low_start = low_tad[0]
 		low_end = low_tad[1]
-                high_points = high_cluster.points[(high_start-high_cluster.offset):(high_end-high_cluster.offset)]
-		low_points = low_cluster.points[(low_start-low_cluster.offset):(low_end-low_cluster.offset)]
+                high_points = high_structure.points[(high_start-high_structure.offset):(high_end-high_structure.offset)]
+		low_points = low_structure.points[(low_start-low_structure.offset):(low_end-low_structure.offset)]
 		high_nums = [high_point.num for high_point in high_points if high_point != 0]
 		inferred_low_nums = np.array(high_nums)/res_ratio
 		true_low_nums = [low_point.num for low_point in low_points if low_point != 0]
 		intersection = [num for num in true_low_nums if num in inferred_low_nums]
 		if len(intersection) > 0:	#compatible
-                	high_cluster.createSubcluster(high_points, high_offset)
-			low_cluster.createSubcluster(low_points, low_offset)
+                	high_structure.createSubstructure(high_points, high_offset)
+			low_structure.createSubstructure(low_points, low_offset)
                 high_offset = high_end
 		low_offset = low_end

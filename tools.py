@@ -1,7 +1,5 @@
 """Misc. useful things"""
 
-import sys
-
 class Tracker(object):
 	"""Tracks progress of task"""
 	def __init__(self, name, size, currPercentage=0, count=0):
@@ -38,4 +36,4 @@ def get_res_string(res):
 	if res_kb < 1000:
 		return str(res_kb) + "kb"
 	else:
-		return str(res_kb/1000) + "mb"	
+		return str(res_kb/1000) + "Mb"	 

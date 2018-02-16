@@ -11,9 +11,9 @@ import stats_tools as st
 import pymp
 import multiprocessing as mp
 
-def infer_clusters(contactMat, clusters, offsets, alpha, classical=False):
-	"""Infers 3D coordinates for multiple clusters with same contact matrix"""
-	assert sum([len(cluster.getPointNums()) for cluster in clusters]) == len(contactMat)
+def infer_structures(contactMat, structures, offsets, alpha, classical=False):
+	"""Infers 3D coordinates for multiple structures with same contact matrix"""
+	assert sum([len(structure.getPointNums()) for structure in structures]) == len(contactMat)
 
 	at.makeSymmetric(contactMat)
 	rowsums = np.array([sum(row) for row in contactMat])
@@ -28,13 +28,13 @@ def infer_clusters(contactMat, clusters, offsets, alpha, classical=False):
 		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1)
 		coords = mds.fit_transform(distMat)
 
-	for offset, cluster in zip(offsets, clusters):
-		for i in range(len(cluster.getPoints())):	
-			cluster.getPoints()[i].pos = coords[i + offset]
+	for offset, structure in zip(offsets, structures):
+		for i in range(len(structure.getPoints())):	
+			structure.getPoints()[i].pos = coords[i + offset]
 
-def infer_cluster(contactMat, cluster, alpha, classical=False):
-	"""Infers 3D coordinates for one cluster"""
-	assert len(cluster.getPointNums()) == len(contactMat)
+def infer_structure(contactMat, structure, alpha, classical=False):
+	"""Infers 3D coordinates for one structure"""
+	assert len(structure.getPointNums()) == len(contactMat)
 
 	at.makeSymmetric(contactMat)
 	rowsums = np.array([sum(row) for row in contactMat])
@@ -49,18 +49,18 @@ def infer_cluster(contactMat, cluster, alpha, classical=False):
 		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1)
 		coords = mds.fit_transform(distMat)
 
-	for i in range(len(cluster.getPoints())):	
-		cluster.getPoints()[i].pos = coords[i]
+	for i in range(len(structure.getPoints())):	
+		structure.getPoints()[i].pos = coords[i]
 
 def fullMDS(path, classical, alpha):
 	"""MDS without partitioning"""
-	cluster = dt.clusterFromBed(path, None, None)
-	contactMat = dt.matFromBed(path, cluster)
-	infer_cluster(contactMat, cluster, alpha, classical)
-	return cluster
+	structure = dt.structureFromBed(path, None, None)
+	contactMat = dt.matFromBed(path, structure)
+	infer_structure(contactMat, structure, alpha, classical)
+	return structure
 	
 def partitionedMDS(path, args):
-	"""Partitions cluster into subclusters and performs MDS"""
+	"""Partitions structure into substructures and performs MDS"""
 	domainSmoothingParameter = args[0]
 	minSizeFraction = args[1]
 	maxmemory = args[2]
@@ -68,46 +68,46 @@ def partitionedMDS(path, args):
 	alpha = args[4]
 	res_ratio = args[5]
 
-	#create low-res cluster
+	#create low-res structure
 	low_chrom = dt.chromFromBed(path)
 	low_chrom.res *= res_ratio
-	lowCluster = dt.clusterFromBed(path, low_chrom, None)
+	lowstructure = dt.structureFromBed(path, low_chrom, None)
 
 	#get TADs
-	low_contactMat = dt.matFromBed(path, lowCluster)
-	lowTads = tad.getDomains(low_contactMat, lowCluster, domainSmoothingParameter, minSizeFraction)		#low subclusters
+	low_contactMat = dt.matFromBed(path, lowstructure)
+	lowTads = tad.getDomains(low_contactMat, lowstructure, domainSmoothingParameter, minSizeFraction)		#low substructures
 
 	#create high-res chrom
 	size, res = dt.basicParamsFromBed(path)
-	highChrom = dt.ChromParameters(lowCluster.chrom.minPos, lowCluster.chrom.maxPos, res, lowCluster.chrom.name, size)
+	highChrom = dt.ChromParameters(lowstructure.chrom.minPos, lowstructure.chrom.maxPos, res, lowstructure.chrom.name, size)
 
-	#create high-res cluster
-	res_ratio = lowCluster.chrom.res/highChrom.res
+	#create high-res structure
+	res_ratio = lowstructure.chrom.res/highChrom.res
 	highTads = lowTads * res_ratio
-	highCluster = dt.clusterFromBed(path, highChrom, highTads)
+	highstructure = dt.structureFromBed(path, highChrom, highTads)
 
-	#create compatible subclusters
-	tad.subclustersFromTads(highCluster, lowCluster, lowTads)
+	#create compatible substructures
+	tad.substructuresFromTads(highstructure, lowstructure, lowTads)
 
-	infer_cluster(low_contactMat, lowCluster, alpha)
+	infer_structure(low_contactMat, lowstructure, alpha)
 	print "Low-resolution MDS complete"
 
-	highSubclusters = pymp.shared.list(highCluster.clusters)
-	lowSubclusters = pymp.shared.list(lowCluster.clusters)
+	highSubstructures = pymp.shared.list(highstructure.structures)
+	lowSubstructures = pymp.shared.list(lowstructure.structures)
 
-	numSubclusters = len(highCluster.clusters)
-	num_threads = min((num_threads, mp.cpu_count(), numSubclusters))	#don't exceed number of requested threads, available threads, or clusters
+	numSubstructures = len(highstructure.structures)
+	num_threads = min((num_threads, mp.cpu_count(), numSubstructures))	#don't exceed number of requested threads, available threads, or structures
 	with pymp.Parallel(num_threads) as p:
-		for subclusternum in p.range(numSubclusters):
-			highSubcluster = highSubclusters[subclusternum]
-			trueLow = lowSubclusters[subclusternum]
+		for substructurenum in p.range(numSubstructures):
+			highSubstructure = highSubstructures[substructurenum]
+			trueLow = lowSubstructures[substructurenum]
 
 			#perform MDS individually
-			cluster_contactMat = dt.matFromBed(path, highSubcluster)	#contact matrix for this cluster only
-			infer_cluster(cluster_contactMat, highSubcluster, 2)
+			structure_contactMat = dt.matFromBed(path, highSubstructure)	#contact matrix for this structure only
+			infer_structure(structure_contactMat, highSubstructure, 2)
 
 			#approximate as low resolution
-			inferredLow = dt.highToLow(highSubcluster, res_ratio)
+			inferredLow = dt.highToLow(highSubstructure, res_ratio)
 
 			#rescale
 			scaling_factor = la.radius_of_gyration(trueLow)/la.radius_of_gyration(inferredLow)
@@ -116,19 +116,19 @@ def partitionedMDS(path, args):
 					x, y, z = point.pos
 					inferredLow.points[i].pos = (x*scaling_factor, y*scaling_factor, z*scaling_factor)
 	
-			#recover the transformation for inferred from true low cluster
+			#recover the transformation for inferred from true low structure
 			r, t = la.getTransformation(inferredLow, trueLow)
 			t *= res_ratio**(2./3)	#rescale
 
-			#transform high cluster
-			highSubcluster.transform(r, t)
-			highSubclusters[subclusternum] = highSubcluster
+			#transform high structure
+			highSubstructure.transform(r, t)
+			highSubstructures[substructurenum] = highSubstructure
 
-			print "MDS performed on cluster {} of {}".format(subclusternum + 1, numSubclusters)
+			print "MDS performed on structure {} of {}".format(substructurenum + 1, numSubstructures)
 
-	highCluster.setClusters(highSubclusters)
+	highstructure.setstructures(highSubstructures)
 
-	return highCluster
+	return highstructure
 
 def main():
 	parser = argparse.ArgumentParser(description="Reconstruct 3D coordinates from normalized intrachromosomal Hi-C BED files.")
@@ -136,8 +136,8 @@ def main():
 	parser.add_argument("--classical", action="store_true", help="use classical MDS (default: metric MDS)")
 	parser.add_argument("--full", action="store_true", help="use full MDS (default: partitioned MDS)")
 	parser.add_argument("-l", type=int, help="low resolution/high resolution", default=10)
-	parser.add_argument("-p", type=float, default=0.1, help="domain size parameter: larger value means fewer clusters created (for partitioned MDS only)")
-	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents clusters from being too small (for partitioned MDS only)")
+	parser.add_argument("-p", type=float, default=0.1, help="domain size parameter: larger value means fewer structures created (for partitioned MDS only)")
+	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents structures from being too small (for partitioned MDS only)")
 	parser.add_argument("-o", help="path to output file")
 	parser.add_argument("-r", default=32000000, help="maximum RAM to use (in kb)")
 	parser.add_argument("-n", default=3, help="number of threads")
@@ -145,7 +145,7 @@ def main():
 	args = parser.parse_args()
 
 	if args.full:	#not partitioned
-		cluster = fullMDS(args.path, args.classical, args.a)
+		structure = fullMDS(args.path, args.classical, args.a)
 
 	else:	#partitioned
 		params = (args.p, args.m, args.r, args.n, args.a, args.l)
@@ -154,10 +154,10 @@ def main():
 		if not tools.args_are_valid(params, names, intervals):
 			sys.exit(0)
 
-		cluster = partitionedMDS(args.path, params)
+		structure = partitionedMDS(args.path, params)
 	
 	if args.o is not None:
-		cluster.write(args.o)
+		structure.write(args.o)
 
 if __name__ == "__main__":
 	main()

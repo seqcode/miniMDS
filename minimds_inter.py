@@ -7,17 +7,17 @@ import tools
 import argparse
 import minimds as mm
 
-def get_inter_mat(intra_prefix, inter_prefix, res, clusters, offsets):
+def get_inter_mat(intra_prefix, inter_prefix, res, structures, offsets):
 	res_string = tools.get_res_string(res)
 
-	names = [cluster.chrom.name for cluster in clusters]
+	names = [structure.chrom.name for structure in structures]
 	n = len(names)
 	for i in range(n):
 		if names[i].startswith("chr"):
 			names[i] = names[i][3:len(names[i])]	#remove "chr"
 
 	#fill matrix
-	total_len = sum([len(cluster.getPoints()) for cluster in clusters])
+	total_len = sum([len(structure.getPoints()) for structure in structures])
 	mat = np.zeros((total_len, total_len))
 	for i in range(n):
 		for j in range(i+1):
@@ -31,8 +31,8 @@ def get_inter_mat(intra_prefix, inter_prefix, res, clusters, offsets):
 					line = line.strip().split()
 					loc1 = int(line[4])
 					loc2 = int(line[1])
-					index1 = clusters[i].getIndex(loc1)
-					index2 = clusters[j].getIndex(loc2)
+					index1 = structures[i].getIndex(loc1)
+					index2 = structures[j].getIndex(loc2)
 					if index1 is not None and index2 is not None:
 						index1 += offsets[i]
 						index2 += offsets[j]
@@ -46,33 +46,33 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, full, args
 	inter_res_string = tools.get_res_string(inter_res)
 	intra_res_string = tools.get_res_string(intra_res)
 
-	#get low-res clusters from intra files
-	low_clusters = [dt.clusterFromBed("{}_{}_{}.bed".format(intra_prefix, name, inter_res_string), None, None) for name in names]
+	#get low-res structures from intra files
+	low_structures = [dt.structureFromBed("{}_{}_{}.bed".format(intra_prefix, name, inter_res_string), None, None) for name in names]
 
 	#for correct indexing
 	n = len(names)
 	offsets = np.zeros(n, dtype=np.int32)
 	for i in range(1, n):
-		offsets[i] = offsets[i-1] + len(low_clusters[i-1].getPoints())
+		offsets[i] = offsets[i-1] + len(low_structures[i-1].getPoints())
 
-	inter_mat = get_inter_mat(intra_prefix, inter_prefix, inter_res, low_clusters, offsets)
+	inter_mat = get_inter_mat(intra_prefix, inter_prefix, inter_res, low_structures, offsets)
 
 	#perform MDS at low resolution on all chroms
-	mm.infer_clusters(inter_mat, low_clusters, offsets, args[4])
+	mm.infer_structures(inter_mat, low_structures, offsets, args[4])
 
 	#perform MDS at high resolution on each chrom
-	high_clusters = []
-	inferred_low_clusters = []
+	high_structures = []
+	inferred_low_structures = []
 	ts = []
-	for true_low, name in zip(low_clusters, names):
+	for true_low, name in zip(low_structures, names):
 		path = "{}_{}_{}.bed".format(intra_prefix, name, intra_res_string)
 		if full:
-			high_cluster = mm.fullMDS(path, False, args[4])
+			high_structure = mm.fullMDS(path, False, args[4])
 		else:
-			high_cluster = mm.partitionedMDS(path, args)
-		high_clusters.append(high_cluster)
-		inferred_low = dt.highToLow(high_cluster, true_low.chrom.res/high_cluster.chrom.res)
-		inferred_low_clusters.append(inferred_low)
+			high_structure = mm.partitionedMDS(path, args)
+		high_structures.append(high_structure)
+		inferred_low = dt.highToLow(high_structure, true_low.chrom.res/high_structure.chrom.res)
+		inferred_low_structures.append(inferred_low)
 
 		#rescale
 		rescaling_factor = la.radius_of_gyration(true_low)/la.radius_of_gyration(inferred_low)
@@ -81,17 +81,17 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, full, args
 			point.pos = rescaled_coords[i]
 
 		r, t = la.getTransformation(inferred_low, true_low)
-		high_cluster.transform(r, None)	#do not translate now (need to rescale)
+		high_structure.transform(r, None)	#do not translate now (need to rescale)
 		ts.append(t)	
 
 	#translate (with rescaling)
-	low_rgs = np.array([la.radius_of_gyration(cluster) for cluster in low_clusters])
-	high_rgs = np.array([la.radius_of_gyration(cluster) for cluster in high_clusters])
+	low_rgs = np.array([la.radius_of_gyration(structure) for structure in low_structures])
+	high_rgs = np.array([la.radius_of_gyration(structure) for structure in high_structures])
 	scaling_factor = np.mean(high_rgs/low_rgs)
-	for high_cluster, t in zip(high_clusters, ts):
-		high_cluster.transform(None, scaling_factor*t)	#rescale translation
+	for high_structure, t in zip(high_structures, ts):
+		high_structure.transform(None, scaling_factor*t)	#rescale translation
 
-	return high_clusters
+	return high_structures
 
 def main():
 	parser = argparse.ArgumentParser(description="Reconstruct 3D coordinates from normalized interchromosomal Hi-C BED files.")
@@ -102,8 +102,8 @@ def main():
 	parser.add_argument("--full", action="store_true", help="use full MDS (default: partitioned MDS)")
 	parser.add_argument("-c", action="append", default=[], help="Names of chromosomes to use, e.g. 1 (default: all human chromosomes other than Y)")
 	parser.add_argument("-l", type=int, help="low resolution/high resolution", default=10)
-	parser.add_argument("-p", type=float, default=0.1, help="domain size parameter: larger value means fewer clusters created (for partitioned MDS only)")
-	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents clusters from being too small (for partitioned MDS only)")
+	parser.add_argument("-p", type=float, default=0.1, help="domain size parameter: larger value means fewer structures created (for partitioned MDS only)")
+	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents structures from being too small (for partitioned MDS only)")
 	parser.add_argument("-o", help="prefix of output file")
 	parser.add_argument("-r", default=32000000, help="maximum RAM to use (in kb)")
 	parser.add_argument("-n", default=3, help="Number of threads")
@@ -121,11 +121,11 @@ def main():
 	if not tools.args_are_valid(params, names, intervals):
 		sys.exit(0)
 
-	clusters = interMDS(chrom_names, args.inter_prefix, args.intra_prefix, args.inter_res, args.intra_res, args.full, params)
+	structures = interMDS(chrom_names, args.inter_prefix, args.intra_prefix, args.inter_res, args.intra_res, args.full, params)
 
 	if args.o is not None:
-		for cluster in clusters:
-			cluster.write("{}_{}_{}_cluster.tsv".format(args.o, cluster.chrom.name, tools.get_res_string(cluster.chrom.res)))
+		for structure in structures:
+			structure.write("{}_{}_{}_structure.tsv".format(args.o, structure.chrom.name, tools.get_res_string(structure.chrom.res)))
 
 if __name__ == "__main__":
 	main()

@@ -1,14 +1,15 @@
-from mayavi import mlab	#this must be first
+from mayavi import mlab
 import numpy as np
 import linear_algebra as la
 import os
 import sys
 
-#from Rippe (2001)
+#from Rippe 2001
 kl = 289	#Kuhn length (nm)
 bpPerKL = 30000.	#base pairs per Kuhn length 
 chromatinDiameter = 30	#diameter of heterochromatin (nm)
-default_colors = np.array([[255,0,0], [255,238,0], [0,255,238], [0,102,255], [255,0,170], [255,102,0], [204,255,0], [0,238,255], [0,68,255], [255,0,102], [255,136,0], [0,255,34], [0,204,255], [34,0,255], [255,0,68], [255,170,0], [0,255,136], [0,170,255], [204,0,255], [255,204,0], [0,255,204], [0,136,255], [255,0,238]])/255.
+
+default_colors = np.array([[255,0,0], [0,255,238], [255,238,0], [0,102,255], [255,0,170], [255,102,0], [204,255,0], [0,238,255], [0,68,255], [255,0,102], [255,136,0], [0,255,34], [0,204,255], [34,0,255], [255,0,68], [255,170,0], [0,255,136], [0,170,255], [204,0,255], [255,204,0], [0,255,204], [0,136,255], [255,0,238]])/255.
 
 default_colors = [tuple(color) for color in default_colors]	#convert to tuple
 

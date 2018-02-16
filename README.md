@@ -96,7 +96,7 @@ The resolution you choose for the low-res file depends on your tradeoff between 
 
 The miniMDS algorithm creates partitions in the high-resolution data and performs MDS on each partition individually. A greater number of partitions can increase speed but also reduce accuracy. On the other hand, for very sparse data a greater number of partitions can actually increase accuracy. If your output appears "clumpy", increase the number of partitions.
 
-The number of partitions cannot be set directly because partitions are created empirically to maximize clustering of the data. However, the degree of clustering of the data can be tweaked with the following parameters:
+The number of partitions cannot be set directly because partitions are created empirically to maximize structureing of the data. However, the degree of structureing of the data can be tweaked with the following parameters:
 
 >-m: minimum partition size (as a fraction of the data). Default = 0.05
 >
@@ -180,62 +180,60 @@ All of the parameters from minimds.py are also available for minimds_inter.py
 
 ###### Specifying chromosomes
 
-By default, minimds_inter.py uses all human chromosomes other than Y. You can specify chromosomes using the option -c.
+By default, minimds_inter.py uses all human chromosomes other than Y. You can specify chromosomes (in order) using the option -c.
 
 To perform interchromosomal analysis on chromosomes 1 and 8:
 
 ``python minimds_inter.py -c 1 8 data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
 
-Note: it is often necessary to use this option if you are using a genome other than human, so that it won't search for chromosomes that don't exist.
+Note: it is often necessary to use this option if you are using a non-human genome to avoid searching for chromosomes that don't exist.
 
 ### Plotting
 
-Read a structure into a Cluster object:
+Read a structure:
 
-``cluster = data_tools.clusterFromFile(path)``
-
-Example:
-
-``cluster = data_tools.clusterFromFile("GM12878_combined_22_100kb_structure.tsv")``
+``structure = data_tools.structure_from_file("GM12878_combined_22_100kb_structure.tsv")``
 
 Create an interactive 3D plot in Mayavi. (Mayavi allows you to rotate the image and save a view.)
 
-``plotting.plot_cluster_interactive(cluster, color=(0,0.5,0.7), radius=0.01, enrichments=my_enrichments)``
+``plotting.plot_structure_interactive(structure, color=(0,0.5,0.7), radius=0.01, enrichments=my_enrichments)``
 
 If _radius_ is not selected, the to-scale radius of heterochromatin is used. 
 
 _enrichments_ is a vector with a numerical value for each bin in the structure (i.e. bins that do not have a nan coordinate). For example, this could represent the ChIP-seq enrichments for each bin. This option overrides _color_ and will use a rainbow colormap, with blue representing low values and red representing high values. 
 
-Multiple clusters can be plotted simultaneously:
+Multiple structures can be plotted simultaneously:
 
     chroms = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, X)
-    clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
-    plotting.plot_clusters_interactive(clusters)
+    structures = [data_tools.structure_from_file("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
+    plotting.plot_structures_interactive(structures)
 
-plotting.py has 23 built-in colors designed to be as different to the human eye as possible. By default, these colors are used when plotting multiple clusters. You can also specify a list of colors:
+plotting.py has 23 built-in colors designed to be maximally different to the human eye. By default, these colors are used when plotting multiple structures. You can also specify a list of colors:
 
     chroms = (1, 2)
-    clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
-    plotting.plot_clusters_interactive(clusters, colors=[(1,0,0), (0,0,1)])
+    structures = [data_tools.structure_from_file("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
+    plotting.plot_structures_interactive(structures, colors=[(1,0,0), (0,0,1)])
 
 _all_enrichments_ is a list of enrichments, e.g. 
      
-     plotting.plot_clusters_interactive(clusters, all_enrichments=[enrichments1, enrichments2])
+     plotting.plot_structures_interactive(structures, all_enrichments=[enrichments1, enrichments2])
 
 The radius can also be specified, as above. 
 
 The option _cut_ creates a cross-section of the plot. For example, this is useful for viewing the interior of the nucleus.
 
     chroms = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, X)
-    clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
-    plotting.plot_clusters_interactive(clusters, cut=True)
+    structures = [data_tools.structure_from_file("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
+    plotting.plot_structures_interactive(structures, cut=True)
 
 A plot can be saved as a gif:
 
-``plotting.plot_cluster_gif(cluster, outname, color=(1,0,0), radius=None, increment=10)``
+``plotting.plot_structure_gif(structure, struct, color=(1,0,0), radius=None, increment=10)``
 
-A smaller value of _increment_ will lead to a smoother gif.
+will create struct.gif
 
-Multiple clusters can also be plotted in a single gif:
+A smaller value of _increment_ will lead to a smoother gif. Increments must be a factor of 360. 
 
-``plotting.plot_clusters_gif(clusters, outname, colors=default_colors, radius=None, increment=10)``
+Multiple structures can also be plotted in a single gif:
+
+``plotting.plot_structures_gif(structures, struct, colors=default_colors, radius=None, increment=10)``
