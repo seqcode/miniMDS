@@ -45,7 +45,7 @@ def plot_structure_interactive(structure, enrichments=None, color=(1,0,0), radiu
 	zs = coords[:,2]
 	mlab.figure(bgcolor=(1,1,1))
 	if enrichments:
-		mlab.plot3d(xs, ys, zs, tube_radius=radius, enrichments)
+		mlab.plot3d(xs, ys, zs, enrichments, tube_radius=radius)
 	else:
 		mlab.plot3d(xs, ys, zs, tube_radius=radius, color=color)
 	if out_path:
@@ -90,7 +90,7 @@ def plot_structure_gif(structure, outname, enrichments=None, color=(1,0,0), radi
 		mlab.savefig("{}_{:>03}.png".format(outname, i))
 		
 	mlab.close()
-	os.system("convert -loop 1 {}_*.png {}.gif".format(outname, outname))
+	os.system("convert {}_*.png {}.gif".format(outname, outname))
 	os.system("rm {}_*.png".format(outname))
 
 def calculateRadius(structures):
