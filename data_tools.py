@@ -198,11 +198,10 @@ def chromFromBed(path):
 	return ChromParameters(minPos, maxPos, res, name, i)
 
 def basicParamsFromBed(path):
-	res = None
 	print "Scanning {}".format(path)
 	with open(path) as infile:
 		for i, line in enumerate(infile):
-			if res is None:
+			if i == 0:
 				line = line.strip().split()
 				res = (int(line[2]) - int(line[1]))
 		infile.close()
