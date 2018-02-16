@@ -250,7 +250,7 @@ def highToLow(highstructure, resRatio):
 
 	low_n = int(np.ceil(len(highstructure.points)/float(resRatio)))
 
-	lowstructure = structure(np.zeros(low_n, dtype=np.object), [], lowChrom, highstructure.offset/resRatio)
+	lowstructure = Structure(np.zeros(low_n, dtype=np.object), [], lowChrom, highstructure.offset/resRatio)
 
 	allPointsToMerge = []
 	for i in range(len(lowstructure.points)):
