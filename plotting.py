@@ -98,13 +98,11 @@ def calculateRadius(structures):
 	conversionFactors = np.zeros(len(structures))
 	for j, structure in enumerate(structures):
 		totDist = 0
-		count = 0
 		coords = structure.getCoords()
 		n = len(coords)
 		for i in range(1, n):
 			totDist += la.calcDistance(coords[i-1], coords[i])
-			count += 1
-		avgDist = totDist/count		#average distance between neighboring loci
+		avgDist = totDist/(n-1)		#average distance between neighboring loci
 		physicalDist = kl * (structure.chrom.res/bpPerKL)**(1./2)		#physical distance between neighboring loci (nm)
 		conversionFactors[j] = avgDist/physicalDist
 	conversionFactor = np.mean(conversionFactors)
