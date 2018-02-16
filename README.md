@@ -19,6 +19,7 @@ Requirements:
 ## Testing
 
 2/15/18: Test scripts need to be updated, ignore for now. 
+
 On Linux, please run test.sh (in the scripts directory) and report any issues. (miniMDS is compatible with Mac, but the shell scripts only run on Linux.) 
 
 ## TLDR
@@ -199,9 +200,11 @@ Example:
 
 Create an interactive 3D plot in Mayavi. (Mayavi allows you to rotate the image and save a view.)
 
-``plotting.plot_cluster_interactive(cluster, color=(1,0,0), radius=None)``
+``plotting.plot_cluster_interactive(cluster, color=(0,0.5,0.7), radius=0.01, enrichments=my_enrichments)``
 
-By default, the radius is the to-scale radius of heterochromatin. 
+If _radius_ is not selected, the to-scale radius of heterochromatin is used. 
+
+_enrichments_ is a vector with a numerical value for each bin in the structure (i.e. bins that do not have a nan coordinate). For example, this could represent the ChIP-seq enrichments for each bin. This option overrides _color_ and will use a rainbow colormap, with blue representing low values and red representing high values. 
 
 Multiple clusters can be plotted simultaneously:
 
@@ -214,6 +217,10 @@ plotting.py has 23 built-in colors designed to be as different to the human eye 
     chroms = (1, 2)
     clusters = [data_tools.clusterFromFile("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
     plotting.plot_clusters_interactive(clusters, colors=[(1,0,0), (0,0,1)])
+
+_all_enrichments_ is a list of enrichments, e.g. 
+     
+     plotting.plot_clusters_interactive(clusters, all_enrichments=[enrichments1, enrichments2])
 
 The radius can also be specified, as above. 
 
