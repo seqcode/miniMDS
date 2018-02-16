@@ -80,8 +80,8 @@ class Structure(object):
 					self.points[point.num] = point
 
 	def createSubstructure(self, points, offset):
-		"""Creates substructure containing pointsToAdd"""
-		substructure = structure(points, [], self.chrom, offset)
+		"""Creates substructure containing points"""
+		substructure = Structure(points, [], self.chrom, offset)
 		self.structures.append(substructure)
 
 	def transform(self, r, t):
