@@ -156,7 +156,7 @@ def main():
 
 		structure = partitionedMDS(args.path, params)
 	
-	if args.o is not None:
+	if args.o:
 		structure.write(args.o)
 
 if __name__ == "__main__":

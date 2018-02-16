@@ -90,13 +90,13 @@ miniMDS first infers a global intrachromosomal structure at low resolution, whic
 
 ``python minimds.py -l 20 -o GM12878_combined_22_10kb_structure.tsv GM12878_combined_22_10kb.bed``
 
-The resolution you choose for the low-res file depends on your tradeoff between speed and accuracy. Lower resolutions (i.e. higher ratios) are faster but less accurate. For now, the high resolution must be a factor of the low resolution. For example, a 500-Kb-resolution file can be used to infer a 100-Kb-resolution structure, but a 250-Kb-resolution file cannot. 
+The value you choose depends on your tradeoff between speed and accuracy (but must be an integer). Lower resolutions (i.e. higher ratios) are faster but less accurate.
 
 ##### Controlling the number of partitions
 
 The miniMDS algorithm creates partitions in the high-resolution data and performs MDS on each partition individually. A greater number of partitions can increase speed but also reduce accuracy. On the other hand, for very sparse data a greater number of partitions can actually increase accuracy. If your output appears "clumpy", increase the number of partitions.
 
-The number of partitions cannot be set directly because partitions are created empirically to maximize structureing of the data. However, the degree of structureing of the data can be tweaked with the following parameters:
+The number of partitions cannot be set directly because partitions are created empirically to maximize clustering of the data. However, the degree of clustering of the data can be tweaked with the following parameters:
 
 >-m: minimum partition size (as a fraction of the data). Default = 0.05
 >
@@ -164,13 +164,13 @@ Example:
 
 >GM12878_combined_21_22_100kb.bed
 
-Enter the prefix and resolution of the inter-chromosomal and intra-chromosomal files, respectively:
+Enter the prefix, inter-chromosomal resolution, and intra-chromosomal resolution:
 
-``python minimds_inter.py [inter-chromosomal file prefix] [intra-chromosomal file prefix] [inter-chromosomal resolution] [intra-chromosomal resolution]``
+``python minimds_inter.py [prefix] [inter-chromosomal resolution] [intra-chromosomal resolution]``
 
 For example, if your files are stored in the directory _data_:
 
-``python minimds_inter.py data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
+``python minimds_inter.py data/GM12878_combined 1000000 10000``
 
 Because of the challenges of inter-chromosomal inference, it is recommended that a resolution no greater than 1-Mbp be used for inter-chromosomal data. 
 
@@ -192,15 +192,17 @@ Note: it is often necessary to use this option if you are using a non-human geno
 
 Read a structure:
 
-``structure = data_tools.structure_from_file("GM12878_combined_22_100kb_structure.tsv")``
+    import data_tools
+    structure = data_tools.structure_from_file("GM12878_combined_22_100kb_structure.tsv")``
 
 Create an interactive 3D plot in Mayavi. (Mayavi allows you to rotate the image and save a view.)
 
-``plotting.plot_structure_interactive(structure, color=(0,0.5,0.7), radius=0.01, enrichments=my_enrichments)``
+    import plotting
+    plotting.plot_structure_interactive(structure, color=(0,0.5,0.7), radius=0.01, enrichments=my_enrichments)``
 
 If _radius_ is not selected, the to-scale radius of heterochromatin is used. 
 
-_enrichments_ is a vector with a numerical value for each bin in the structure (i.e. bins that do not have a nan coordinate). For example, this could represent the ChIP-seq enrichments for each bin. This option overrides _color_ and will use a rainbow colormap, with blue representing low values and red representing high values. 
+_enrichments_ is a vector with a numerical value for each bin in the structure (i.e. bins that do not have a nan coordinate). For example, this could represent ChIP-seq enrichments for each bin. This option overrides _color_ and will use a rainbow colormap, with blue representing low values and red representing high values. 
 
 Multiple structures can be plotted simultaneously:
 

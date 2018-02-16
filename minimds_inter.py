@@ -7,7 +7,7 @@ import tools
 import argparse
 import minimds as mm
 
-def get_inter_mat(intra_prefix, inter_prefix, res, structures, offsets):
+def get_inter_mat(prefix, res, structures, offsets):
 	res_string = tools.get_res_string(res)
 
 	names = [structure.chrom.name for structure in structures]
@@ -22,9 +22,9 @@ def get_inter_mat(intra_prefix, inter_prefix, res, structures, offsets):
 	for i in range(n):
 		for j in range(i+1):
 			if i == j:
-				path = "{}_{}_{}.bed".format(intra_prefix, names[i], res_string)
+				path = "{}_{}_{}.bed".format(prefix, names[i], res_string)
 			else:
-				path = "{}_{}_{}_{}.bed".format(inter_prefix, names[j], names[i], res_string)
+				path = "{}_{}_{}_{}.bed".format(prefix, names[j], names[i], res_string)
 			print "Reading {}".format(path)
 			with open(path) as bed:
 				for line in bed:
@@ -33,21 +33,19 @@ def get_inter_mat(intra_prefix, inter_prefix, res, structures, offsets):
 					loc2 = int(line[1])
 					index1 = structures[i].getIndex(loc1)
 					index2 = structures[j].getIndex(loc2)
-					if index1 is not None and index2 is not None:
-						index1 += offsets[i]
-						index2 += offsets[j]
-						row = index1
-						col = index2
+					if index1 and index2:
+						row = index1 + offsets[i]
+						col = index2 + offsets[j]
 						mat[row, col] += float(line[6])
 			bed.close()
 	return mat
 
-def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, full, args):
+def interMDS(names, prefix, inter_res, intra_res, full, args):
 	inter_res_string = tools.get_res_string(inter_res)
 	intra_res_string = tools.get_res_string(intra_res)
 
 	#get low-res structures from intra files
-	low_structures = [dt.structureFromBed("{}_{}_{}.bed".format(intra_prefix, name, inter_res_string), None, None) for name in names]
+	low_structures = [dt.structureFromBed("{}_{}_{}.bed".format(prefix, name, inter_res_string), None, None) for name in names]
 
 	#for correct indexing
 	n = len(names)
@@ -55,7 +53,7 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, full, args
 	for i in range(1, n):
 		offsets[i] = offsets[i-1] + len(low_structures[i-1].getPoints())
 
-	inter_mat = get_inter_mat(intra_prefix, inter_prefix, inter_res, low_structures, offsets)
+	inter_mat = get_inter_mat(prefix, inter_res, low_structures, offsets)
 
 	#perform MDS at low resolution on all chroms
 	mm.infer_structures(inter_mat, low_structures, offsets, args[4])
@@ -65,7 +63,7 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, full, args
 	inferred_low_structures = []
 	ts = []
 	for true_low, name in zip(low_structures, names):
-		path = "{}_{}_{}.bed".format(intra_prefix, name, intra_res_string)
+		path = "{}_{}_{}.bed".format(prefix, name, intra_res_string)
 		if full:
 			high_structure = mm.fullMDS(path, False, args[4])
 		else:
@@ -95,8 +93,7 @@ def interMDS(names, inter_prefix, intra_prefix, inter_res, intra_res, full, args
 
 def main():
 	parser = argparse.ArgumentParser(description="Reconstruct 3D coordinates from normalized interchromosomal Hi-C BED files.")
-	parser.add_argument("inter_prefix", help="prefix of interchromosomal Hi-C BED file")
-	parser.add_argument("intra_prefix", help="prefix of intrachromosomal Hi-C BED file")
+	parser.add_argument("prefix", help="prefix of Hi-C BED files")
 	parser.add_argument("inter_res", type=int, help="resolution of interchromosomal BED files (bp)")
 	parser.add_argument("intra_res", type=int, help="resolution of intrachromosomal BED files (bp)")
 	parser.add_argument("--full", action="store_true", help="use full MDS (default: partitioned MDS)")
@@ -121,9 +118,9 @@ def main():
 	if not tools.args_are_valid(params, names, intervals):
 		sys.exit(0)
 
-	structures = interMDS(chrom_names, args.inter_prefix, args.intra_prefix, args.inter_res, args.intra_res, args.full, params)
+	structures = interMDS(chrom_names, args.prefix, args.inter_res, args.intra_res, args.full, params)
 
-	if args.o is not None:
+	if args.o:
 		for structure in structures:
 			structure.write("{}_{}_{}_structure.tsv".format(args.o, structure.chrom.name, tools.get_res_string(structure.chrom.res)))
 
