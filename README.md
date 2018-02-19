@@ -18,8 +18,6 @@ Requirements:
 
 ## Testing
 
-2/15/18: Test scripts need to be updated, ignore for now. 
-
 On Linux, please run test.sh (in the scripts directory) and report any issues. (miniMDS is compatible with Mac, but the shell scripts only run on Linux.) 
 
 ## TLDR
