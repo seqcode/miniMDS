@@ -55,6 +55,10 @@ class Structure(object):
 	def getPoints(self):
 		return self.points[np.where(self.points !=0)[0]]
 
+	def getGenCoords(self):
+		"""Non-null genomic coordinates of structure"""
+		return [self.chrom.minPos + self.chrom.res * point_num for point_num in self.getPointNums()]
+
 	def getIndex(self, genCoord):
 		"""Converts genomic coordinate into index"""
 		pointNum = self.chrom.getPointNum(genCoord)
@@ -240,6 +244,7 @@ def matFromBed(path, structure):
 
 	at.makeSymmetric(mat)
 	rowsums = np.array([sum(row) for row in mat])
+	point_nums = structure.getPointNums()[np.where(rowsums == 0)[0]]
 	assert len(np.where(rowsums == 0)[0]) == 0
 
 	return mat
