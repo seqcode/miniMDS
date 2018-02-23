@@ -22,7 +22,7 @@ On Linux, please run test.sh (in the scripts directory) and report any issues. (
 
 ## TLDR
 
-``python minimds.py -o [output path] [BED path]``
+``python minimds.py [BED path]``
 
 ## Usage
 
@@ -56,7 +56,7 @@ Full MDS is recommended for low-resolution high-quality (not sparse) files:
 
 ``python minimds.py --full GM12878_combined_22_100kb.bed``
 
-Structures are not saved by default. Use the -o option with the path where you want to save the structure.
+By default structures are saved to [PREFIX]_structure.tsv, e.g. GM12878_combined_22_100kb.bed would output GM12878_combined_22_100kb_structure.tsv. You can use the -o option with a custom path where you want to save the structure.
 
 ``python minimds.py -o GM12878_combined_22_100kb_structure.tsv GM12878_combined_22_100kb.bed``
 
@@ -86,7 +86,7 @@ Example - chr22 at 10-Kbp resolution:
 
 miniMDS first infers a global intrachromosomal structure at low resolution, which it uses as a scaffold for high-resolution inference. By default a resolution ratio of 10 is used. So if your input file is 100-kb resolution, a 1-Mb structure will be used for approximation. The resolution ratio can be changed with the l option. 
 
-``python minimds.py -l 20 -o GM12878_combined_22_10kb_structure.tsv GM12878_combined_22_10kb.bed``
+``python minimds.py -l 20 GM12878_combined_22_10kb.bed``
 
 The value you choose depends on your tradeoff between speed and accuracy (but must be an integer). Lower resolutions (i.e. higher ratios) are faster but less accurate.
 
@@ -102,11 +102,11 @@ The number of partitions cannot be set directly because partitions are created e
 
 Make these parameters smaller to increase the number of partitions. For very high resolution data (such as 5-Kbp), m=0.01 and p=0.01 is recommended:
 
-``python minimds.py -o GM12878_combined_22_5kb_structure.tsv -m 0.01 -p 0.01 GM12878_combined_22_5kb.bed``
+``python minimds.py -m 0.01 -p 0.01 GM12878_combined_22_5kb.bed``
 
 You can limit the maximum RAM (in Kb) used by any given partition using -R (default = 32000):
 
-``python minimds.py -o GM12878_combined_22_5kb_structure.tsv -R 50000 GM12878_combined_22_5kb.bed``
+``python minimds.py -R 50000 GM12878_combined_22_5kb.bed``
 
 ##### Number of threads
 
@@ -114,13 +114,13 @@ miniMDS uses multithreading to achieve greater speed. By default, 3 threads are 
 
 For example, to run miniMDS with four threads:
 
-``python minimds.py -o GM12878_combined_22_10kb_structure.tsv -n 4 GM12878_combined_22_10kb.bed``
+``python minimds.py -n 4 GM12878_combined_22_10kb.bed``
 
 ##### Scaling factor
 
 The scaling factor a describes the assumed relationship between contact frequencies and physical distances: distance = contact_frequency^(-1/a). The default value is 4, based on Wang et al 2016. You can change the scaling factor using -a. 
 
-``python minimds.py -o GM12878_combined_22_10kb_structure.tsv -a 3 GM12878_combined_22_10kb.bed``
+``python minimds.py -a 3 GM12878_combined_22_10kb.bed``
 
 a can be any value >1, including non-integer.
 
