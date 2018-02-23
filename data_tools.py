@@ -138,14 +138,12 @@ def structureFromBed(path, chrom, tads):
 		tadNums = np.zeros(structure.chrom.getLength())
 	else:
 		tadNums = []
-		tadNum = 1
-		for tad in tads:
-			for i in range(tad[0], tad[1]):
-				tadNums.append(tadNum)
-			tadNum += 1
+		for i, tad in enumerate(tads):
+			for j in range(tad[0], tad[1]):
+				tadNums.append(i)
 	maxIndex = len(tadNums) - 1
 
-	points_to_add = np.zeros(structure.chrom.getLength(), dtype=np.bool)	#true if locus should be added
+	points_to_add = np.zeros(structure.chrom.getLength(), dtype=bool)	#true if locus should be added
 	tracker = Tracker("Identifying loci", structure.chrom.size)
 
 	#find which loci should be added
@@ -156,7 +154,7 @@ def structureFromBed(path, chrom, tads):
 			pos2 = int(line[4])
 			pointNum1 = structure.chrom.getPointNum(pos1)
 			pointNum2 = structure.chrom.getPointNum(pos2)
-			if pointNum1 is not None and pointNum2 is not None:
+			if pointNum1 and pointNum2:
 				tadNum1 = tadNums[min(pointNum1, maxIndex)]
 				tadNum2 = tadNums[min(pointNum2, maxIndex)]
 				if pointNum1 != pointNum2 and tadNum1 == tadNum2:		#must be in same TAD
@@ -232,7 +230,7 @@ def matFromBed(path, structure):
 			loc2 = int(line[4])
 			index1 = structure.getIndex(loc1)
 			index2 = structure.getIndex(loc2)
-			if index1 is not None and index2 is not None:
+			if index1 and index2:
 				if index1 > index2:
 					row = index1
 					col = index2
