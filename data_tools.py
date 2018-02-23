@@ -35,10 +35,10 @@ class Structure(object):
 	"""Intrachromosomal structure of points or substructures in 3-D space"""
 	def __init__(self, points, structures, chrom, offset):
 		self.points = points
-		self.structures = structures	#substructures
-		for structure in self.structures:	#auto-fill
-			for point in structure.points:
-				self.points.append(point)	
+		if len(structures) == 0 or structures is None:
+			self.structures = []
+		else:
+			self.setstructures(structures)
 		self.chrom = chrom	#chromosome parameters
 		self.offset = offset	#indexing offset (for substructures only)
 
@@ -82,10 +82,12 @@ class Structure(object):
 			for point in structure.points:
 				if point != 0:
 					self.points[point.num] = point
+		self.indexPoints()
 
 	def createSubstructure(self, points, offset):
 		"""Creates substructure containing points"""
 		substructure = Structure(points, [], self.chrom, offset)
+		substructure.indexPoints()
 		self.structures.append(substructure)
 
 	def transform(self, r, t):
@@ -113,6 +115,10 @@ class Structure(object):
 					out.write("\t".join((str(num), str(point.pos[0]), str(point.pos[1]), str(point.pos[2]))) + "\n")
 				num += 1
 		out.close()
+
+	def indexPoints(self):
+		for i, point_num in enumerate(self.getPointNums()):
+			self.points[point_num - self.offset].index = i
 
 class Point(object):
 	"""Point in 3-D space"""
@@ -156,8 +162,6 @@ def structureFromBed(path, chrom, tads):
 				if pointNum1 != pointNum2 and tadNum1 == tadNum2:		#must be in same TAD
 					points_to_add[pointNum1] = True
 					points_to_add[pointNum2] = True
-				if pointNum1 == 0 or pointNum2 == 0:
-					print "test"
 			tracker.increment()
 		listFile.close()
 
