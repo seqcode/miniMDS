@@ -87,10 +87,13 @@ def getDomains(contactMat, structure, sizeParameter, minSizeFraction):
 	smoothed = smoothWithMovingAverage(scores, smoothingFactor)
 	return domainsFromScores(smoothed, minSizeFraction)
 
-def smoothWithMovingAverage(signal, size_of_window):
+def movingAverage(signal, size_of_window):
 	"""Modified from http://beauty-of-imagination.blogspot.fr/2012/09/fun-with-signal-processing-and.html"""
 	window = np.ones(size_of_window)
-	smoothed = np.roll(np.convolve(window/size_of_window, signal, "valid" ), size_of_window/2)
+	return np.roll(np.convolve(window/size_of_window, signal, "valid" ), size_of_window/2)
+
+def smoothWithMovingAverage(signal, size_of_window):
+	smoothed = movingAverage(signal, size_of_window)
 	signal_size = len(signal)
 	remainder = signal[signal_size - size_of_window + 1 : signal_size]	#end of signal, which can't be smoothed
 	smoothed_remainder = np.zeros_like(remainder)
