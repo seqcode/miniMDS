@@ -22,7 +22,7 @@ On Linux, please run test.sh (in the scripts directory) and report any issues. (
 
 ## TLDR
 
-``python minimds.py [BED path]``
+``python minimds.py [Hi-C BED path]``
 
 ## Usage
 
