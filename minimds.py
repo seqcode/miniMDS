@@ -119,7 +119,7 @@ def partitionedMDS(path, args):
 	
 			#recover the transformation for inferred from true low structure
 			r, t = la.getTransformation(inferredLow, trueLow)
-			t *= res_ratio**(2./3)	#rescale
+			t /= scaling_factor
 
 			#transform high structure
 			highSubstructure.transform(r, t)
@@ -159,6 +159,9 @@ def main():
 	
 	if args.o:
 		structure.write(args.o)
+	else:
+		prefix = args.path.split(".")[0]
+		structure.write(prefix + "_structure.tsv")
 
 if __name__ == "__main__":
 	main()
