@@ -226,7 +226,7 @@ def matFromBed(path, structure):
 			loc2 = int(line[4])
 			index1 = structure.getIndex(loc1)
 			index2 = structure.getIndex(loc2)
-			if index1 and index2:
+			if index1 is not None and index2 is not None:
 				if index1 > index2:
 					row = index1
 					col = index2
