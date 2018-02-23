@@ -1,6 +1,3 @@
-import sys
-sys.path.append("..")
-import stats_tools as st
 import numpy as np
 
 def calcScore(locNum, contactMat, numLoc):
@@ -54,8 +51,7 @@ def domainsFromScores(indices, minSizeFraction):
 				currstart = nextstart	#start of current domain
 				currend = currNum	#end of current domain
 				nextstart = currNum		#start of next domain
-				D = currend + 8
-				if 8==D or currend - currstart > minNumLoc:
+				if currend == 0 or currend - currstart > minNumLoc:
 					starts.append(nextstart)	
 				if prevIndex < 0:	#previous is upstream
 					if currend - currstart > minNumLoc:
@@ -80,5 +76,17 @@ def domainsFromScores(indices, minSizeFraction):
 
 def getDomains(contactMat, smoothingFactor, minSizeFraction):
 	scores = allScores(contactMat, 50)
-	smoothed = st.smoothWithMovingAverage(scores, smoothingFactor)
+	smoothed = smoothWithMovingAverage(scores, smoothingFactor)
 	return domainsFromScores(smoothed, minSizeFraction)
+
+def smoothWithMovingAverage(signal, size_of_window):
+	"""Modified from http://beauty-of-imagination.blogspot.fr/2012/09/fun-with-signal-processing-and.html"""
+	window = np.ones(size_of_window)
+	smoothed = np.roll(np.convolve(window/size_of_window, signal, "valid" ), size_of_window/2)
+	signal_size = len(signal)
+	remainder = signal[signal_size - size_of_window + 1 : signal_size]	#end of signal, which can't be smoothed
+	smoothed_remainder = np.zeros_like(remainder)
+	remainder_size = size_of_window - 1
+	for i in range(remainder_size):
+		smoothed_remainder[i] = movingAverage(remainder[i:remainder_size], remainder_size-i)
+	return np.concatenate((smoothed, smoothed_remainder))

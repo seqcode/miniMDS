@@ -2,14 +2,13 @@ import sys
 import numpy as np
 from sklearn import manifold
 import argparse
+import pymp
+import multiprocessing as mp
 import data_tools as dt
 import array_tools as at
 import tad
 import linear_algebra as la
 import tools
-import stats_tools as st
-import pymp
-import multiprocessing as mp
 
 def infer_structures(contactMat, structures, offsets, alpha, classical=False):
 	"""Infers 3D coordinates for multiple structures with same contact matrix"""
@@ -23,14 +22,15 @@ def infer_structures(contactMat, structures, offsets, alpha, classical=False):
 	at.makeSymmetric(distMat)
 
 	if classical:	#classical MDS
-		coords = st.cmds(distMat)
+		coords = la.cmds(distMat)
 	else:
 		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1)
 		coords = mds.fit_transform(distMat)
 
 	for offset, structure in zip(offsets, structures):
-		for i in range(len(structure.getPoints())):	
-			structure.getPoints()[i].pos = coords[i + offset]
+		points = structure.getPoints()
+		for i in range(len(points)):	
+			points[i].pos = coords[i + offset]
 
 def infer_structure(contactMat, structure, alpha, classical=False):
 	"""Infers 3D coordinates for one structure"""
@@ -44,13 +44,14 @@ def infer_structure(contactMat, structure, alpha, classical=False):
 	at.makeSymmetric(distMat)
 
 	if classical:	#classical MDS
-		coords = st.cmds(distMat)
+		coords = la.cmds(distMat)
 	else:
 		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1)
 		coords = mds.fit_transform(distMat)
 
-	for i in range(len(structure.getPoints())):	
-		structure.getPoints()[i].pos = coords[i]
+	points = structure.getPoints()
+	for i in range(len(points)):	
+		points[i].pos = coords[i]
 
 def fullMDS(path, classical, alpha):
 	"""MDS without partitioning"""
@@ -104,7 +105,7 @@ def partitionedMDS(path, args):
 
 			#perform MDS individually
 			structure_contactMat = dt.matFromBed(path, highSubstructure)	#contact matrix for this structure only
-			infer_structure(structure_contactMat, highSubstructure, 2)
+			infer_structure(structure_contactMat, highSubstructure, 2.5)
 
 			#approximate as low resolution
 			inferredLow = dt.highToLow(highSubstructure, res_ratio)

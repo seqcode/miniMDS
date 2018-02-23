@@ -1,4 +1,3 @@
-import stats_tools as st
 import numpy as np
 
 def calcScore(pointNum, points, contactMat, numPoints):
@@ -85,8 +84,20 @@ def getDomains(contactMat, structure, sizeParameter, minSizeFraction):
 	"""Identify TADs in contact matrix"""
 	scores = allScores(contactMat, structure, 50)	#50 is from Dixon 2012 supplemental
 	smoothingFactor = max((int(len(contactMat)*sizeParameter), 1))	#must be >= 1
-	smoothed = st.smoothWithMovingAverage(scores, smoothingFactor)
+	smoothed = smoothWithMovingAverage(scores, smoothingFactor)
 	return domainsFromScores(smoothed, minSizeFraction)
+
+def smoothWithMovingAverage(signal, size_of_window):
+	"""Modified from http://beauty-of-imagination.blogspot.fr/2012/09/fun-with-signal-processing-and.html"""
+	window = np.ones(size_of_window)
+	smoothed = np.roll(np.convolve(window/size_of_window, signal, "valid" ), size_of_window/2)
+	signal_size = len(signal)
+	remainder = signal[signal_size - size_of_window + 1 : signal_size]	#end of signal, which can't be smoothed
+	smoothed_remainder = np.zeros_like(remainder)
+	remainder_size = size_of_window - 1
+	for i in range(remainder_size):
+		smoothed_remainder[i] = movingAverage(remainder[i:remainder_size], remainder_size-i)
+	return np.concatenate((smoothed, smoothed_remainder))
 
 def substructuresFromTads(high_structure, low_structure, low_tads):
 	"""Create compatible substructures from TADs in high-res structure and low-res structure"""

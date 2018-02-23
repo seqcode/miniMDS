@@ -44,3 +44,24 @@ def radius_of_gyration(structure):
 	centroid = np.mean(coords, axis=0)
 	dist_sum = sum([calcDistance(coord, centroid) for coord in coords])
 	return dist_sum/len(coords)
+
+def cmds(distMat):
+	"""Modified from http://www.nervouscomputer.com/hfs/cmdscale-in-python/"""
+	# Number of points                                                                        
+	n = len(distMat)
+
+	# Centering matrix                                                                        
+	h = np.eye(n) - np.ones((n, n))/n
+
+	# YY^T                                                                                    
+	b = -h.dot(distMat**2).dot(h)/2
+
+	# Diagonalize                                                                             
+	evals, evecs = np.linalg.eigh(b)
+
+	# Sort by eigenvalue in descending order                                                  
+	idx = np.argsort(evals)[::-1]
+	evals = evals[idx]
+	evecs = evecs[:,idx]
+
+	return np.array([evecs[:,0]*evals[0]**(1./2), evecs[:,1]*evals[1]**(1./2), evecs[:,2]*evals[2]**(1./2)]).T
