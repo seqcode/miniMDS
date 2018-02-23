@@ -150,12 +150,14 @@ def structureFromBed(path, chrom, tads):
 			pos2 = int(line[4])
 			pointNum1 = structure.chrom.getPointNum(pos1)
 			pointNum2 = structure.chrom.getPointNum(pos2)
-			if pointNum1 and pointNum2:
+			if pointNum1 is not None and pointNum2 is not None:
 				tadNum1 = tadNums[min(pointNum1, maxIndex)]
 				tadNum2 = tadNums[min(pointNum2, maxIndex)]
 				if pointNum1 != pointNum2 and tadNum1 == tadNum2:		#must be in same TAD
 					points_to_add[pointNum1] = True
 					points_to_add[pointNum2] = True
+				if pointNum1 == 0 or pointNum2 == 0:
+					print "test"
 			tracker.increment()
 		listFile.close()
 
