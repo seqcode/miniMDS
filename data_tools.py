@@ -114,10 +114,6 @@ class Structure(object):
 				num += 1
 		out.close()
 
-	def indexPoints(self):
-		for i, point in enumerate(self.getPoints()):
-			point.index = i
-
 class Point(object):
 	"""Point in 3-D space"""
 	def __init__(self, pos, num, chrom, index):
@@ -166,10 +162,9 @@ def structureFromBed(path, chrom, tads):
 	#create points
 	points = np.zeros(structure.chrom.getLength(), dtype=np.object)
 	pointNums = np.where(points_to_add == True)[0]
-	for pointNum in pointNums:
-		points[pointNum] = Point((0,0,0), pointNum, structure.chrom, None)
+	for i, pointNum in enumerate(pointNums):
+		points[pointNum] = Point((0,0,0), pointNum, structure.chrom, i)
 	structure.points = points
-	structure.indexPoints()
 	
 	return structure
 
@@ -214,7 +209,6 @@ def matFromBed(path, structure):
 	if structure is None:
 		structure = structureFromBed(path, None, None)
 
-	structure.indexPoints()
 	pointNums = structure.getPointNums()
 
 	numpoints = len(pointNums)
