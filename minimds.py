@@ -160,7 +160,7 @@ def main():
 	if args.o:
 		structure.write(args.o)
 	else:
-		prefix = args.path.split(".")[0]
+		prefix = args.path.split(".bed")[0]
 		structure.write(prefix + "_structure.tsv")
 
 if __name__ == "__main__":
