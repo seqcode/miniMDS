@@ -128,7 +128,7 @@ class Point(object):
 		self.chrom = chrom	#chromosome parameters
 		self.index = index	#sequential
 
-def structureFromBed(path, chrom, tads):
+def structureFromBed(path, chrom=None, tads=None):
 	"""Initializes structure from intrachromosomal BED file."""
 	if chrom is None:
 		chrom = chromFromBed(path)
