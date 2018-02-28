@@ -210,7 +210,7 @@ def basicParamsFromBed(path):
 		infile.close()
 	return i, res
 
-def matFromBed(path, structure):	
+def matFromBed(path, structure=None):	
 	"""Converts BED file to matrix. Only includes loci in structure."""
 	if structure is None:
 		structure = structureFromBed(path, None, None)
