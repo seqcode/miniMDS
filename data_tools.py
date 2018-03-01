@@ -156,7 +156,7 @@ def structureFromBed(path, chrom=None, tads=None):
 			pos2 = int(line[4])
 			pointNum1 = structure.chrom.getPointNum(pos1)
 			pointNum2 = structure.chrom.getPointNum(pos2)
-			if pointNum1 is not None and pointNum2 is not None:
+			if pointNum1 and pointNum2:
 				tadNum1 = tadNums[min(pointNum1, maxIndex)]
 				tadNum2 = tadNums[min(pointNum2, maxIndex)]
 				if pointNum1 != pointNum2 and tadNum1 == tadNum2:		#must be in same TAD
@@ -196,7 +196,7 @@ def chromFromBed(path):
 				name = line[0]
 				res = (int(line[2]) - pos1)	
 		infile.close()
-	minPos = int(np.ceil(float(minPos)/res)) * res	#round
+	minPos = int(np.floor(float(minPos)/res)) * res	#round
 	maxPos = int(np.ceil(float(maxPos)/res)) * res
 	return ChromParameters(minPos, maxPos, res, name, i)
 
@@ -230,7 +230,7 @@ def matFromBed(path, structure=None):
 			loc2 = int(line[4])
 			index1 = structure.getIndex(loc1)
 			index2 = structure.getIndex(loc2)
-			if index1 is not None and index2 is not None:
+			if index1 and index2:
 				if index1 > index2:
 					row = index1
 					col = index2
@@ -242,7 +242,6 @@ def matFromBed(path, structure=None):
 
 	at.makeSymmetric(mat)
 	rowsums = np.array([sum(row) for row in mat])
-	point_nums = structure.getPointNums()[np.where(rowsums == 0)[0]]
 	assert len(np.where(rowsums == 0)[0]) == 0
 
 	return mat
