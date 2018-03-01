@@ -170,7 +170,7 @@ For example, if your files are stored in the directory _data_:
 
 ``python minimds_inter.py data/GM12878_combined 1000000 10000``
 
-Because of the challenges of inter-chromosomal inference, it is recommended that a resolution no greater than 1-Mbp be used for inter-chromosomal data. 
+Because of the challenges of inter-chromosomal inference, it is recommended that a resolution no greater than 1-Mbp be used for human inter-chromosomal data. 
 
 #### Other parameters (optional)
 
@@ -178,13 +178,15 @@ All of the parameters from minimds.py are also available for minimds_inter.py
 
 ###### Specifying chromosomes
 
-By default, minimds_inter.py uses all human chromosomes other than Y. You can specify chromosomes (in order) using the option -c.
+By default, minimds_inter.py uses all human chromosomes other than Y. You can specify any number of chromosomes (in order) using the option -c.
 
-To perform interchromosomal analysis on chromosomes 1 and 8:
+To perform interchromosomal analysis on chromosomes 1 and 2:
 
-``python minimds_inter.py -c 1 8 data/GM12878_combined_interchromosomal data/GM12878_combined_intrachromosomal 1000000 10000``
+``python minimds_inter.py -c 1 -c 2 data/GM12878_combined 1000000 10000``
 
-Note: it is often necessary to use this option if you are using a non-human genome to avoid searching for chromosomes that don't exist.
+You can specify a different number of autosomes using -C. To perform interchromosomal analysis on all yeast autosomes:
+
+``python minimds_inter.py -C 16 my_yeast_dir 100000 10000``
 
 ### Plotting
 
