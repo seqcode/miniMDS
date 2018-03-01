@@ -36,7 +36,7 @@ def createHeatmap(mat, domains, outpath, colors=None):
 	# rotate the ticks
 	plt.xticks(rotation=90)
 
-	#ax.grid(False)
+	ax.grid(False)
 
 	# Turn off all the ticks
 	ax = plt.gca()
@@ -67,7 +67,7 @@ def createHeatmap(mat, domains, outpath, colors=None):
 	else:
 		plt.show()
 
-def heatMapFromMat(mat, maxvalue, tads, outpath, colors=None):
+def heatMapFromMat(mat, maxvalue=None, tads=None, outpath=None, colors=None):
 	at.makeSymmetric(mat)
 	if maxvalue is not None:
 		threshold(mat, maxvalue)
