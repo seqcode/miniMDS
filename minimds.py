@@ -24,8 +24,7 @@ def infer_structure(contactMat, structure, alpha, classical=False):
 	if classical:	#classical MDS
 		coords = la.cmds(distMat)
 	else:
-		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1)
-		coords = mds.fit_transform(distMat)
+		coords = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1).fit_transform(distMat)
 
 	structure.setCoords(coords)
 
