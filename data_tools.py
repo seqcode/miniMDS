@@ -47,13 +47,13 @@ class Structure(object):
 
 	def setCoords(self, coords):
 		for coord, point_num in zip(coords, self.getPointNums()):
-			self.points[point_num].pos = coord
+			self.points[point_num - self.offset].pos = coord
 
 	def getPointNums(self):
 		return np.array([point.num for point in self.getPoints()])
 
 	def getPoints(self):
-		return self.points[np.where(self.points !=0)[0]]
+		return self.points[np.where(self.points != 0)[0]]
 
 	def getGenCoords(self):
 		"""Non-null genomic coordinates of structure"""
