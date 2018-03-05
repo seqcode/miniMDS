@@ -6,6 +6,27 @@ from sklearn import manifold
 import tools
 import argparse
 import minimds as mm
+import array_tools as at
+
+def infer_structures(contactMat, structures, offsets, alpha, classical=False):
+	"""Infers 3D coordinates for multiple structures with same contact matrix"""
+	assert sum([len(structure.getPointNums()) for structure in structures]) == len(contactMat)
+
+	at.makeSymmetric(contactMat)
+	rowsums = np.array([sum(row) for row in contactMat])
+	assert len(np.where(rowsums == 0)[0]) == 0 
+
+	distMat = at.contactToDist(contactMat, alpha)
+	at.makeSymmetric(distMat)
+
+	if classical:	#classical MDS
+		coords = la.cmds(distMat)
+	else:
+		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1)
+		coords = mds.fit_transform(distMat)
+
+	for offset, structure in zip(offsets, structures):
+		structure.setCoords(coords[offset:offset+len(structure.getPoints())])
 
 def get_inter_mat(prefix, inter_res_string, intra_res_string, structures, offsets):
 	names = [structure.chrom.name for structure in structures]
@@ -61,7 +82,7 @@ def interMDS(names, prefix, inter_res, intra_res, full, args):
 	inter_mat = get_inter_mat(prefix, inter_res_string, intra_res_string, low_structures, offsets)
 
 	#perform MDS at low resolution on all chroms
-	mm.infer_structures(inter_mat, low_structures, offsets, args[4])
+	infer_structures(inter_mat, low_structures, offsets, args[4])
 
 	#perform MDS at high resolution on each chrom
 	high_structures = []

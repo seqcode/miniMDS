@@ -10,28 +10,6 @@ import tad
 import linear_algebra as la
 import tools
 
-def infer_structures(contactMat, structures, offsets, alpha, classical=False):
-	"""Infers 3D coordinates for multiple structures with same contact matrix"""
-	assert sum([len(structure.getPointNums()) for structure in structures]) == len(contactMat)
-
-	at.makeSymmetric(contactMat)
-	rowsums = np.array([sum(row) for row in contactMat])
-	assert len(np.where(rowsums == 0)[0]) == 0 
-
-	distMat = at.contactToDist(contactMat, alpha)
-	at.makeSymmetric(distMat)
-
-	if classical:	#classical MDS
-		coords = la.cmds(distMat)
-	else:
-		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1)
-		coords = mds.fit_transform(distMat)
-
-	for offset, structure in zip(offsets, structures):
-		points = structure.getPoints()
-		for i in range(len(points)):	
-			points[i].pos = coords[i + offset]
-
 def infer_structure(contactMat, structure, alpha, classical=False):
 	"""Infers 3D coordinates for one structure"""
 	assert len(structure.getPointNums()) == len(contactMat)
@@ -49,9 +27,7 @@ def infer_structure(contactMat, structure, alpha, classical=False):
 		mds = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1)
 		coords = mds.fit_transform(distMat)
 
-	points = structure.getPoints()
-	for i in range(len(points)):	
-		points[i].pos = coords[i]
+	structure.setCoords(coords)
 
 def fullMDS(path, classical, alpha):
 	"""MDS without partitioning"""
@@ -116,7 +92,7 @@ def partitionedMDS(path, args):
 				if point != 0:
 					x, y, z = point.pos
 					inferredLow.points[i].pos = (x*scaling_factor, y*scaling_factor, z*scaling_factor)
-	
+
 			#recover the transformation for inferred from true low structure
 			r, t = la.getTransformation(inferredLow, trueLow)
 			t /= scaling_factor
