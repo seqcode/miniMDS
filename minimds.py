@@ -30,7 +30,7 @@ def infer_structure(contactMat, structure, alpha, classical=False):
 
 def fullMDS(path, classical, alpha):
 	"""MDS without partitioning"""
-	structure = dt.structureFromBed(path, None, None)
+	structure = dt.structureFromBed(path)
 	contactMat = dt.matFromBed(path, structure)
 	infer_structure(contactMat, structure, alpha, classical)
 	return structure
@@ -47,7 +47,7 @@ def partitionedMDS(path, args):
 	#create low-res structure
 	low_chrom = dt.chromFromBed(path)
 	low_chrom.res *= res_ratio
-	lowstructure = dt.structureFromBed(path, low_chrom, None)
+	lowstructure = dt.structureFromBed(path, low_chrom)
 
 	#get TADs
 	low_contactMat = dt.matFromBed(path, lowstructure)

@@ -70,7 +70,7 @@ def interMDS(names, prefix, inter_res, intra_res, full, args):
 		chrom.res = inter_res
 		chrom.minPos = int(np.floor(float(chrom.minPos)/chrom.res)) * chrom.res	#round
 		chrom.maxPos = int(np.ceil(float(chrom.maxPos)/chrom.res)) * chrom.res
-		low_structures.append(dt.structureFromBed(path, chrom, None))
+		low_structures.append(dt.structureFromBed(path, chrom))
 
 	#for correct indexing
 	n = len(names)
