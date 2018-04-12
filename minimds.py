@@ -10,7 +10,7 @@ import tad
 import linear_algebra as la
 import tools
 
-def infer_structure(contactMat, structure, alpha, classical=False):
+def infer_structure(contactMat, structure, alpha, num_threads, classical=False):
 	"""Infers 3D coordinates for one structure"""
 	assert len(structure.getPointNums()) == len(contactMat)
 
@@ -24,15 +24,15 @@ def infer_structure(contactMat, structure, alpha, classical=False):
 	if classical:	#classical MDS
 		coords = la.cmds(distMat)
 	else:
-		coords = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=-1).fit_transform(distMat)
+		coords = manifold.MDS(n_components=3, metric=True, random_state=np.random.RandomState(), verbose=0, dissimilarity="precomputed", n_jobs=num_threads).fit_transform(distMat)
 
 	structure.setCoords(coords)
 
-def fullMDS(path, classical, alpha):
+def fullMDS(path, classical, alpha, num_threads,):
 	"""MDS without partitioning"""
 	structure = dt.structureFromBed(path)
 	contactMat = dt.matFromBed(path, structure)
-	infer_structure(contactMat, structure, alpha, classical)
+	infer_structure(contactMat, structure, alpha, num_threads, classical)
 	return structure
 	
 def partitionedMDS(path, args):
@@ -65,7 +65,7 @@ def partitionedMDS(path, args):
 	#create compatible substructures
 	tad.substructuresFromTads(highstructure, lowstructure, lowTads)
 
-	infer_structure(low_contactMat, lowstructure, alpha)
+	infer_structure(low_contactMat, lowstructure, alpha, num_threads)
 	print "Low-resolution MDS complete"
 
 	highSubstructures = pymp.shared.list(highstructure.structures)
@@ -80,7 +80,7 @@ def partitionedMDS(path, args):
 
 			#perform MDS individually
 			structure_contactMat = dt.matFromBed(path, highSubstructure)	#contact matrix for this structure only
-			infer_structure(structure_contactMat, highSubstructure, 2.5)
+			infer_structure(structure_contactMat, highSubstructure, 2.5, num_threads)
 
 			#approximate as low resolution
 			inferredLow = dt.highToLow(highSubstructure, res_ratio)
@@ -121,7 +121,7 @@ def main():
 	args = parser.parse_args()
 
 	if args.full:	#not partitioned
-		structure = fullMDS(args.path, args.classical, args.a)
+		structure = fullMDS(args.path, args.classical, args.a, args.n)
 
 	else:	#partitioned
 		params = (args.p, args.m, args.r, args.n, args.a, args.l)
