@@ -338,3 +338,10 @@ def make_compatible(structures):
 			new_points[new_point_num] = Point(pos, new_point_num, new_chrom, i)
 		structure.points = new_points
 		structure.chrom = new_chrom
+
+def normalized_dist_mat(path, structure):
+	"""Standard processing for creating distance matrix"""
+	contacts = matFromBed(path, structure)
+	dists = at.contactToDist(contacts, 4)
+	at.makeSymmetric(dists)
+	return dists/np.mean(dists)	#normalize
