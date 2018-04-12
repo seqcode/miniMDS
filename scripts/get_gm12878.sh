@@ -4,10 +4,7 @@ RES=$1
 CHROM=$2
 RES_KB=$(($RES/1000))
 
-if [ ! -e hic_data ]
-	then
-		mkdir hic_data
-fi
+mkdir -p hic_data
 
 cd hic_data
 
@@ -30,26 +27,26 @@ if [ $CHROM -eq 0 ]
 	then
 		for CHROM in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X
 		do
-			DIR=$RES_STRING"_resolution_intrachromosomal/chr"$CHROM
-			if [ ! -e "GM12878_combined/"$DIR ]
+			DIR=$RES_STRING"_resolution_intrachromosomal"/chr$CHROM
+			if [ ! -e GM12878_combined/$DIR ]
 				then
-					tar xzf GSE63525_GM12878_combined_intrachromosomal_contact_matrices.tar.gz "GM12878_combined/"$DIR
+					tar xzf GSE63525_GM12878_combined_intrachromosomal_contact_matrices.tar.gz GM12878_combined/$DIR
 			fi
 
-			if [ ! -e "GM12878_combined_"$CHROM"_"$RES_KB"kb.bed" ]
+			if [ ! -e "GM12878_combined_"$CHROM"_"$RES_KB$RES_STRING.bed ]
 				then
 	  				python ../normalize.py GM12878_combined $RES $CHROM
 			fi
 		done
 
 else
-	DIR=$RES_STRING"_resolution_intrachromosomal/chr"$CHROM
-	if [ ! -e "GM12878_combined/"$DIR ]
+	DIR=$RES_STRING"_resolution_intrachromosomal"/chr$CHROM
+	if [ ! -e GM12878_combined/$DIR ]
 		then
-			tar xzf GSE63525_GM12878_combined_intrachromosomal_contact_matrices.tar.gz "GM12878_combined/"$DIR
+			tar xzf GSE63525_GM12878_combined_intrachromosomal_contact_matrices.tar.gz GM12878_combined/$DIR
 	fi
 
-	if [ ! -e "GM12878_combined_"$CHROM"_"$RES_KB"kb.bed" ]
+	if [ ! -e GM12878_combined_$CHROM"_"$RES_KB$RES_STRING.bed ]
 		then
 	  		python ../normalize.py GM12878_combined $RES $CHROM
 	fi
