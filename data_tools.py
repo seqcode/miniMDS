@@ -120,6 +120,14 @@ class Structure(object):
 		for i, point_num in enumerate(self.getPointNums()):
 			self.points[point_num - self.offset].index = i
 
+	def rescale(self):
+		"""Rescale radius of gyration of structure to 1"""
+		rg = la.radius_of_gyration(self)
+		for i, point in enumerate(self.points):
+			if point != 0:
+				x, y, z = point.pos
+				self.points[i].pos = (x/rg, y/rg, z/rg)
+
 class Point(object):
 	"""Point in 3-D space"""
 	def __init__(self, pos, num, chrom, index):
@@ -267,16 +275,11 @@ def highToLow(highstructure, resRatio):
 	index = lowstructure.offset
 	for i, pointsToMerge in enumerate(allPointsToMerge):
 		if len(pointsToMerge) > 0:
-			lowstructure.points[i] = mergePoints(pointsToMerge, i + lowstructure.offset, lowChrom, index)
+			meanCoord = np.mean(np.array([point.pos for point in pointsToMerge]), axis=0)
+			lowstructure.points[i] = Point(meanCoord, newPointNum, chrom, index)
 			index += 1
 
 	return lowstructure
-
-def mergePoints(pointsToMerge, newPointNum, chrom, index):
-	"""Creates new point with average position of pointsToMerge"""
-	coords = np.array([point.pos for point in pointsToMerge])
-	meanCoord = np.mean(coords, axis=0)
-	return Point(meanCoord, newPointNum, chrom, index)
 
 def structure_from_file(path):
 	hasMore = True
@@ -306,3 +309,32 @@ def structure_from_file(path):
 	structure.points = np.array(structure.points)
 	structure.chrom.maxPos = structure.chrom.minPos + structure.chrom.res*num	#max pos is last point num
 	return structure
+
+def make_compatible(structures):
+	"""Enforce that points be shared by all structures"""
+	gen_coord_dict = {}
+	for i, structure in enumerate(structures):
+		for gen_coord in structure.getGenCoords():
+			if gen_coord in gen_coord_dict:
+				gen_coord_dict[gen_coord] += 1
+			else:
+				gen_coord_dict[gen_coord] = 1
+	
+	consensus = []
+	n = len(structures)
+	for gen_coord in gen_coord_dict.keys():
+		if gen_coord_dict[gen_coord] == n:
+			consensus.append(gen_coord)
+
+	consensus = np.sort(consensus)
+	
+	for structure in structures:
+		new_chrom = ChromParameters(consensus[0], consensus[-1] + structure.chrom.res, structure.chrom.res, structure.chrom.name, structure.chrom.size)
+		new_points = np.zeros(new_chrom.getLength(), dtype=object)
+		for i, gen_coord in enumerate(consensus):
+			old_point_num = structure.chrom.getPointNum(gen_coord)
+			new_point_num = new_chrom.getPointNum(gen_coord)
+			pos = structure.points[old_point_num].pos
+			new_points[new_point_num] = Point(pos, new_point_num, new_chrom, i)
+		structure.points = new_points
+		structure.chrom = new_chrom
