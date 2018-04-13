@@ -76,7 +76,7 @@ def change_coordinate_system(n, coords):
 	k_hat = [0,0,1]		#z-axis
 	theta = np.arccos(np.dot(k_hat, n_hat))
 	b = np.cross(k_hat, n_hat)
-	len_b = la.calcDistance(b, origin)
+	len_b = calcDistance(b, origin)
 	b_hat = b/len_b
 
 	q0 = np.cos(theta/2)
