@@ -276,7 +276,7 @@ def highToLow(highstructure, resRatio):
 	for i, pointsToMerge in enumerate(allPointsToMerge):
 		if len(pointsToMerge) > 0:
 			meanCoord = np.mean(np.array([point.pos for point in pointsToMerge]), axis=0)
-			lowstructure.points[i] = Point(meanCoord, newPointNum, chrom, index)
+			lowstructure.points[i] = Point(meanCoord, i + lowstructure.offset, lowChrom, index)
 			index += 1
 
 	return lowstructure
