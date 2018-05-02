@@ -90,7 +90,7 @@ def interMDS(names, prefix, inter_res, intra_res, full, args):
 	for true_low, name in zip(low_structures, names):
 		path = "{}_{}_{}.bed".format(prefix, name, intra_res_string)
 		if full:
-			high_structure = mm.fullMDS(path, False, args[4])
+			high_structure = mm.fullMDS(path, False, args[4], args[3])
 		else:
 			high_structure = mm.partitionedMDS(path, args)
 		high_structures.append(high_structure)
