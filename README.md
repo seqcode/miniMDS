@@ -16,13 +16,13 @@ Requirements:
     * [mayavi](http://docs.enthought.com/mayavi/mayavi/) (for plotting)
     * [ImageMagick](https://www.imagemagick.org/script/index.php) (for creating gifs)
 
-## Testing
-
-On Linux, please run test.sh (in the scripts directory) and report any issues. (miniMDS is compatible with Mac, but the shell scripts only run on Linux.) 
-
 ## TLDR
 
 ``python minimds.py [Hi-C BED path]``
+
+## Testing
+
+On Linux, please run test.sh (in the scripts directory) and report any issues. (miniMDS is compatible with Mac, but the shell scripts only run on Linux.) 
 
 ## Usage
 
