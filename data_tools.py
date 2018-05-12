@@ -22,6 +22,9 @@ class ChromParameters(object):
 		if genCoord < self.minPos or genCoord > self.maxPos:
 			return None
 		else:
+			#print genCoord
+			#print self.minPos
+			#print int((genCoord - self.minPos)/self.res)
 			return int((genCoord - self.minPos)/self.res) 
 
 	def reduceRes(self, resRatio):
@@ -82,7 +85,7 @@ class Structure(object):
 			for point in structure.points:
 				if point != 0:
 					self.points[point.num] = point
-		self.indexPoints()
+		#self.indexPoints()
 
 	def createSubstructure(self, points, offset):
 		"""Creates substructure containing points"""
@@ -136,49 +139,52 @@ class Point(object):
 		self.chrom = chrom	#chromosome parameters
 		self.index = index	#sequential
 
-def structureFromBed(path, chrom=None, tads=None):
+def structureFromBed(path, chrom=None, start=None, end=None, offset=0, tads=None):
 	"""Initializes structure from intrachromosomal BED file."""
 	if chrom is None:
 		chrom = chromFromBed(path)
 
-	structure = Structure([], [], chrom, 0)
+	if start is None:
+		start = chrom.minPos
+
+	if end is None:
+		end = chrom.maxPos
+
+	structure = Structure([], [], chrom, offset)
 	
 	#get TAD for every locus
-	if tads is None:
-		tadNums = np.zeros(structure.chrom.getLength())
-	else:
-		tadNums = []
-		for i, tad in enumerate(tads):
-			for j in range(tad[0], tad[1]):
-				tadNums.append(i)
-	maxIndex = len(tadNums) - 1
+	#if tads is None:
+#		tadNums = np.zeros(structure.chrom.getLength())
+	#else:
+	#	tadNums = []
+	#	for i, tad in enumerate(tads):
+	#		for j in range(tad[0], tad[1]):
+	#			tadNums.append(i)
 
-	points_to_add = np.zeros(structure.chrom.getLength(), dtype=bool)	#true if locus should be added
+	#maxIndex = len(tadNums) - 1
+
+	structure.points = np.zeros((end - start)/chrom.res + 1, dtype=object)	#true if locus should be added
 	tracker = Tracker("Identifying loci", structure.chrom.size)
 
-	#find which loci should be added
+	#add loci
 	with open(path) as listFile:
 		for line in listFile:
 			line = line.strip().split()
 			pos1 = int(line[1])
 			pos2 = int(line[4])
-			pointNum1 = structure.chrom.getPointNum(pos1)
-			pointNum2 = structure.chrom.getPointNum(pos2)
-			if pointNum1 is not None and pointNum2 is not None:
-				tadNum1 = tadNums[min(pointNum1, maxIndex)]
-				tadNum2 = tadNums[min(pointNum2, maxIndex)]
-				if pointNum1 != pointNum2 and tadNum1 == tadNum2:		#must be in same TAD
-					points_to_add[pointNum1] = True
-					points_to_add[pointNum2] = True
+			if pos1 >= start and pos1 <= end and pos2 >= start and pos2 <= end:
+				pointNum1 = structure.chrom.getPointNum(pos1)
+				pointNum2 = structure.chrom.getPointNum(pos2)
+				#tadNum1 = tadNums[min(pointNum1, maxIndex)]
+				#tadNum2 = tadNums[min(pointNum2, maxIndex)]
+				#if pointNum1 != pointNum2 and tadNum1 == tadNum2:		#must be in same TAD
+				if pointNum1 != pointNum2:	#non-self-interacting
+					structure.points[(pos1 - start)/chrom.res] = Point((0,0,0), pointNum1, structure.chrom, 0)
+					structure.points[(pos2 - start)/chrom.res] = Point((0,0,0), pointNum2, structure.chrom, 0)
 			tracker.increment()
 		listFile.close()
 
-	#create points
-	points = np.zeros(structure.chrom.getLength(), dtype=np.object)
-	pointNums = np.where(points_to_add == True)[0]
-	for i, pointNum in enumerate(pointNums):
-		points[pointNum] = Point((0,0,0), pointNum, structure.chrom, i)
-	structure.points = points
+	structure.indexPoints()
 	
 	return structure
 
@@ -248,8 +254,11 @@ def matFromBed(path, structure=None):
 				mat[row, col] += float(line[6])
 		infile.close()
 
-	at.makeSymmetric(mat)
+	at.makeSymmetric(mat)	
 	rowsums = np.array([sum(row) for row in mat])
+	if len(np.where(rowsums == 0)[0]) != 0:
+		print np.array(structure.getGenCoords())[np.where(rowsums == 0)[0]]
+		sys.exit(1)
 	assert len(np.where(rowsums == 0)[0]) == 0
 
 	return mat
@@ -258,19 +267,17 @@ def highToLow(highstructure, resRatio):
 	"""Reduces resolution of structure"""
 	lowChrom = highstructure.chrom.reduceRes(resRatio)
 
-	low_n = int(np.ceil(len(highstructure.points)/float(resRatio)))
+	low_n = len(highstructure.points)/resRatio + 1
 
 	lowstructure = Structure(np.zeros(low_n, dtype=np.object), [], lowChrom, highstructure.offset/resRatio)
 
-	allPointsToMerge = []
-	for i in range(len(lowstructure.points)):
-		allPointsToMerge.append([])
+	allPointsToMerge = [[] for i in range(low_n)]
 	
 	for highPoint in highstructure.getPoints():
 		pointsToMerge = []
-		highNum = highPoint.num
+		highNum = highPoint.num	- highstructure.offset
 		lowNum = highNum/resRatio
-		allPointsToMerge[lowNum - lowstructure.offset].append(highPoint)
+		allPointsToMerge[lowNum].append(highPoint)
 
 	index = lowstructure.offset
 	for i, pointsToMerge in enumerate(allPointsToMerge):

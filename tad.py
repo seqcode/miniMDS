@@ -69,10 +69,9 @@ def domainsFromScores(scores, minSizeFraction):
 	domains = []
 	for i in range(len(scores)):
 		score = scores[i]
-		if i == len(scores) - 1:
-			end = i + 1
+		if i == len(scores) - 1:	#at end of scores, close remaining TAD
+			end = i
 			domains.append([start,end])
-			start = i + 1
 		elif score > 0 and prevScore < 0 and i-start >= minNumLoc:	#current is downstream, previous was upstream
 			end = i
 			domains.append([start,end])
@@ -102,25 +101,36 @@ def smoothWithMovingAverage(signal, size_of_window):
 		smoothed_remainder[i] = movingAverage(remainder[i:remainder_size], remainder_size-i)
 	return np.concatenate((smoothed, smoothed_remainder))
 
-def substructuresFromTads(high_structure, low_structure, low_tads):
-	"""Create compatible substructures from TADs in high-res structure and low-res structure"""
-	res_ratio = low_structure.chrom.res/high_structure.chrom.res
-	high_tads = low_tads * res_ratio
-        high_offset = 0
-	low_offset = 0
-        for high_tad, low_tad in zip(high_tads, low_tads):
-		high_start = high_tad[0]
-		high_end = high_tad[1]
-		low_start = low_tad[0]
-		low_end = low_tad[1]
-                high_points = high_structure.points[(high_start-high_structure.offset):(high_end-high_structure.offset)]
-		low_points = low_structure.points[(low_start-low_structure.offset):(low_end-low_structure.offset)]
-		high_nums = [high_point.num for high_point in high_points if high_point != 0]
-		inferred_low_nums = np.array(high_nums)/res_ratio
-		true_low_nums = [low_point.num for low_point in low_points if low_point != 0]
-		intersection = [num for num in true_low_nums if num in inferred_low_nums]
-		if len(intersection) > 0:	#compatible
-                	high_structure.createSubstructure(high_points, high_offset)
-			low_structure.createSubstructure(low_points, low_offset)
-                high_offset = high_end
-		low_offset = low_end
+def substructuresFromTads(structure, tads):
+	point_nums = structure.getPointNums()
+	offset = 0	#initialize
+	for td in tads:
+		start = point_nums[td[0]]	#convert from index to num
+		end = point_nums[td[1]]
+		points = structure.points[start-structure.offset:end-structure.offset]
+		structure.createSubstructure(points, offset)
+		offset = end	#update
+
+#def substructuresFromTads(high_structure, low_structure, low_tads):
+#	"""Create compatible substructures from TADs in high-res structure and low-res structure"""
+#	res_ratio = low_structure.chrom.res/high_structure.chrom.res
+#	high_tads = low_tads * res_ratio
+ #       high_offset = 0
+#	low_offset = 0
+ #       for high_tad, low_tad in zip(high_tads, low_tads):
+#		if high_tad[0] < len(high_structure.getPointNums()):
+#			high_start = high_structure.getPointNums()[high_tad[0]]	#convert from index to num
+#			high_end = high_structure.getPointNums()[min((high_tad[1], len(high_structure.getPoints()) - 1))]	#don't go out of bounds
+#			low_start = low_structure.getPointNums()[low_tad[0]]
+#			low_end = low_structure.getPointNums()[min((low_tad[1], len(low_structure.getPoints()) - 1))]	
+#		        high_points = high_structure.points[(high_start-high_structure.offset):(high_end-high_structure.offset)]
+#			low_points = low_structure.points[(low_start-low_structure.offset):(low_end-low_structure.offset)]
+#			high_nums = [high_point.num for high_point in high_points if high_point != 0]
+#			inferred_low_nums = np.array(high_nums)/res_ratio
+#			true_low_nums = [low_point.num for low_point in low_points if low_point != 0]
+#			intersection = [num for num in true_low_nums if num in inferred_low_nums]
+#			if len(intersection) > 0:	#compatible
+#		        	high_structure.createSubstructure(high_points, high_offset)
+#				low_structure.createSubstructure(low_points, low_offset)
+#		        high_offset = high_end
+#			low_offset = low_end

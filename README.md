@@ -124,6 +124,10 @@ The scaling factor a describes the assumed relationship between contact frequenc
 
 a can be any value >1, including non-integer.
 
+A secondary scaling factor is used for short-range interactions. The default value is 2.5. You can change this using -a2. (Reducing this can help with "clumping" in the structure.)
+
+``python minimds.py -a2 2 GM12878_combined_22_10kb.bed``
+
 ##### Classical MDS
 
 Classical MDS (cMDS), also called principal coordinates analysis, is a variant of MDS that is faster under certain circumstances. The miniMDS tool supports cMDS but NOT with partitioned MDS. Use the --classical option. 
