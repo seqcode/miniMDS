@@ -151,7 +151,7 @@ def main():
 	args = parser.parse_args()
 
 	if args.full:	#not partitioned
-		structure = fullMDS(args.path, args.classical, args.a, args.n, args.a2)
+		structure = fullMDS(args.path, args.classical, args.a, args.n)
 
 	else:	#partitioned
 		params = (args.p, args.m, args.r, args.n, args.a, args.l, args.a2)
