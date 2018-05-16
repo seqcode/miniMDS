@@ -36,9 +36,9 @@ def calculateRadius(coords, res):
 	conversionFactor = avgDist/physicalDist
 	return chromatinDiameter/2 * conversionFactor
 
-mmds_structure = dt.structureFromFile("hic_data/GM12878_combined_22_10kb_mmds_coords.tsv")
-cmds_structure = dt.structureFromFile("hic_data/GM12878_combined_22_10kb_cmds_coords.tsv")
-minimds_structure = dt.structureFromFile("hic_data/GM12878_combined_22_10kb_minimds_coords.tsv")
+mmds_structure = dt.structure_from_file("hic_data/GM12878_combined_22_10kb_mmds_coords.tsv")
+cmds_structure = dt.structure_from_file("hic_data/GM12878_combined_22_10kb_cmds_coords.tsv")
+minimds_structure = dt.structure_from_file("hic_data/GM12878_combined_22_10kb_minimds_coords.tsv")
 
 mmds_res = mmds_structure.chrom.res
 cmds_res = cmds_structure.chrom.res

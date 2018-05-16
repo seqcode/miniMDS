@@ -8,7 +8,7 @@ import misc
 
 bedpath = "hic_data/GM12878_combined_22_100kb.bed"
 
-mmds_structure = dt.structureFromFile("hic_data/GM12878_combined_22_100kb_mmds_coords.tsv")
+mmds_structure = dt.structure_from_file("hic_data/GM12878_combined_22_100kb_mmds_coords.tsv")
 contactMat = dt.matFromBed(bedpath, mmds_structure)
 mmds_true_mat = at.contactToDist(contactMat)
 at.makeSymmetric(mmds_true_mat)
@@ -17,7 +17,7 @@ for j in range(len(mmds_true_mat)):	#remove diagonal
 mmds_distMat = misc.distMat(mmds_structure)
 mmds_r = misc.pearson(mmds_true_mat, mmds_distMat)
 
-cmds_structure = dt.structureFromFile("hic_data/GM12878_combined_22_100kb_cmds_coords.tsv")
+cmds_structure = dt.structure_from_file("hic_data/GM12878_combined_22_100kb_cmds_coords.tsv")
 contactMat = dt.matFromBed(bedpath, cmds_structure)
 cmds_true_mat = at.contactToDist(contactMat)
 at.makeSymmetric(cmds_true_mat)
@@ -26,7 +26,7 @@ for j in range(len(cmds_true_mat)):	#remove diagonal
 cmds_distMat = misc.distMat(cmds_structure)
 cmds_r = misc.pearson(cmds_true_mat, cmds_distMat)
 
-minimds_structure = dt.structureFromFile("hic_data/GM12878_combined_22_100kb_minimds_coords.tsv")
+minimds_structure = dt.structure_from_file("hic_data/GM12878_combined_22_100kb_minimds_coords.tsv")
 contactMat = dt.matFromBed(bedpath, minimds_structure)
 minimds_true_mat = at.contactToDist(contactMat)
 at.makeSymmetric(minimds_true_mat)

@@ -18,7 +18,7 @@ mogen_rs = np.zeros(n)
 for i, chrom in enumerate(chroms):
 	bedpath = "hic_data/GM12878_combined_{}_10kb.bed".format(chrom)
 
-	mmds_structure = dt.structureFromFile("hic_data/GM12878_combined_{}_10kb_mmds_coords.tsv".format(chrom))
+	mmds_structure = dt.structure_from_file("hic_data/GM12878_combined_{}_10kb_mmds_coords.tsv".format(chrom))
 	contactMat = dt.matFromBed(bedpath, mmds_structure)
 	mmds_true_mat = at.contactToDist(contactMat)
 	at.makeSymmetric(mmds_true_mat)
@@ -27,7 +27,7 @@ for i, chrom in enumerate(chroms):
 	mmds_distMat = misc.distMat(mmds_structure)
 	mmds_rs[i] = misc.pearson(mmds_true_mat, mmds_distMat)
 	
-	cmds_structure = dt.structureFromFile("hic_data/GM12878_combined_{}_10kb_cmds_coords.tsv".format(chrom))
+	cmds_structure = dt.structure_from_file("hic_data/GM12878_combined_{}_10kb_cmds_coords.tsv".format(chrom))
 	contactMat = dt.matFromBed(bedpath, cmds_structure)
 	cmds_true_mat = at.contactToDist(contactMat)
 	at.makeSymmetric(cmds_true_mat)
@@ -36,7 +36,7 @@ for i, chrom in enumerate(chroms):
 	cmds_distMat = misc.distMat(cmds_structure)
 	cmds_rs[i] = misc.pearson(cmds_true_mat, cmds_distMat)
 
-	minimds_structure = dt.structureFromFile("hic_data/GM12878_combined_{}_10kb_minimds_coords.tsv".format(chrom))
+	minimds_structure = dt.structure_from_file("hic_data/GM12878_combined_{}_10kb_minimds_coords.tsv".format(chrom))
 	contactMat = dt.matFromBed(bedpath, minimds_structure)
 	minimds_true_mat = at.contactToDist(contactMat)
 	at.makeSymmetric(minimds_true_mat)
