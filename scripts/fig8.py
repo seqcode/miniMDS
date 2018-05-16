@@ -18,31 +18,31 @@ mogen_rs = np.zeros(n)
 for i, chrom in enumerate(chroms):
 	bedpath = "hic_data/GM12878_combined_{}_10kb.bed".format(chrom)
 
-	mmds_cluster = dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_mmds_coords.tsv".format(chrom))
-	contactMat = dt.matFromBed(bedpath, mmds_cluster)
+	mmds_structure = dt.structureFromFile("hic_data/GM12878_combined_{}_10kb_mmds_coords.tsv".format(chrom))
+	contactMat = dt.matFromBed(bedpath, mmds_structure)
 	mmds_true_mat = at.contactToDist(contactMat)
 	at.makeSymmetric(mmds_true_mat)
 	for j in range(len(mmds_true_mat)):	#remove diagonal
 		mmds_true_mat[j,j] = 0
-	mmds_distMat = misc.distMat(mmds_cluster)
+	mmds_distMat = misc.distMat(mmds_structure)
 	mmds_rs[i] = misc.pearson(mmds_true_mat, mmds_distMat)
 	
-	cmds_cluster = dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_cmds_coords.tsv".format(chrom))
-	contactMat = dt.matFromBed(bedpath, cmds_cluster)
+	cmds_structure = dt.structureFromFile("hic_data/GM12878_combined_{}_10kb_cmds_coords.tsv".format(chrom))
+	contactMat = dt.matFromBed(bedpath, cmds_structure)
 	cmds_true_mat = at.contactToDist(contactMat)
 	at.makeSymmetric(cmds_true_mat)
 	for j in range(len(cmds_true_mat)):	#remove diagonal
 		cmds_true_mat[j,j] = 0
-	cmds_distMat = misc.distMat(cmds_cluster)
+	cmds_distMat = misc.distMat(cmds_structure)
 	cmds_rs[i] = misc.pearson(cmds_true_mat, cmds_distMat)
 
-	minimds_cluster = dt.clusterFromFile("hic_data/GM12878_combined_{}_10kb_minimds_coords.tsv".format(chrom))
-	contactMat = dt.matFromBed(bedpath, minimds_cluster)
+	minimds_structure = dt.structureFromFile("hic_data/GM12878_combined_{}_10kb_minimds_coords.tsv".format(chrom))
+	contactMat = dt.matFromBed(bedpath, minimds_structure)
 	minimds_true_mat = at.contactToDist(contactMat)
 	at.makeSymmetric(minimds_true_mat)
 	for j in range(len(minimds_true_mat)):	#remove diagonal
 		minimds_true_mat[j,j] = 0
-	minimds_distMat = misc.distMat(minimds_cluster)
+	minimds_distMat = misc.distMat(minimds_structure)
 	minimds_rs[i] = misc.pearson(minimds_true_mat, minimds_distMat)
 
 	mogen_coords = np.loadtxt("MOGEN/examples/hiC/output/GM12878_combined_{}_10kb_rep1_coords.tsv".format(chrom))

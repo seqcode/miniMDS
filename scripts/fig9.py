@@ -36,19 +36,19 @@ def calculateRadius(coords, res):
 	conversionFactor = avgDist/physicalDist
 	return chromatinDiameter/2 * conversionFactor
 
-mmds_cluster = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_mmds_coords.tsv")
-cmds_cluster = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_cmds_coords.tsv")
-minimds_cluster = dt.clusterFromFile("hic_data/GM12878_combined_22_10kb_minimds_coords.tsv")
+mmds_structure = dt.structureFromFile("hic_data/GM12878_combined_22_10kb_mmds_coords.tsv")
+cmds_structure = dt.structureFromFile("hic_data/GM12878_combined_22_10kb_cmds_coords.tsv")
+minimds_structure = dt.structureFromFile("hic_data/GM12878_combined_22_10kb_minimds_coords.tsv")
 
-mmds_res = mmds_cluster.chrom.res
-cmds_res = cmds_cluster.chrom.res
-minimds_res = minimds_cluster.chrom.res
+mmds_res = mmds_structure.chrom.res
+cmds_res = cmds_structure.chrom.res
+minimds_res = minimds_structure.chrom.res
 
 assert mmds_res == cmds_res == minimds_res
 
 res = mmds_res
 
-plot.plot_cluster_interactive(mmds_cluster, out_path="Fig9A.png")
-plot.plot_cluster_interactive(cmds_cluster, out_path="Fig9B.png")
-plot.plot_cluster_interactive(minimds_cluster, out_path="Fig9C.png")
+plot.plot_structure_interactive(mmds_structure, out_path="Fig9A.png")
+plot.plot_structure_interactive(cmds_structure, out_path="Fig9B.png")
+plot.plot_structure_interactive(minimds_structure, out_path="Fig9C.png")
 plot_coords_interactive(np.loadtxt("MOGEN/examples/hiC/output/GM12878_combined_22_10kb_rep1_coords.tsv"), res, out_path="Fig9D.png")

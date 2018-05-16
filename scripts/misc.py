@@ -34,9 +34,9 @@ def parse_time(time_string):
 	secs = float(split[1].split("s")[0])
 	return mins + secs/60
 
-def distMat(cluster):
-	"""Creates distance matrix from cluster"""
-	points = cluster.getPoints()
+def distMat(structure):
+	"""Creates distance matrix from structure"""
+	points = structure.getPoints()
 	numPoints = len(points)
 	mat = np.zeros((numPoints, numPoints))
 	for i in range(numPoints):
