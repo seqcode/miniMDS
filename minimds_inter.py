@@ -129,7 +129,7 @@ def main():
 	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents structures from being too small (for partitioned MDS only)")
 	parser.add_argument("-o", help="prefix of output file")
 	parser.add_argument("-r", default=32000000, help="maximum RAM to use (in kb)")
-	parser.add_argument("-n", default=3, help="Number of threads")
+	parser.add_argument("-n", type=int, default=3, help="Number of threads")
 	parser.add_argument("-a", type=float, default=4, help="alpha factor for converting contact frequencies to physical distances")
 	args = parser.parse_args()
 

@@ -9,7 +9,6 @@ import array_tools as at
 import tad
 import linear_algebra as la
 import tools
-import plotting as plot
 
 def infer_structure(contactMat, structure, alpha, num_threads, classical=False):
 	"""Infers 3D coordinates for one structure"""
@@ -88,19 +87,13 @@ def partitionedMDS(path, args):
 	infer_structure(low_contactMat, lowstructure, alpha, num_threads)
 	print "Low-resolution MDS complete"
 
-	plot.plot_structure_interactive(lowstructure)
-
 	highSubstructures = pymp.shared.list(highstructure.structures)
 	lowSubstructures = pymp.shared.list(lowstructure.structures)
-
-	#highSubstructures = highstructure.structures
-	#lowSubstructures = lowstructure.structures
 
 	numSubstructures = len(highstructure.structures)
 	num_threads = min((num_threads, mp.cpu_count(), numSubstructures))	#don't exceed number of requested threads, available threads, or structures
 	with pymp.Parallel(num_threads) as p:
 		for substructurenum in p.range(numSubstructures):
-	#for substructurenum in range(numSubstructures):
 			highSubstructure = highSubstructures[substructurenum]	
 			if len(highSubstructure.getPoints()) > 0:	#skip empty
 				trueLow = lowSubstructures[substructurenum]
@@ -128,8 +121,6 @@ def partitionedMDS(path, args):
 				highSubstructures[substructurenum] = highSubstructure
 
 				print "MDS performed on structure {} of {}".format(substructurenum + 1, numSubstructures)
-			else:
-				print "empty"
 
 	highstructure.setstructures(highSubstructures)
 
@@ -145,7 +136,7 @@ def main():
 	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents structures from being too small (for partitioned MDS only)")
 	parser.add_argument("-o", help="path to output file")
 	parser.add_argument("-r", default=32000000, help="maximum RAM to use (in kb)")
-	parser.add_argument("-n", default=3, help="number of threads")
+	parser.add_argument("-n", type=int, default=3, help="number of threads")
 	parser.add_argument("-a", type=float, default=4, help="alpha factor for converting contact frequencies to physical distances")
 	parser.add_argument("-a2", type=float, default=2.5, help="short-range alpha factor for converting contact frequencies to physical distances")
 	args = parser.parse_args()
