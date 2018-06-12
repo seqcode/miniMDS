@@ -1,5 +1,6 @@
 import numpy as np
 import argparse
+import tools
 
 def get_chrom_num(chrom):
 	if chrom == "X":
@@ -27,11 +28,7 @@ def normalize(chrom1, chrom2, rawpath, krpath1, krpath2, res, outpath):
 	raw.close()
 
 def normalize_inter(hic_id, res, chrom_a, chrom_b):
-	res_kb = res/1000
-	if res_kb < 1000:
-		res_string = str(res_kb) + "kb"
-	else:
-		res_string = str(res_kb/1000) + "mb"
+	res_string = tools.get_res_string(res)
 
 	if get_chrom_num(chrom_a) < get_chrom_num(chrom_b):
 		chrom1 = chrom_a
@@ -49,11 +46,8 @@ def normalize_inter(hic_id, res, chrom_a, chrom_b):
 	normalize(chromstring1, chromstring2, rawpath, krpath1, krpath2, res, outpath)
 
 def normalize_intra(hic_id, res, chrom):
-	res_kb = res/1000
-	if res_kb < 1000:
-		res_string = str(res_kb) + "kb"
-	else:
-		res_string = str(res_kb/1000) + "mb"
+	res_string = tools.get_res_string(res)
+
 	rawpath = "{}/{}_resolution_intrachromosomal/chr{}/MAPQGE30/chr{}_{}.RAWobserved".format(hic_id, res_string, chrom, chrom, res_string)
 	krpath = "{}/{}_resolution_intrachromosomal/chr{}/MAPQGE30/chr{}_{}.KRnorm".format(hic_id, res_string, chrom, chrom, res_string)
 	outpath = "{}_{}_{}.bed".format(hic_id, chrom, res_string)
@@ -65,7 +59,7 @@ def main():
 	parser.add_argument("hic_id", help="e.g. GM12878_combined")
 	parser.add_argument("res", type=int, help="resolution (bp)")
 	parser.add_argument("chrom1", help="first chromosome (e.g. 1)")
-	parser.add_argument("-chrom2", help="second chromosome (e.g. 1)")
+	parser.add_argument("--chrom2", help="second chromosome (e.g. 2)")
 	args = parser.parse_args()
 
 	if args.chrom2 is None:

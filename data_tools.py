@@ -17,15 +17,16 @@ class ChromParameters(object):
 		"""Number of possible loci"""
 		return (self.maxPos - self.minPos)/self.res + 1
 
-	def getPointNum(self, genCoord):
-		"""Converts genomic coordinate into point number"""
+	def getAbsoluteIndex(self, genCoord):
+		"""Converts genomic coordinate into absolute index. Absolute indexing includes empty (zero) points."""
 		if genCoord < self.minPos or genCoord > self.maxPos:
 			return None
 		else:
-			#print genCoord
-			#print self.minPos
-			#print int((genCoord - self.minPos)/self.res)
 			return int((genCoord - self.minPos)/self.res) 
+
+	def getGenCoord(self, abs_index):
+		"""Converts absolute index into genomic coordinate"""
+		return self.minPos + self.res * abs_index
 
 	def reduceRes(self, resRatio):
 		"""Creates low-res version of this chromosome"""
@@ -43,54 +44,56 @@ class Structure(object):
 		else:
 			self.setstructures(structures)
 		self.chrom = chrom	#chromosome parameters
-		self.offset = offset	#indexing offset (for substructures only)
+		self.offset = offset	#absolute indexing offset (for substructures only)
 
 	def getCoords(self):
 		return [point.pos for point in self.getPoints()]
 
 	def setCoords(self, coords):
-		for coord, point_num in zip(coords, self.getPointNums()):
-			self.points[point_num - self.offset].pos = coord
+		for coord, abs_index in zip(coords, self.nonzero_abs_indices()):
+			self.points[abs_index - self.offset].pos = coord
 
-	def getPointNums(self):
-		return np.array([point.num for point in self.getPoints()])
+	def nonzero_abs_indices(self):
+		"""Absolute indices for all non-zero points."""
+		return np.array([point.absolute_index for point in self.getPoints()])
 
 	def getPoints(self):
+		"""All non-zero points"""
 		return self.points[np.where(self.points != 0)[0]]
 
 	def getGenCoords(self):
-		"""Non-null genomic coordinates of structure"""
-		return [self.chrom.minPos + self.chrom.res * point_num for point_num in self.getPointNums()]
+		"""Non-zero genomic coordinates of structure"""
+		return [self.chrom.getGenCoord(abs_index) for abs_index in self.nonzero_abs_indices()]
 
-	def getIndex(self, genCoord):
-		"""Converts genomic coordinate into index"""
-		pointNum = self.chrom.getPointNum(genCoord)
-		if pointNum is None:
+	def get_rel_index(self, genCoord):
+		"""Converts genomic coordinate into relative index."""
+		abs_index = self.chrom.getAbsoluteIndex(genCoord)
+		if abs_index is None:
 			return None
 		else:
-			pointNum -= self.offset
-			if pointNum >= 0 and pointNum < len(self.points):
-				point = self.points[pointNum]
+			abs_index -= self.offset
+			if abs_index >= 0 and abs_index < len(self.points):
+				point = self.points[abs_index]
 				if point == 0:
 					return None
 				else:
-					return point.index
+					return point.relative_index
 			else:
 				return None
 	
 	def setstructures(self, structures):
 		self.structures = structures
-		self.points = np.zeros(max([max(structure.getPointNums()) for structure in structures]) + 1, dtype=np.object)	#reset
+		self.points = np.zeros(max([max(structure.nonzero_abs_indices()) for structure in structures]) + 1, dtype=np.object)	#reset
 		for structure in self.structures:
 			for point in structure.points:
 				if point != 0:
-					self.points[point.num] = point
+					self.points[point.absolute_index] = point
 		#self.indexPoints()
 
 	def createSubstructure(self, points, offset):
 		"""Creates substructure containing points"""
 		substructure = Structure(points, [], self.chrom, offset)
-		substructure.indexPoints()
+		substructure.set_rel_indices()
 		self.structures.append(substructure)
 
 	def transform(self, r, t):
@@ -102,26 +105,27 @@ class Structure(object):
 		a = np.mat(self.getCoords())
 		n = len(a)
 		a_transformed = np.array(((r*a.T) + np.tile(t, (1, n))).T)
-		for i, pointNum in enumerate(self.getPointNums()):
-			self.points[pointNum - self.offset].pos = a_transformed[i]
+		for i, abs_index in enumerate(self.nonzero_abs_indices()):
+			self.points[abs_index - self.offset].pos = a_transformed[i]
 
 	def write(self, outpath):
 		with open(outpath, "w") as out:
 			out.write(self.chrom.name + "\n")
 			out.write(str(self.chrom.res) + "\n")
 			out.write(str(self.chrom.minPos) + "\n")
-			num = self.offset
+			abs_index = self.offset
 			for point in self.points:
 				if point == 0:
-					out.write("\t".join((str(num), "nan", "nan", "nan")) + "\n")
+					out.write("\t".join((str(abs_index), "nan", "nan", "nan")) + "\n")
 				else:
-					out.write("\t".join((str(num), str(point.pos[0]), str(point.pos[1]), str(point.pos[2]))) + "\n")
-				num += 1
+					out.write("\t".join((str(abs_index), str(point.pos[0]), str(point.pos[1]), str(point.pos[2]))) + "\n")
+				abs_index += 1
 		out.close()
 
-	def indexPoints(self):
-		for i, point_num in enumerate(self.getPointNums()):
-			self.points[point_num - self.offset].index = i
+	def set_rel_indices(self):
+		"""Relative indexing is index relative to non-zero points only"""
+		for i, abs_index in enumerate(self.nonzero_abs_indices()):
+			self.points[abs_index - self.offset].relative_index = i
 
 	def rescale(self):
 		"""Rescale radius of gyration of structure to 1"""
@@ -133,11 +137,11 @@ class Structure(object):
 
 class Point(object):
 	"""Point in 3-D space"""
-	def __init__(self, pos, num, chrom, index):
+	def __init__(self, pos, chrom, absolute_index, relative_index):
 		self.pos = pos	#3D coordinates
-		self.num = num	#locus (not necessarily sequential)
 		self.chrom = chrom	#chromosome parameters
-		self.index = index	#sequential
+		self.absolute_index = absolute_index	#index relative to all points in structure (including null/zero points)
+		self.relative_index = relative_index	#index relative to only non-zero points
 
 def structureFromBed(path, chrom=None, start=None, end=None, offset=0, tads=None):
 	"""Initializes structure from intrachromosomal BED file."""
@@ -173,18 +177,18 @@ def structureFromBed(path, chrom=None, start=None, end=None, offset=0, tads=None
 			pos1 = int(line[1])
 			pos2 = int(line[4])
 			if pos1 >= start and pos1 <= end and pos2 >= start and pos2 <= end:
-				pointNum1 = structure.chrom.getPointNum(pos1)
-				pointNum2 = structure.chrom.getPointNum(pos2)
+				abs_index1 = structure.chrom.getAbsoluteIndex(pos1)
+				abs_index2 = structure.chrom.getAbsoluteIndex(pos2)
 				#tadNum1 = tadNums[min(pointNum1, maxIndex)]
 				#tadNum2 = tadNums[min(pointNum2, maxIndex)]
 				#if pointNum1 != pointNum2 and tadNum1 == tadNum2:		#must be in same TAD
-				if pointNum1 != pointNum2:	#non-self-interacting
-					structure.points[(pos1 - start)/chrom.res] = Point((0,0,0), pointNum1, structure.chrom, 0)
-					structure.points[(pos2 - start)/chrom.res] = Point((0,0,0), pointNum2, structure.chrom, 0)
+				if abs_index1 != abs_index2:	#non-self-interacting
+					structure.points[(pos1 - start)/chrom.res] = Point((0,0,0), structure.chrom, abs_index1, 0)
+					structure.points[(pos2 - start)/chrom.res] = Point((0,0,0), structure.chrom, abs_index2, 0)
 			tracker.increment()
 		listFile.close()
 
-	structure.indexPoints()
+	structure.set_rel_indices()
 	
 	return structure
 
@@ -229,21 +233,20 @@ def matFromBed(path, structure=None):
 	if structure is None:
 		structure = structureFromBed(path, None, None)
 
-	pointNums = structure.getPointNums()
+	abs_indices = structure.nonzero_abs_indices()
 
-	numpoints = len(pointNums)
+	numpoints = len(abs_indices)
 	mat = np.zeros((numpoints, numpoints))	
 
-	maxPointNum = max(pointNums)
-	assert maxPointNum - structure.offset < len(structure.points)
+	assert max(abs_indices) - structure.offset < len(structure.points)
 
 	with open(path) as infile:
 		for line in infile:
 			line = line.strip().split()
 			loc1 = int(line[1])
 			loc2 = int(line[4])
-			index1 = structure.getIndex(loc1)
-			index2 = structure.getIndex(loc2)
+			index1 = structure.get_rel_index(loc1)
+			index2 = structure.get_rel_index(loc2)
 			if index1 is not None and index2 is not None:
 				if index1 > index2:
 					row = index1
@@ -275,15 +278,15 @@ def highToLow(highstructure, resRatio):
 	
 	for highPoint in highstructure.getPoints():
 		pointsToMerge = []
-		highNum = highPoint.num	- highstructure.offset
-		lowNum = highNum/resRatio
-		allPointsToMerge[lowNum].append(highPoint)
+		high_abs_index = highPoint.absolute_index - highstructure.offset
+		low_abs_index = high_abs_index/resRatio
+		allPointsToMerge[low_abs_index].append(highPoint)
 
 	index = lowstructure.offset
 	for i, pointsToMerge in enumerate(allPointsToMerge):
 		if len(pointsToMerge) > 0:
 			meanCoord = np.mean(np.array([point.pos for point in pointsToMerge]), axis=0)
-			lowstructure.points[i] = Point(meanCoord, i + lowstructure.offset, lowChrom, index)
+			lowstructure.points[i] = Point(meanCoord, lowChrom, i + lowstructure.offset, index)
 			index += 1
 
 	return lowstructure
@@ -339,10 +342,10 @@ def make_compatible(structures):
 		new_chrom = ChromParameters(consensus[0], consensus[-1] + structure.chrom.res, structure.chrom.res, structure.chrom.name, structure.chrom.size)
 		new_points = np.zeros(new_chrom.getLength(), dtype=object)
 		for i, gen_coord in enumerate(consensus):
-			old_point_num = structure.chrom.getPointNum(gen_coord)
-			new_point_num = new_chrom.getPointNum(gen_coord)
-			pos = structure.points[old_point_num].pos
-			new_points[new_point_num] = Point(pos, new_point_num, new_chrom, i)
+			old_abs_index = structure.chrom.getAbsIndex(gen_coord)
+			new_abs_index = new_chrom.getAbsIndex(gen_coord)
+			pos = structure.points[old_abs_index].pos
+			new_points[new_abs_index] = Point(pos, new_chrom, new_abs_index, i)
 		structure.points = new_points
 		structure.chrom = new_chrom
 

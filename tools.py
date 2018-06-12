@@ -36,4 +36,4 @@ def get_res_string(res):
 	if res_kb < 1000:
 		return str(res_kb) + "kb"
 	else:
-		return str(res_kb/1000) + "Mb"	 
+		return str(res_kb/1000) + "mb"	 

@@ -1,6 +1,6 @@
 import numpy as np
 
-def calcScore(pointNum, points, contactMat, numPoints):
+def calcScore(abs_index, points, contactMat, numPoints):
 	"""Calculates directionality score for locus. See Dixon 2012 supplemental. Positive=downstream. Negative=upstream."""
 	a = 0	#initialize
 	b = 0
@@ -8,15 +8,15 @@ def calcScore(pointNum, points, contactMat, numPoints):
 	bCount = 0
 	avg_a = 0
 	avg_b = 0
-	currIndex = points[pointNum].index
+	currIndex = points[abs_index].relative_index
 
 	#upstream
 	upstreamIndexFound = False
 	numPointsUpstream = numPoints	#numPoints is max separation from curr point to include when calculating score
 	while not upstreamIndexFound and numPointsUpstream > 0:
-		if points[pointNum - numPointsUpstream] != 0:
+		if points[abs_index - numPointsUpstream] != 0:
 			upstreamIndexFound = True
-			minIndex = points[pointNum - numPointsUpstream].index	
+			minIndex = points[abs_index - numPointsUpstream].relative_index	
 		else:
 			numPointsUpstream -= 1
 
@@ -31,9 +31,9 @@ def calcScore(pointNum, points, contactMat, numPoints):
 	downstreamIndexFound = False
 	numPointsDownstream = numPoints	#numPoints is max separation from curr point to include when calculating score
 	while not downstreamIndexFound and numPointsDownstream > 0:
-		if points[pointNum + numPointsDownstream] != 0:
+		if points[abs_index + numPointsDownstream] != 0:
 			downstreamIndexFound = True
-			maxIndex = points[pointNum + numPointsDownstream].index	
+			maxIndex = points[abs_index + numPointsDownstream].relative_index	
 		else:
 			numPointsDownstream -= 1
 
@@ -56,10 +56,10 @@ def allScores(contactMat, structure, maxNumPoints):
 	"""Calculates all directionality scores for chromosome"""
 	scores = []	
 	totNumLoc = len(contactMat)
-	for pointNum in structure.getPointNums():
-		i = structure.points[pointNum - structure.offset].index
+	for abs_index in structure.nonzero_abs_indices():
+		i = structure.points[abs_index - structure.offset].relative_index
 		numPoints = min((maxNumPoints, totNumLoc - 1 - i, i))	#avoid going out of range of contact matrix 
-		scores.append(calcScore(pointNum, structure.points, contactMat, numPoints))
+		scores.append(calcScore(abs_index, structure.points, contactMat, numPoints))
 	return scores
 
 def domainsFromScores(scores, minSizeFraction):
@@ -102,11 +102,11 @@ def smoothWithMovingAverage(signal, size_of_window):
 	return np.concatenate((smoothed, smoothed_remainder))
 
 def substructuresFromTads(structure, tads):
-	point_nums = structure.getPointNums()
+	abs_indices = structure.nonzero_abs_indices()
 	offset = 0	#initialize
 	for td in tads:
-		start = point_nums[td[0]]	#convert from index to num
-		end = point_nums[td[1]]
+		start = abs_indices[td[0]]	#convert from relative index to absolute index
+		end = abs_indices[td[1]]
 		points = structure.points[start-structure.offset:end-structure.offset]
 		structure.createSubstructure(points, offset)
 		offset = end	#update

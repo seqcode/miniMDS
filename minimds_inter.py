@@ -10,7 +10,7 @@ import array_tools as at
 
 def infer_structures(contactMat, structures, offsets, alpha, num_threads, classical=False):
 	"""Infers 3D coordinates for multiple structures with same contact matrix"""
-	assert sum([len(structure.getPointNums()) for structure in structures]) == len(contactMat)
+	assert sum([len(structure.nonzero_abs_indices()) for structure in structures]) == len(contactMat)
 
 	at.makeSymmetric(contactMat)
 	rowsums = np.array([sum(row) for row in contactMat])
@@ -49,8 +49,8 @@ def get_inter_mat(prefix, inter_res_string, intra_res_string, structures, offset
 					line = line.strip().split()
 					loc1 = int(line[4])
 					loc2 = int(line[1])
-					index1 = structures[i].getIndex(loc1)
-					index2 = structures[j].getIndex(loc2)
+					index1 = structures[i].get_rel_index(loc1)
+					index2 = structures[j].get_rel_index(loc2)
 					row = index1 + offsets[i]
 					col = index2 + offsets[j]
 					mat[row, col] += float(line[6])
@@ -152,10 +152,10 @@ def main():
 
 	if args.o:
 		for structure in structures:
-			structure.write("{}_{}_{}_structure.tsv".format(args.o, structure.chrom.name, tools.get_res_string(structure.chrom.res)))
+			structure.write("{}_{}_{}_structure.tsv".format(args.o, structure.chrom.name.strip("chr"), tools.get_res_string(structure.chrom.res)))
 	else:
 		for structure in structures:
-			structure.write("{}_{}_{}_structure.tsv".format(args.prefix, structure.chrom.name, tools.get_res_string(structure.chrom.res)))
+			structure.write("{}_{}_{}_structure.tsv".format(args.prefix, structure.chrom.name.strip("chr"), tools.get_res_string(structure.chrom.res)))
 
 if __name__ == "__main__":
 	main()

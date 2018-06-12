@@ -12,7 +12,7 @@ import tools
 
 def infer_structure(contactMat, structure, alpha, num_threads, classical=False):
 	"""Infers 3D coordinates for one structure"""
-	assert len(structure.getPointNums()) == len(contactMat)
+	assert len(structure.nonzero_abs_indices()) == len(contactMat)
 
 	at.makeSymmetric(contactMat)
 	rowsums = np.array([sum(row) for row in contactMat])
@@ -52,7 +52,7 @@ def partitionedMDS(path, args):
 
 	#get TADs
 	low_contactMat = dt.matFromBed(path, lowstructure)
-	low_tad_indices = tad.getDomains(low_contactMat, lowstructure, domainSmoothingParameter, minSizeFraction)		#low substructures, defined on point indices not point nums
+	low_tad_indices = tad.getDomains(low_contactMat, lowstructure, domainSmoothingParameter, minSizeFraction)		#low substructures, defined on relative indices not absolute indices
 	tad.substructuresFromTads(lowstructure, low_tad_indices)
 
 	#create high-res chrom

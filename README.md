@@ -156,7 +156,7 @@ Example:
 
 Inter-chromosomal format:
 
->{prefix}\_{ChrA}\_{ChrB}_{resolution}{kb or Mb}.bed
+>{prefix}\_{ChrA}\_{ChrB}_{resolution}{kb or mb}.bed
 
 where A is before B in:
 
