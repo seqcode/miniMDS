@@ -74,16 +74,6 @@ def partitionedMDS(path, args):
 	
 	highstructure.setstructures(high_substructures)
 	
-	#create high-res structure
-	#res_ratio = lowstructure.chrom.res/highChrom.res
-	#highTads = lowTads * res_ratio
-	#print highTads
-	#highstructure = dt.structureFromBed(path, highChrom, highTads)
-
-	#create compatible substructures
-	#tad.substructuresFromTads(highstructure, lowstructure, lowTads)
-	#print highstructure.structures[1].getGenCoords()
-
 	infer_structure(low_contactMat, lowstructure, alpha, num_threads)
 	print "Low-resolution MDS complete"
 

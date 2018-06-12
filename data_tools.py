@@ -88,7 +88,6 @@ class Structure(object):
 			for point in structure.points:
 				if point != 0:
 					self.points[point.absolute_index] = point
-		#self.indexPoints()
 
 	def createSubstructure(self, points, offset):
 		"""Creates substructure containing points"""
@@ -156,17 +155,6 @@ def structureFromBed(path, chrom=None, start=None, end=None, offset=0, tads=None
 
 	structure = Structure([], [], chrom, offset)
 	
-	#get TAD for every locus
-	#if tads is None:
-#		tadNums = np.zeros(structure.chrom.getLength())
-	#else:
-	#	tadNums = []
-	#	for i, tad in enumerate(tads):
-	#		for j in range(tad[0], tad[1]):
-	#			tadNums.append(i)
-
-	#maxIndex = len(tadNums) - 1
-
 	structure.points = np.zeros((end - start)/chrom.res + 1, dtype=object)	#true if locus should be added
 	tracker = Tracker("Identifying loci", structure.chrom.size)
 
