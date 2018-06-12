@@ -6,7 +6,7 @@ import data_tools as dt
 inpath = sys.argv[1]
 outpath = sys.argv[2]
 
-structure = dt.structureFromBed(inpath, None, None)
+structure = dt.structureFromBed(inpath)
 contactMat = dt.matFromBed(inpath, structure)
 n = len(contactMat)
 fullMat = np.zeros((n, n+2))

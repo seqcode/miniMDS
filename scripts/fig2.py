@@ -18,8 +18,8 @@ def matFromDixon(path, chrom):
 			pos2 = int(line[1])
 			if pos1 != pos2:
 				if pos1 >= chrom.minPos and pos1 <= chrom.maxPos and pos2 >= chrom.minPos and pos2 <= chrom.maxPos:
-					bin1 = chrom.getPointNum(pos1)	
-					bin2 = chrom.getPointNum(pos2)
+					bin1 = chrom.getAbsoluteIndex(pos1)	
+					bin2 = chrom.getAbsoluteIndex(pos2)
 					if bin1 > bin2:
 						row = bin1
 						col = bin2
