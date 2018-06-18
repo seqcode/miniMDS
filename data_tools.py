@@ -300,7 +300,7 @@ def structure_from_file(path):
 					x = float(line[1])
 					y = float(line[2])
 					z = float(line[3])
-					point = Point((x,y,z), num, chrom, index)
+					point = Point((x,y,z), chrom, num, index)
 					index += 1
 				structure.points.append(point)
 		infile.close()
@@ -330,8 +330,8 @@ def make_compatible(structures):
 		new_chrom = ChromParameters(consensus[0], consensus[-1] + structure.chrom.res, structure.chrom.res, structure.chrom.name, structure.chrom.size)
 		new_points = np.zeros(new_chrom.getLength(), dtype=object)
 		for i, gen_coord in enumerate(consensus):
-			old_abs_index = structure.chrom.getAbsIndex(gen_coord)
-			new_abs_index = new_chrom.getAbsIndex(gen_coord)
+			old_abs_index = structure.chrom.getAbsoluteIndex(gen_coord)
+			new_abs_index = new_chrom.getAbsoluteIndex(gen_coord)
 			pos = structure.points[old_abs_index].pos
 			new_points[new_abs_index] = Point(pos, new_chrom, new_abs_index, i)
 		structure.points = new_points
