@@ -142,7 +142,7 @@ class Point(object):
 		self.absolute_index = absolute_index	#index relative to all points in structure (including null/zero points)
 		self.relative_index = relative_index	#index relative to only non-zero points
 
-def structureFromBed(path, chrom=None, start=None, end=None, offset=0, tads=None):
+def structureFromBed(path, chrom=None, start=None, end=None, offset=0):
 	"""Initializes structure from intrachromosomal BED file."""
 	if chrom is None:
 		chrom = chromFromBed(path)
@@ -167,9 +167,6 @@ def structureFromBed(path, chrom=None, start=None, end=None, offset=0, tads=None
 			if pos1 >= start and pos1 <= end and pos2 >= start and pos2 <= end:
 				abs_index1 = structure.chrom.getAbsoluteIndex(pos1)
 				abs_index2 = structure.chrom.getAbsoluteIndex(pos2)
-				#tadNum1 = tadNums[min(pointNum1, maxIndex)]
-				#tadNum2 = tadNums[min(pointNum2, maxIndex)]
-				#if pointNum1 != pointNum2 and tadNum1 == tadNum2:		#must be in same TAD
 				if abs_index1 != abs_index2:	#non-self-interacting
 					structure.points[(pos1 - start)/chrom.res] = Point((0,0,0), structure.chrom, abs_index1, 0)
 					structure.points[(pos2 - start)/chrom.res] = Point((0,0,0), structure.chrom, abs_index2, 0)
@@ -333,7 +330,7 @@ def make_compatible(structures):
 			old_abs_index = structure.chrom.getAbsoluteIndex(gen_coord)
 			new_abs_index = new_chrom.getAbsoluteIndex(gen_coord)
 			pos = structure.points[old_abs_index].pos
-			new_points[new_abs_index] = Point(pos, new_chrom, new_abs_index, i)
+			new_points[new_abs_index - structure.offset] = Point(pos, new_chrom, new_abs_index, i)
 		structure.points = new_points
 		structure.chrom = new_chrom
 
