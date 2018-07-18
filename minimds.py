@@ -59,9 +59,11 @@ def partitionedMDS(path, args):
 	size, res = dt.basicParamsFromBed(path)
 	highChrom = dt.ChromParameters(lowstructure.chrom.minPos, lowstructure.chrom.maxPos, res, lowstructure.chrom.name, size)
 
+	#create high-res structure
 	highstructure = dt.Structure([], [], highChrom, 0)
-	high_substructures = []
 	
+	#initialize high-res substructures
+	high_substructures = []
 	low_gen_coords = lowstructure.getGenCoords()
 	offset = 0 #initialize
 	for td in low_tad_indices:
@@ -136,7 +138,7 @@ def main():
 
 	else:	#partitioned
 		params = (args.p, args.m, args.r, args.n, args.a, args.l, args.a2)
-		names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha", "Resolution ratio", "Short-range, alpha")
+		names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha", "Resolution ratio", "Short-range alpha")
 		intervals = ((0, 1), (0, 1), (0, None), (0, None), (1, None), (1, None), (1, None))
 		if not tools.args_are_valid(params, names, intervals):
 			sys.exit(1)
