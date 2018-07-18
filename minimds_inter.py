@@ -51,9 +51,10 @@ def get_inter_mat(prefix, inter_res_string, intra_res_string, structures, offset
 					loc2 = int(line[1])
 					index1 = structures[i].get_rel_index(loc1)
 					index2 = structures[j].get_rel_index(loc2)
-					row = index1 + offsets[i]
-					col = index2 + offsets[j]
-					mat[row, col] += float(line[6])
+					if index1 is not None and index2 is not None:
+						row = index1 + offsets[i]
+						col = index2 + offsets[j]
+						mat[row, col] += float(line[6])
 			bed.close()
 	return mat
 
@@ -131,6 +132,7 @@ def main():
 	parser.add_argument("-r", default=32000000, help="maximum RAM to use (in kb)")
 	parser.add_argument("-n", type=int, default=3, help="Number of threads")
 	parser.add_argument("-a", type=float, default=4, help="alpha factor for converting contact frequencies to physical distances")
+	parser.add_argument("-a2", type=float, default=2.5, help="short-range alpha factor for converting contact frequencies to physical distances")
 	args = parser.parse_args()
 
 	if len(args.c) == 0:
@@ -142,11 +144,11 @@ def main():
 		chrom_names = args.c
 	
 
-	params = (args.p, args.m, args.r, args.n, args.a, args.l)
-	names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha", "Resolution ratio")
-	intervals = ((0, 1), (0, 1), (0, None), (0, None), (1, None), (1, None))
+	params = (args.p, args.m, args.r, args.n, args.a, args.l, args.a2)
+	names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha", "Resolution ratio", "Short-range alpha")
+	intervals = ((0, 1), (0, 1), (0, None), (0, None), (1, None), (1, None), (1, None))
 	if not tools.args_are_valid(params, names, intervals):
-		sys.exit(0)
+		sys.exit(1)
 
 	structures = interMDS(chrom_names, args.prefix, args.inter_res, args.intra_res, args.full, params)
 
