@@ -245,6 +245,7 @@ def matFromBed(path, structure=None):
 	at.makeSymmetric(mat)	
 	rowsums = np.array([sum(row) for row in mat])
 	if len(np.where(rowsums == 0)[0]) != 0:
+		print "Error: empty rows"
 		print np.array(structure.getGenCoords())[np.where(rowsums == 0)[0]]
 		sys.exit(1)
 	assert len(np.where(rowsums == 0)[0]) == 0
