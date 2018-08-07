@@ -52,8 +52,8 @@ def partitionedMDS(path, args):
 
 	#get TADs
 	low_contactMat = dt.matFromBed(path, lowstructure)
-	low_tad_indices = tad.getDomains(low_contactMat, lowstructure, domainSmoothingParameter, minSizeFraction)		#low substructures, defined on relative indices not absolute indices
-	tad.substructuresFromTads(lowstructure, low_tad_indices)
+	low_tads = tad.getDomains(low_contactMat, lowstructure, domainSmoothingParameter, minSizeFraction)		#low substructures, defined on relative indices not absolute indices
+	tad.substructuresFromTads(lowstructure, low_tads)
 
 	#create high-res chrom
 	size, res = dt.basicParamsFromBed(path)
@@ -66,9 +66,12 @@ def partitionedMDS(path, args):
 	high_substructures = []
 	low_gen_coords = lowstructure.getGenCoords()
 	offset = 0 #initialize
-	for td in low_tad_indices:
-		start_gen_coord = low_gen_coords[td[0]]
-		end_gen_coord = low_gen_coords[td[1]]
+	for i, low_tad in enumerate(low_tads):
+		start_gen_coord = low_gen_coords[low_tad[0]]
+		if i == len(low_tads) - 1:	#for last tad, avoid rounding error
+			end_gen_coord = highstructure.chrom.maxPos
+		else:
+			end_gen_coord = low_gen_coords[low_tad[1]]
 		high_substructure = dt.structureFromBed(path, highChrom, start_gen_coord, end_gen_coord, offset)
 		high_substructures.append(high_substructure)
 		offset += len(high_substructure.points)	#update
