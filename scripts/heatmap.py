@@ -7,10 +7,11 @@ import array_tools as at
 def threshold(mat, value):
 	"""Cuts off values above threshold for ease of visualization of heatmap"""
 	n = len(mat)
+	thresholded = np.zeros_like(mat)
 	for i in range(n):
 		for j in range(n):
-			if mat[i,j] > value:
-				mat[i,j] = value
+			thresholded[i,j] = min((mat[i,j], value))
+	return thresholded
 
 def createHeatmap(mat, domains, outpath, colors=None):
 	# Plot
@@ -70,5 +71,5 @@ def createHeatmap(mat, domains, outpath, colors=None):
 def heatMapFromMat(mat, maxvalue=None, tads=None, outpath=None, colors=None):
 	at.makeSymmetric(mat)
 	if maxvalue is not None:
-		threshold(mat, maxvalue)
+		mat = threshold(mat, maxvalue)
 	createHeatmap(mat, tads, outpath, colors)
