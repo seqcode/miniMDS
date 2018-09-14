@@ -9,11 +9,11 @@ Rieber, L., & Mahony, S. (2017). miniMDS: 3D structural inference from high-reso
 ## Installation
 
 Requirements:
-* python 2.7
+* python (must be python 3 for plotting, otherwise 2.7 is fine)
 * Python dependencies can be installed using
 ``pip install -r requirements.txt``
 * The following optional dependencies can be installed manually:
-    * [mayavi](http://docs.enthought.com/mayavi/mayavi/) (for plotting)
+    * [mayavi](http://docs.enthought.com/mayavi/mayavi/installation.html#installing-with-pip) (for plotting)
     * [ImageMagick](https://www.imagemagick.org/script/index.php) (for creating gifs)
 
 ## Testing
@@ -23,52 +23,6 @@ Please run test.sh (in the scripts directory) and report any issues.
 ## TLDR
 
 ``python minimds.py [Hi-C BED path]``
-
-## Troubleshooting
-
-### miniMDS won't complete due to an error
-
-The majority of user errors are due to problems in formatting the input file (see below). In particular, make sure that there are no lines in the input file with 0 counts. This can lead to issues such as empty rows in matrices. If your input file looks fine, please post the error in the issues tab. We try to respond promptly.
-
-### Output structure looks bad
-
-The art of Hi-C analysis involves developing an intuition for whether a structure looks good or bad. There are several reasons a bad structure can occur.
-
-#### Over-partitioning
-
-If your dataset is small and not sparse (small chromosomes, low-resolution, high-coverage), partitioning is less beneficial. First, the computational efficiency is less necessary. Second, partitioning loses information. We recommend testing your dataset with full MDS first. Only if this is computationally intractable or the output structure looks bad (see under-partitioning) do we recommend partitioned MDS. 
-
-``python minimds.py --full [Hi-C BED path]``
-
-Rao GM12878 chr22 250-kb resolution looks better with [full MDS](https://drive.google.com/file/d/1jkZy9z0O4z9VXKnRHqBZz5bMz2Bs-kNu/view?usp=sharing) than [partitioned MDS](https://drive.google.com/file/d/11rm4gbzUhM_sCW86-vwEA-gqc0ZHL90W/view?usp=sharing). Signs of over-partitioning include outliers and a clumpy or incoherent structure. 
-
-Even if you use partitioned MDS, you can reduce the number of partitions to avoid over-partitioning. Increasing the values of the -m or -p parameters (see below) will reduce the number of partitions.
-
-#### Under-partitioning
-
-Many datasets will output a  dense spherical structure if full MDS is used, such as [Rao GM12878 chr22 10-kb resolution](https://drive.google.com/file/d/1h7OcoJ1EZyoYC692IEWEvqTtox0Z770L/view?usp=sharing). In theses cases partitioned MDS can be used to produce a [more defined structure](https://drive.google.com/file/d/1wuzphqkmNSYqn56bNFdHKzzH35vt_jHU/view?usp=sharing). If there are too few partitions, the partitions themselves may appear dense and clumpy. Decreasing the values of the -m or -p parameters (see below) will increase the number of partitions, [further improving the structure](https://drive.google.com/file/d/1DfarHkMs_6wJUdh5dzMgITQIZGLZpq0a/view?usp=sharing). 
-
-#### Resolution is too high
-
-Though miniMDS allows structural inference to be achieved at greater resolutions, the degree of improvement will depend on the quality of input data. When performing structural inference, many Hi-C datasets must be processed at lower resolution than for other types of analysis. If miniMDS won't produce good structures at any parameter setting, take a look at the sparsity of your dataset, which will determine its optimal resolution. Sparsity can be estimated as the number of (nonzero) lines in the input file. For example, mesenchymal allele-phased chr22 40-kb resolution structures look spherical, regardless of whether they were generated from [full MDS](https://drive.google.com/file/d/1GIG009AAQtxF2l3vIEuj7TeT2nr84K_Y/view?usp=sharing) or [partitioned MDS](https://drive.google.com/file/d/1TFV0my7PBURrNrHbAnCnKmhcoejuYEaC/view?usp=sharing), or with an [increased partition number](https://drive.google.com/file/d/1z2fvysJe87rBV29Ie7jmMAdIb19aMuf6/view?usp=sharing). We see that the input file has only 28,239 lines, compared to 347,273 lines in the Rao GM12878 file for the same chromosome at the same resolution (a gold-standard dataset). Thus we reduce the resolution of the input file using bin_bed.py in the scripts folder:
-
-``python bin_bed.py [input file (higher resolution)] [desired low resolution (bp)] [output file (lower resolution)]``
-
-``python bin_bed.py mesenchymal_22_40kb.bed 500000 mesenchymal_22_500kb.bed``
-
-The lower-resolution file has 2181 lines, compared to 2551 in Rao GM12878. Now we can get an [okay structure](https://drive.google.com/file/d/1SyNTIqh39W-7RSgoLMwZSlMN8RUZgqX3/view?usp=sharing) using partitioned MDS. 
-
-#### Normalization problems
-
-Most datasets should produce okay structures at 1-Mb resolution using full MDS. If not, there could be an issue with normalization, which sometimes produces artifacts. As a sanity check, try inferring structures using raw (un-normalized) data. For a good dataset, this should produce okay structures other than a few outliers. For example, [here](https://drive.google.com/file/d/1CFiBVBjeQFYZxajlGeYANzDM9Z_N_XSI/view?usp=sharing) is the structure for Rao K562 raw chr1 1-Mb resolution. 
-
-#### Data quality problems
-
-If your raw low-resolution structures look bad, there may be a deeper problem with the data. A simple QC metric is the distance decay, the rapid decrease in contact frequency with linear genomic distance. This can be plotted using distance_decay.py in the scripts folder. 
-
-``python distance_decay.py [Hi-C bed file]``
-
-Here is a [good](https://drive.google.com/file/d/1i7HCZiHSWO6NFi1HlNuf5cu9r20NPnku/view?usp=sharing) distance decay curve and a [bad](https://drive.google.com/file/d/1EYX0TA8qF8YsoMQNHShrXcHF_bEeLIIe/view?usp=sharing) one. A bad distance decay curve suggests serious issues with the Hi-C data, making it unsuitable for structural inference. 
 
 ## Usage
 
@@ -293,3 +247,49 @@ A smaller value of _increment_ will lead to a smoother gif. Increments must be a
 Multiple structures can also be plotted in a single gif:
 
 ``plotting.plot_structures_gif(structures, struct, colors=default_colors, radius=None, increment=10)``
+
+## Troubleshooting
+
+### miniMDS won't complete due to an error
+
+The majority of user errors are due to problems in formatting the input file (see below). In particular, make sure that there are no lines in the input file with 0 counts. This can lead to issues such as empty rows in matrices. If your input file looks fine, please post the error in the issues tab. We try to respond promptly.
+
+### Output structure looks bad
+
+The art of Hi-C analysis involves developing an intuition for whether a structure looks good or bad. There are several reasons a bad structure can occur.
+
+#### Over-partitioning
+
+If your dataset is small and not sparse (small chromosomes, low-resolution, high-coverage), partitioning is less beneficial. First, the computational efficiency is less necessary. Second, partitioning loses information. We recommend testing your dataset with full MDS first. Only if this is computationally intractable or the output structure looks bad (see under-partitioning) do we recommend partitioned MDS. 
+
+``python minimds.py --full [Hi-C BED path]``
+
+Rao GM12878 chr22 250-kb resolution looks better with [full MDS](https://drive.google.com/file/d/1jkZy9z0O4z9VXKnRHqBZz5bMz2Bs-kNu/view?usp=sharing) than [partitioned MDS](https://drive.google.com/file/d/11rm4gbzUhM_sCW86-vwEA-gqc0ZHL90W/view?usp=sharing). Signs of over-partitioning include outliers and a clumpy or incoherent structure. 
+
+Even if you use partitioned MDS, you can reduce the number of partitions to avoid over-partitioning. Increasing the values of the -m or -p parameters (see below) will reduce the number of partitions.
+
+#### Under-partitioning
+
+Many datasets will output a  dense spherical structure if full MDS is used, such as [Rao GM12878 chr22 10-kb resolution](https://drive.google.com/file/d/1h7OcoJ1EZyoYC692IEWEvqTtox0Z770L/view?usp=sharing). In theses cases partitioned MDS can be used to produce a [more defined structure](https://drive.google.com/file/d/1wuzphqkmNSYqn56bNFdHKzzH35vt_jHU/view?usp=sharing). If there are too few partitions, the partitions themselves may appear dense and clumpy. Decreasing the values of the -m or -p parameters (see below) will increase the number of partitions, [further improving the structure](https://drive.google.com/file/d/1DfarHkMs_6wJUdh5dzMgITQIZGLZpq0a/view?usp=sharing). 
+
+#### Resolution is too high
+
+Though miniMDS allows structural inference to be achieved at greater resolutions, the degree of improvement will depend on the quality of input data. When performing structural inference, many Hi-C datasets must be processed at lower resolution than for other types of analysis. If miniMDS won't produce good structures at any parameter setting, take a look at the sparsity of your dataset, which will determine its optimal resolution. Sparsity can be estimated as the number of (nonzero) lines in the input file. For example, mesenchymal allele-phased chr22 40-kb resolution structures look spherical, regardless of whether they were generated from [full MDS](https://drive.google.com/file/d/1GIG009AAQtxF2l3vIEuj7TeT2nr84K_Y/view?usp=sharing) or [partitioned MDS](https://drive.google.com/file/d/1TFV0my7PBURrNrHbAnCnKmhcoejuYEaC/view?usp=sharing), or with an [increased partition number](https://drive.google.com/file/d/1z2fvysJe87rBV29Ie7jmMAdIb19aMuf6/view?usp=sharing). We see that the input file has only 28,239 lines, compared to 347,273 lines in the Rao GM12878 file for the same chromosome at the same resolution (a gold-standard dataset). Thus we reduce the resolution of the input file using bin_bed.py in the scripts folder:
+
+``python bin_bed.py [input file (higher resolution)] [desired low resolution (bp)] [output file (lower resolution)]``
+
+``python bin_bed.py mesenchymal_22_40kb.bed 500000 mesenchymal_22_500kb.bed``
+
+The lower-resolution file has 2181 lines, compared to 2551 in Rao GM12878. Now we can get an [okay structure](https://drive.google.com/file/d/1SyNTIqh39W-7RSgoLMwZSlMN8RUZgqX3/view?usp=sharing) using partitioned MDS. 
+
+#### Normalization problems
+
+Most datasets should produce okay structures at 1-Mb resolution using full MDS. If not, there could be an issue with normalization, which sometimes produces artifacts. As a sanity check, try inferring structures using raw (un-normalized) data. For a good dataset, this should produce okay structures other than a few outliers. For example, [here](https://drive.google.com/file/d/1CFiBVBjeQFYZxajlGeYANzDM9Z_N_XSI/view?usp=sharing) is the structure for Rao K562 raw chr1 1-Mb resolution. 
+
+#### Data quality problems
+
+If your raw low-resolution structures look bad, there may be a deeper problem with the data. A simple QC metric is the distance decay, the rapid decrease in contact frequency with linear genomic distance. This can be plotted using distance_decay.py in the scripts folder. 
+
+``python distance_decay.py [Hi-C bed file]``
+
+Here is a [good](https://drive.google.com/file/d/1i7HCZiHSWO6NFi1HlNuf5cu9r20NPnku/view?usp=sharing) distance decay curve and a [bad](https://drive.google.com/file/d/1EYX0TA8qF8YsoMQNHShrXcHF_bEeLIIe/view?usp=sharing) one. A bad distance decay curve suggests serious issues with the Hi-C data, making it unsuitable for structural inference. 
