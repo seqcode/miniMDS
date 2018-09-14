@@ -155,7 +155,7 @@ def structureFromBed(path, chrom=None, start=None, end=None, offset=0):
 
 	structure = Structure([], [], chrom, offset)
 	
-	structure.points = np.zeros((end - start)/chrom.res + 1, dtype=object)	#true if locus should be added
+	structure.points = np.zeros(int((end - start)/chrom.res) + 1, dtype=object)	#true if locus should be added
 	tracker = Tracker("Identifying loci", structure.chrom.size)
 
 	#add loci
