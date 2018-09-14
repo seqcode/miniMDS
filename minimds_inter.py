@@ -43,7 +43,7 @@ def get_inter_mat(prefix, inter_res_string, intra_res_string, structures, offset
 				path = "{}_{}_{}.bed".format(prefix, names[i], intra_res_string)
 			else:
 				path = "{}_{}_{}_{}.bed".format(prefix, names[j], names[i], inter_res_string)
-			print "Reading {}".format(path)
+			print("Reading {}".format(path))
 			with open(path) as bed:
 				for line in bed:
 					line = line.strip().split()
