@@ -168,8 +168,8 @@ def structureFromBed(path, chrom=None, start=None, end=None, offset=0):
 				abs_index1 = structure.chrom.getAbsoluteIndex(pos1)
 				abs_index2 = structure.chrom.getAbsoluteIndex(pos2)
 				if abs_index1 != abs_index2:	#non-self-interacting
-					structure.points[(pos1 - start)/chrom.res] = Point((0,0,0), structure.chrom, abs_index1, 0)
-					structure.points[(pos2 - start)/chrom.res] = Point((0,0,0), structure.chrom, abs_index2, 0)
+					structure.points[int((pos1 - start)/chrom.res)] = Point((0,0,0), structure.chrom, abs_index1, 0)
+					structure.points[int((pos2 - start)/chrom.res)] = Point((0,0,0), structure.chrom, abs_index2, 0)
 			tracker.increment()
 		listFile.close()
 
@@ -256,16 +256,16 @@ def highToLow(highstructure, resRatio):
 	"""Reduces resolution of structure"""
 	lowChrom = highstructure.chrom.reduceRes(resRatio)
 
-	low_n = len(highstructure.points)/resRatio + 1
+	low_n = int(len(highstructure.points)/resRatio + 1)
 
-	lowstructure = Structure(np.zeros(low_n, dtype=np.object), [], lowChrom, highstructure.offset/resRatio)
+	lowstructure = Structure(np.zeros(low_n, dtype=np.object), [], lowChrom, int(highstructure.offset/resRatio))
 
 	allPointsToMerge = [[] for i in range(low_n)]
 	
 	for highPoint in highstructure.getPoints():
 		pointsToMerge = []
 		high_abs_index = highPoint.absolute_index - highstructure.offset
-		low_abs_index = high_abs_index/resRatio
+		low_abs_index = int(high_abs_index/resRatio)
 		allPointsToMerge[low_abs_index].append(highPoint)
 
 	index = lowstructure.offset

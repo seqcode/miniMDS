@@ -89,7 +89,7 @@ def getDomains(contactMat, structure, sizeParameter, minSizeFraction):
 def movingAverage(signal, size_of_window):
 	"""Modified from http://beauty-of-imagination.blogspot.fr/2012/09/fun-with-signal-processing-and.html"""
 	window = np.ones(size_of_window)
-	return np.roll(np.convolve(window/size_of_window, signal, "valid" ), size_of_window/2)
+	return np.roll(np.convolve(window/size_of_window, signal, "valid"), int(size_of_window/2))
 
 def smoothWithMovingAverage(signal, size_of_window):
 	smoothed = movingAverage(signal, size_of_window)
