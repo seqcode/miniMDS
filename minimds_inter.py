@@ -58,7 +58,7 @@ def get_inter_mat(prefix, inter_res_string, intra_res_string, structures, offset
 			bed.close()
 	return mat
 
-def interMDS(names, prefix, inter_res, intra_res, full, args):
+def interMDS(names, prefix, inter_res, intra_res, partitioned, args):
 	inter_res_string = tools.get_res_string(inter_res)
 	intra_res_string = tools.get_res_string(intra_res)
 
@@ -90,10 +90,10 @@ def interMDS(names, prefix, inter_res, intra_res, full, args):
 	ts = []
 	for true_low, name in zip(low_structures, names):
 		path = "{}_{}_{}.bed".format(prefix, name, intra_res_string)
-		if full:
-			high_structure = mm.fullMDS(path, False, args[4], args[3])
-		else:
+		if partitioned:
 			high_structure = mm.partitionedMDS(path, args)
+		else:
+			high_structure = mm.fullMDS(path, False, args[4], args[3])
 		high_structures.append(high_structure)
 		inferred_low = dt.highToLow(high_structure, true_low.chrom.res/high_structure.chrom.res)
 		inferred_low_structures.append(inferred_low)
@@ -122,7 +122,7 @@ def main():
 	parser.add_argument("prefix", help="prefix of Hi-C BED files")
 	parser.add_argument("inter_res", type=int, help="resolution of interchromosomal BED files (bp)")
 	parser.add_argument("intra_res", type=int, help="resolution of intrachromosomal BED files (bp)")
-	parser.add_argument("--full", action="store_true", help="use full MDS (default: partitioned MDS)")
+	parser.add_argument("--partitioned", action="store_true", help="use partitioned MDS (default: full MDS)")
 	parser.add_argument("-c", action="append", default=[], help="names of chromosomes to use, e.g. 1 (default: all human chromosomes other than Y)")
 	parser.add_argument("-C", type=int, help="number of autosomes")
 	parser.add_argument("-l", type=int, help="low resolution/high resolution", default=10)
@@ -150,7 +150,7 @@ def main():
 	if not tools.args_are_valid(params, names, intervals):
 		sys.exit(1)
 
-	structures = interMDS(chrom_names, args.prefix, args.inter_res, args.intra_res, args.full, params)
+	structures = interMDS(chrom_names, args.prefix, args.inter_res, args.intra_res, args.partitioned, params)
 
 	if args.o:
 		for structure in structures:

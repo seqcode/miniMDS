@@ -136,7 +136,7 @@ def main():
 	parser = argparse.ArgumentParser(description="Reconstruct 3D coordinates from normalized intrachromosomal Hi-C BED files.")
 	parser.add_argument("path", help="path to intrachromosomal Hi-C BED file")
 	parser.add_argument("--classical", action="store_true", help="use classical MDS (default: metric MDS)")
-	parser.add_argument("--full", action="store_true", help="use full MDS (default: partitioned MDS)")
+	parser.add_argument("--partitioned", action="store_true", help="use partitioned MDS (default: full MDS)")
 	parser.add_argument("-l", type=int, help="low resolution/high resolution", default=10)
 	parser.add_argument("-p", type=float, default=0.1, help="domain size parameter: larger value means fewer structures created (for partitioned MDS only)")
 	parser.add_argument("-m", type=float, default=0.05, help="minimum domain size parameter: prevents structures from being too small (for partitioned MDS only)")
@@ -148,10 +148,7 @@ def main():
 	parser.add_argument("-w", type=float, default=0.05, help="weight of distance decay prior")
 	args = parser.parse_args()
 
-	if args.full:	#not partitioned
-		structure = fullMDS(args.path, args.classical, args.a, args.n, args.w)
-
-	else:	#partitioned
+	if args.partitioned:	
 		params = (args.p, args.m, args.r, args.n, args.a, args.l, args.a2, args.w)
 		names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha", "Resolution ratio", "Short-range alpha", "Weight")
 		intervals = ((0, 1), (0, 1), (0, None), (0, None), (0, None), (1, None), (0, None), (0, 1))
@@ -159,6 +156,9 @@ def main():
 			sys.exit(1)
 
 		structure = partitionedMDS(args.path, params)
+
+	else:	#not partitioned
+		structure = fullMDS(args.path, args.classical, args.a, args.n, args.w)
 	
 	if args.o:
 		structure.write(args.o)

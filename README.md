@@ -56,13 +56,13 @@ To view help:
 
 ``python minimds.py -h``
 
-By default, partitioned MDS is used:
+By default, full MDS is used:
 
 ``python minimds.py GM12878_combined_22_5kb.bed``
 
-Full MDS is recommended for low-resolution high-quality (not sparse) files, especially small chromosomes:
+To use partitioned MDS:
 
-``python minimds.py --full GM12878_combined_22_5kb.bed``
+``python minimds.py --partitioned GM12878_combined_22_5kb.bed``
 
 By default structures are saved to [PREFIX]_structure.tsv, e.g. GM12878_combined_22_100kb.bed would output GM12878_combined_22_100kb_structure.tsv. You can use the -o option with a custom path where you want to save the structure.
 
