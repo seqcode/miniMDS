@@ -1,6 +1,10 @@
 # miniMDS
 
-miniMDS is a tool for inferring and plotting 3D structures from normalized Hi-C data, using a novel approximation to multidimensional scaling (MDS). It produces a single 3D structure from a Hi-C BED file, representing an ensemble average of chromosome conformations within the population of cells. Using parallelization, it is able to process high-resolution data quickly with limited memory requirements. The human genome can be inferred at kilobase-resolution within several hours on a desktop computer. Standard MDS results in inaccuracies for sparse high-resolution data, but miniMDS focuses on local substructures to achieve greater accuracy. miniMDS also supports interchromosomal structural inference. Together with Mayavi, miniMDS produces publication-quality images and gifs. 
+miniMDS is a tool for inferring and plotting 3D structures from normalized Hi-C data, using a novel approximation to multidimensional scaling (MDS). It produces a single 3D structure from a Hi-C BED file, representing an ensemble average of chromosome conformations within the population of cells. Using parallelization, it is able to process high-resolution data quickly with limited memory requirements. The human genome can be inferred at kilobase-resolution within several hours on a desktop computer. Standard MDS results in inaccuracies for sparse high-resolution data, but miniMDS focuses on local substructures to achieve greater accuracy. miniMDS also supports interchromosomal structural inference. Together with Mayavi, miniMDS produces publication-quality images and gifs.
+
+## Update 9/27/18
+
+Major improvements in miniMDS. Please pull code for latest version.
 
 ## Citation
 
@@ -131,6 +135,14 @@ a can be any value >1, including non-integer.
 A secondary scaling factor is used for short-range interactions. The default value is 2.5. You can change this using -a2. (Reducing this can help with "clumping" in the structure.)
 
 ``python minimds.py -a2 2 GM12878_combined_22_10kb.bed``
+
+##### Prior
+
+Exponential decay in contact frequency with genomic separation is a hallmark of Hi-C data. To reduce noise, miniMDS corrects contact frequencies with a distance-decay prior. The default prior weight is 0.05. You can change the weight using -w. 
+
+``python minimds.py -w 0 GM12878_combined_22_10kb.bed``
+
+w can be any value between 0 and 1. 
 
 ##### Classical MDS
 

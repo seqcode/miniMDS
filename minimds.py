@@ -9,10 +9,18 @@ import array_tools as at
 import tad
 import linear_algebra as la
 import tools
+from matplotlib import pyplot as plt
+sys.path.append("/home/lur159/Documents/utilities")
+from hic_oe import get_expected
 
-def infer_structure(contactMat, structure, alpha, num_threads, classical=False):
+def infer_structure(contactMat, structure, alpha, num_threads, weight, classical=False):
 	"""Infers 3D coordinates for one structure"""
 	assert len(structure.nonzero_abs_indices()) == len(contactMat)
+
+	expected = get_expected(contactMat)
+	for i in range(len(contactMat)):
+		for j in range(i):
+			contactMat[i,j] = (1-weight)*contactMat[i,j] + weight*expected[i-j-1]
 
 	at.makeSymmetric(contactMat)
 	rowsums = np.array([sum(row) for row in contactMat])
@@ -30,11 +38,11 @@ def infer_structure(contactMat, structure, alpha, num_threads, classical=False):
 
 	structure.setCoords(coords)
 
-def fullMDS(path, classical, alpha, num_threads):
+def fullMDS(path, classical, alpha, num_threads, weight):
 	"""MDS without partitioning"""
 	structure = dt.structureFromBed(path)
 	contactMat = dt.matFromBed(path, structure)
-	infer_structure(contactMat, structure, alpha, num_threads, classical)
+	infer_structure(contactMat, structure, alpha, num_threads, weight, classical)
 	return structure
 	
 def partitionedMDS(path, args):
@@ -46,6 +54,7 @@ def partitionedMDS(path, args):
 	alpha = args[4]
 	res_ratio = args[5]
 	alpha2 = args[6]
+	weight = args[7]
 
 	#create low-res structure
 	low_chrom = dt.chromFromBed(path)
@@ -81,7 +90,7 @@ def partitionedMDS(path, args):
 
 	highstructure.setstructures(high_substructures)
 
-	infer_structure(low_contactMat, lowstructure, alpha, num_threads)
+	infer_structure(low_contactMat, lowstructure, alpha, num_threads, weight)
 	print("Low-resolution MDS complete")
 
 	highSubstructures = pymp.shared.list(highstructure.structures)
@@ -97,7 +106,7 @@ def partitionedMDS(path, args):
 
 				#perform MDS individually
 				structure_contactMat = dt.matFromBed(path, highSubstructure)	#contact matrix for this structure only
-				infer_structure(structure_contactMat, highSubstructure, alpha2, num_threads)
+				infer_structure(structure_contactMat, highSubstructure, alpha2, num_threads, weight)
 
 				#approximate as low resolution
 				inferredLow = dt.highToLow(highSubstructure, res_ratio)
@@ -136,15 +145,16 @@ def main():
 	parser.add_argument("-n", type=int, default=3, help="number of threads")
 	parser.add_argument("-a", type=float, default=4, help="alpha factor for converting contact frequencies to physical distances")
 	parser.add_argument("-a2", type=float, default=2.5, help="short-range alpha factor for converting contact frequencies to physical distances")
+	parser.add_argument("-w", type=float, default=0.05, help="weight of distance decay prior")
 	args = parser.parse_args()
 
 	if args.full:	#not partitioned
-		structure = fullMDS(args.path, args.classical, args.a, args.n)
+		structure = fullMDS(args.path, args.classical, args.a, args.n, args.w)
 
 	else:	#partitioned
-		params = (args.p, args.m, args.r, args.n, args.a, args.l, args.a2)
-		names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha", "Resolution ratio", "Short-range alpha")
-		intervals = ((0, 1), (0, 1), (0, None), (0, None), (1, None), (1, None), (1, None))
+		params = (args.p, args.m, args.r, args.n, args.a, args.l, args.a2, args.w)
+		names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha", "Resolution ratio", "Short-range alpha", "Weight")
+		intervals = ((0, 1), (0, 1), (0, None), (0, None), (0, None), (1, None), (0, None), (0, 1))
 		if not tools.args_are_valid(params, names, intervals):
 			sys.exit(1)
 
