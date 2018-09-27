@@ -58,15 +58,15 @@ To view help:
 
 By default, partitioned MDS is used:
 
-``python minimds.py GM12878_combined_22_100kb.bed``
+``python minimds.py GM12878_combined_22_5kb.bed``
 
 Full MDS is recommended for low-resolution high-quality (not sparse) files, especially small chromosomes:
 
-``python minimds.py --full GM12878_combined_22_100kb.bed``
+``python minimds.py --full GM12878_combined_22_5kb.bed``
 
 By default structures are saved to [PREFIX]_structure.tsv, e.g. GM12878_combined_22_100kb.bed would output GM12878_combined_22_100kb_structure.tsv. You can use the -o option with a custom path where you want to save the structure.
 
-``python minimds.py -o GM12878_combined_22_100kb_structure.tsv GM12878_combined_22_100kb.bed``
+``python minimds.py -o test_structure.tsv GM12878_combined_22_5kb.bed``
 
 Structures are saved to tsv files. The header contains the name of the chromosome, the resolution, and the starting genomic coordinate. Each line in the file contains the genomic bin number followed by the 3D coordinates (with "nan" for missing data). 
 
@@ -94,7 +94,7 @@ Example - chr22 at 10-Kbp resolution:
 
 miniMDS first infers a global intrachromosomal structure at low resolution, which it uses as a scaffold for high-resolution inference. By default a resolution ratio of 10 is used. So if your input file is 100-kb resolution, a 1-Mb structure will be used for approximation. The resolution ratio can be changed with the l option. 
 
-``python minimds.py -l 20 GM12878_combined_22_10kb.bed``
+``python minimds.py -l 20 GM12878_combined_22_5kb.bed``
 
 The value you choose depends on your tradeoff between speed and accuracy (but must be an integer). Lower resolutions (i.e. higher ratios) are faster but less accurate.
 
@@ -122,25 +122,25 @@ miniMDS uses multithreading to achieve greater speed. By default, 3 threads are 
 
 For example, to run miniMDS with four threads:
 
-``python minimds.py -n 4 GM12878_combined_22_10kb.bed``
+``python minimds.py -n 4 GM12878_combined_22_5kb.bed``
 
 ##### Scaling factor
 
 The scaling factor a describes the assumed relationship between contact frequencies and physical distances: distance = contact_frequency^(-1/a). The default value is 4, based on Wang et al 2016. You can change the scaling factor using -a. 
 
-``python minimds.py -a 3 GM12878_combined_22_10kb.bed``
+``python minimds.py -a 3 GM12878_combined_22_5kb.bed``
 
 a can be any value >1, including non-integer.
 
 A secondary scaling factor is used for short-range interactions. The default value is 2.5. You can change this using -a2. (Reducing this can help with "clumping" in the structure.)
 
-``python minimds.py -a2 2 GM12878_combined_22_10kb.bed``
+``python minimds.py -a2 2 GM12878_combined_22_5kb.bed``
 
 ##### Prior
 
 Exponential decay in contact frequency with genomic separation is a hallmark of Hi-C data. To reduce noise, miniMDS corrects contact frequencies with a distance-decay prior. The default prior weight is 0.05. You can change the weight using -w. 
 
-``python minimds.py -w 0 GM12878_combined_22_10kb.bed``
+``python minimds.py -w 0 GM12878_combined_22_5kb.bed``
 
 w can be any value between 0 and 1. 
 
@@ -148,7 +148,7 @@ w can be any value between 0 and 1.
 
 Classical MDS (cMDS), also called principal coordinates analysis, is a variant of MDS that is faster under certain circumstances. The miniMDS tool supports cMDS but NOT with partitioned MDS. Use the --classical option. 
 
-``python minimds.py --classical GM12878_combined_22_10kb.bed``
+``python minimds.py --classical GM12878_combined_22_5kb.bed``
 
 This mode is mainly used for testing. 
 
