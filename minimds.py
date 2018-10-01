@@ -10,7 +10,6 @@ import tad
 import linear_algebra as la
 import tools
 from matplotlib import pyplot as plt
-sys.path.append("/home/lur159/Documents/utilities")
 from hic_oe import get_expected
 
 def infer_structure(contactMat, structure, alpha, num_threads, weight, classical=False):
