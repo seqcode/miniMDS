@@ -30,7 +30,7 @@ $TIME -o cmds_chr22_10kb_time.txt -f %e python ../minimds.py --classical $BEDPAT
 
 #miniMDS
 
-$TIME -o minimds_chr22_10kb_time.txt -f %e python ../minimds.py -l hic_data/GM12878_combined_22_100kb.bed $BEDPATH
+$TIME -o minimds_chr22_10kb_time.txt -f %e python ../minimds.py --partitioned $BEDPATH
 
 #MOGEN
 

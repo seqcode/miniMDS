@@ -10,7 +10,7 @@ do
 	BEDPATH="hic_data/GM12878_combined_"$CHROM"_10kb.bed"
 	python ../minimds.py -o "hic_data/GM12878_combined_"$CHROM"_10kb_mmds_coords.tsv" $BEDPATH
 	python ../minimds.py --classical -o "hic_data/GM12878_combined_"$CHROM"_10kb_cmds_coords.tsv" $BEDPATH
-	python ../minimds.py -l "hic_data/GM12878_combined_"$CHROM"_100kb.bed" -o "hic_data/GM12878_combined_"$CHROM"_10kb_minimds_coords.tsv" -p 0.001 $BEDPATH
+	python ../minimds.py --partitioned -o "hic_data/GM12878_combined_"$CHROM"_10kb_minimds_coords.tsv" -p 0.001 $BEDPATH
 
 	INPUT_PATH="MOGEN/examples/hiC/input/GM12878_combined_"$CHROM"_"$RES_KB"kb.tsv" 
 	if [ ! -e $INPUT_PATH ]

@@ -36,10 +36,10 @@ python ../minimds.py -o hic_data/GM12878_combined_22_10kb_mmds_rep2.tsv $BEDPATH
 #miniMDS
 
 #rep 1
-python ../minimds.py -l hic_data/GM12878_combined_22_100kb.bed -p 0.01 -m 0.01 -o hic_data/GM12878_combined_22_10kb_minimds_rep1.tsv $BEDPATH
+python ../minimds.py --partitioned -p 0.01 -m 0.01 -o hic_data/GM12878_combined_22_10kb_minimds_rep1.tsv $BEDPATH
 
 #rep 2
-python ../minimds.py -l hic_data/GM12878_combined_22_100kb.bed -p 0.01 -m 0.01 -o hic_data/GM12878_combined_22_10kb_minimds_rep2.tsv $BEDPATH
+python ../minimds.py --partitioned -p 0.01 -m 0.01 -o hic_data/GM12878_combined_22_10kb_minimds_rep2.tsv $BEDPATH
 
 #MOGEN
 

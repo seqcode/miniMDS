@@ -10,7 +10,6 @@ cd hic_data
 
 if [ ! -e GSE63525_GM12878_combined_intrachromosomal_contact_matrices.tar.gz ]
 	then
-		#wget ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525%5FGM12878%5Fcombined%5Fintrachromosomal%5Fcontact%5Fmatrices%2Etar%2Egz
 		curl ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525%5FGM12878%5Fcombined%5Fintrachromosomal%5Fcontact%5Fmatrices%2Etar%2Egz -o GSE65325_GM12878_combined_intrachromosomal_contact_matrices.tar.gz		
 fi
 
