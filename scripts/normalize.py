@@ -3,6 +3,7 @@ sys.path.append("..")
 import numpy as np
 import argparse
 import tools
+import os
 
 def get_chrom_num(chrom):
 	if chrom == "X":
