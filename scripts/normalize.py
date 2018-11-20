@@ -42,7 +42,7 @@ def normalize_inter(hic_id, res, chrom_a, chrom_b):
 	rawpath = "{}/{}_resolution_interchromosomal/chr{}_chr{}/MAPQGE30/chr{}_{}_{}.RAWobserved".format(hic_id, res_string, chrom1, chrom2, chrom1, chrom2, res_string)
 	krpath1 = "{}/{}_resolution_interchromosomal/chr{}_chr{}/MAPQGE30/chr{}_{}.KRnorm".format(hic_id, res_string, chrom1, chrom2, chrom1, res_string)
 	krpath2 = "{}/{}_resolution_interchromosomal/chr{}_chr{}/MAPQGE30/chr{}_{}.KRnorm".format(hic_id, res_string, chrom1, chrom2, chrom2, res_string)
-	outpath = "{}_{}_{}_{}_{}.bed".format(hic_id, chrom1, chrom2, res_string, norm)
+	outpath = "{}_{}_{}_{}.bed".format(hic_id, chrom1, chrom2, res_string)
 	chromstring1 = "chr" + chrom1
 	chromstring2 = "chr" + chrom2
 	normalize(chromstring1, chromstring2, rawpath, krpath1, krpath2, res, outpath)
