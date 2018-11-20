@@ -133,6 +133,7 @@ def main():
 	parser.add_argument("-n", type=int, default=3, help="Number of threads")
 	parser.add_argument("-a", type=float, default=4, help="alpha factor for converting contact frequencies to physical distances")
 	parser.add_argument("-a2", type=float, default=2.5, help="short-range alpha factor for converting contact frequencies to physical distances")
+	parser.add_argument("-w", type=float, default=0.05, help="weight of distance decay prior")
 	args = parser.parse_args()
 
 	if len(args.c) == 0:
@@ -144,9 +145,9 @@ def main():
 		chrom_names = args.c
 	
 
-	params = (args.p, args.m, args.r, args.n, args.a, args.l, args.a2)
-	names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha", "Resolution ratio", "Short-range alpha")
-	intervals = ((0, 1), (0, 1), (0, None), (0, None), (1, None), (1, None), (1, None))
+	params = (args.p, args.m, args.r, args.n, args.a, args.l, args.a2, args.w)
+	names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha", "Resolution ratio", "Short-range alpha", "Weight")
+	intervals = ((0, 1), (0, 1), (0, None), (0, None), (1, None), (1, None), (1, None), (0, 1))
 	if not tools.args_are_valid(params, names, intervals):
 		sys.exit(1)
 
