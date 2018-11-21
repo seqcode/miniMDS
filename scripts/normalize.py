@@ -3,6 +3,7 @@ sys.path.append("..")
 import numpy as np
 import argparse
 import tools
+import os
 
 def get_chrom_num(chrom):
 	if chrom == "X":
@@ -41,8 +42,12 @@ def normalize_inter(hic_id, res, chrom_a, chrom_b):
 
 	rawpath = "{}/{}_resolution_interchromosomal/chr{}_chr{}/MAPQGE30/chr{}_{}_{}.RAWobserved".format(hic_id, res_string, chrom1, chrom2, chrom1, chrom2, res_string)
 	krpath1 = "{}/{}_resolution_interchromosomal/chr{}_chr{}/MAPQGE30/chr{}_{}.KRnorm".format(hic_id, res_string, chrom1, chrom2, chrom1, res_string)
+	if not os.path.isfile(krpath1):
+		krpath1 = "{}/{}_resolution_interchromosomal/chr{}_chr{}/MAPQGE30/chr{}_{}.VCnorm".format(hic_id, res_string, chrom1, chrom2, chrom1, res_string)
 	krpath2 = "{}/{}_resolution_interchromosomal/chr{}_chr{}/MAPQGE30/chr{}_{}.KRnorm".format(hic_id, res_string, chrom1, chrom2, chrom2, res_string)
-	outpath = "{}_{}_{}_{}_{}.bed".format(hic_id, chrom1, chrom2, res_string, norm)
+	if not os.path.isfile(krpath2):
+		krpath2 = "{}/{}_resolution_interchromosomal/chr{}_chr{}/MAPQGE30/chr{}_{}VCnorm".format(hic_id, res_string, chrom1, chrom2, chrom2, res_string)
+	outpath = "{}_{}_{}_{}.bed".format(hic_id, chrom1, chrom2, res_string)
 	chromstring1 = "chr" + chrom1
 	chromstring2 = "chr" + chrom2
 	normalize(chromstring1, chromstring2, rawpath, krpath1, krpath2, res, outpath)
@@ -52,6 +57,8 @@ def normalize_intra(hic_id, res, chrom):
 
 	rawpath = "{}/{}_resolution_intrachromosomal/chr{}/MAPQGE30/chr{}_{}.RAWobserved".format(hic_id, res_string, chrom, chrom, res_string)
 	krpath = "{}/{}_resolution_intrachromosomal/chr{}/MAPQGE30/chr{}_{}.KRnorm".format(hic_id, res_string, chrom, chrom, res_string)
+	if not os.path.isfile(krpath):
+		krpath = "{}/{}_resolution_intrachromosomal/chr{}/MAPQGE30/chr{}_{}.VCnorm".format(hic_id, res_string, chrom, chrom, res_string)
 	outpath = "{}_{}_{}.bed".format(hic_id, chrom, res_string)
 	chromstring = "chr" + chrom
 	normalize(chromstring, chromstring, rawpath, krpath, None, res, outpath)
