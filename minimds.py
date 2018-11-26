@@ -46,7 +46,6 @@ def fullMDS(path, classical, alpha, num_threads, weight):
 	
 def partitionedMDS(path, args):
 	"""Partitions structure into substructures and performs MDS"""
-	print args
 	domainSmoothingParameter = args[0]
 	minSizeFraction = args[1]
 	maxmemory = args[2]
