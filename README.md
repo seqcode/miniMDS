@@ -4,10 +4,12 @@ miniMDS is a tool for inferring and plotting 3D structures from normalized Hi-C 
 
 Example: GM12878 chr22 at 5-kb resolution
 
-Standard MDS:
+Standard MDS
+
 ![alt text](http://lugh.bmb.psu.edu/data/rieber/GM12878_combined_22_5kb_standard.gif "Standard MDS")
 
-miniMDS:
+miniMDS
+
 ![alt text](http://lugh.bmb.psu.edu/data/rieber/GM12878_combined_22_5kb_minimds.gif "miniMDS")
 
 ## Update 9/27/18
