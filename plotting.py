@@ -69,7 +69,7 @@ def plot_structures_gif(structures, outname, all_enrichments=None, colors=defaul
 		mlab.savefig("{}_{:>03}.png".format(outname, i))
 
 	mlab.close()
-	os.system("convert -loop 1 {}_*.png {}.gif".format(outname, outname))
+	os.system("convert {}_*.png {}.gif".format(outname, outname))
 	os.system("rm {}_*.png".format(outname))
 
 def plot_structure_gif(structure, outname, enrichments=None, color=(1,0,0), radius=None, increment=10):
