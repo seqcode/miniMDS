@@ -93,7 +93,7 @@ def interMDS(names, prefix, inter_res, intra_res, partitioned, args):
 		if partitioned:
 			high_structure = mm.partitionedMDS(path, args)
 		else:
-			high_structure = mm.fullMDS(path, False, args[4], args[3])
+			high_structure = mm.fullMDS(path, False, args[4], args[3], args[7])
 		high_structures.append(high_structure)
 		inferred_low = dt.highToLow(high_structure, true_low.chrom.res/high_structure.chrom.res)
 		inferred_low_structures.append(inferred_low)
