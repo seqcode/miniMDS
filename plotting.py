@@ -30,7 +30,7 @@ def plot_structures_interactive(structures, all_enrichments=None, colors=default
 		if all_enrichments is not None:
 			mlab.plot3d(xs, ys, zs, all_enrichments[i], tube_radius=radius, colormap="seismic")
 		else:
-			mlab.plot3d(xs, ys, zs, [0 for x in xs], tube_radius=radius, color=colors[i])
+			mlab.plot3d(xs, ys, zs, tube_radius=radius, color=colors[i])
 	if out_path:
 		mlab.savefig(out_path)		
 	mlab.show()
