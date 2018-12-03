@@ -147,7 +147,7 @@ def main():
 
 	params = (args.p, args.m, args.r, args.n, args.a, args.l, args.a2, args.w)
 	names = ("Domain size parameter", "Minimum domain size", "Maximum memory", "Number of threads", "Alpha", "Resolution ratio", "Short-range alpha", "Weight")
-	intervals = ((0, 1), (0, 1), (0, None), (0, None), (1, None), (1, None), (1, None), (0, 1))
+	intervals = ((0, 1), (0, 1), (0, None), (0, None), (1, None), (1, None), (1, None), (None, 1))
 	if not tools.args_are_valid(params, names, intervals):
 		sys.exit(1)
 
