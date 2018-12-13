@@ -28,7 +28,7 @@ def plot_structures_interactive(structures, all_enrichments=None, colors=default
 			ys = ys[indices]
 			zs = zs[indices]	
 		if all_enrichments is not None:
-			mlab.plot3d(xs, ys, zs, all_enrichments[i], tube_radius=radius, colormap="seismic")
+			mlab.plot3d(xs, ys, zs, all_enrichments[i], tube_radius=radius, colormap="bwr")
 		else:
 			mlab.plot3d(xs, ys, zs, tube_radius=radius, color=colors[i])
 	if out_path:
@@ -44,7 +44,7 @@ def plot_structure_interactive(structure, enrichments=None, color=(1,0,0), radiu
 	zs = coords[:,2]
 	mlab.figure(bgcolor=(1,1,1))
 	if enrichments is not None:
-		mlab.plot3d(xs, ys, zs, enrichments, tube_radius=radius, colormap="seismic")
+		mlab.plot3d(xs, ys, zs, enrichments, tube_radius=radius, colormap="bwr")
 	else:
 		mlab.plot3d(xs, ys, zs, tube_radius=radius, color=color)
 	if out_path:
@@ -62,7 +62,7 @@ def plot_structures_gif(structures, outname, all_enrichments=None, colors=defaul
 		for j, structure in enumerate(structures):
 			coords = np.array(structure.getCoords())
 			if all_enrichments is not None:
-				s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], all_enrichments[j], tube_radius=radius, colormap="seismic")
+				s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], all_enrichments[j], tube_radius=radius, colormap="bwr")
 			else:
 				s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], tube_radius=radius, color=colors[j])
 		mlab.view(i)
@@ -81,7 +81,7 @@ def plot_structure_gif(structure, outname, enrichments=None, color=(1,0,0), radi
 	coords = np.array(structure.getCoords())
 	mlab.figure(bgcolor=(1,1,1))
 	if enrichments is not None:
-		s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], enrichments, tube_radius=radius, colormap="seismic")
+		s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], enrichments, tube_radius=radius, colormap="bwr")
 	else:
 		s = mlab.plot3d(coords[:,0], coords[:,1], coords[:,2], tube_radius=radius, color=color)
 	for i in range(0, 360, increment):
