@@ -122,9 +122,9 @@ Make these parameters smaller to increase the number of partitions. For very hig
 
 ``python minimds.py -m 0.01 -p 0.01 GM12878_combined_22_5kb.bed``
 
-You can limit the maximum RAM (in Kb) used by any given partition using -R (default = 32000):
+You can limit the maximum RAM (in Kb) used by any given partition using -r (default = 32000000):
 
-``python minimds.py -R 50000 GM12878_combined_22_5kb.bed``
+``python minimds.py -r 50000 GM12878_combined_22_5kb.bed``
 
 ##### Number of threads
 
