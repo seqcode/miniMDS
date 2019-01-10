@@ -61,6 +61,17 @@ class Structure(object):
 		"""All non-zero points"""
 		return self.points[np.where(self.points != 0)[0]]
 
+	def subsamplePoints(self, start_abs_index, end_abs_index):
+		"""Set structure's points to only include start_abs_index through end_abs_index"""
+		points = self.points[start_abs_index:end_abs_index+1]
+		self.chrom.maxPos = self.chrom.getGenCoord(end_abs_index)
+		self.chrom.minPos = self.chrom.getGenCoord(start_abs_index)
+		#re-index
+		for abs_index in np.where(points != 0)[0]:
+			points[abs_index].absolute_index = abs_index
+		self.points = points
+		self.set_rel_indices()
+
 	def getGenCoords(self):
 		"""Non-zero genomic coordinates of structure"""
 		return [self.chrom.getGenCoord(abs_index) for abs_index in self.nonzero_abs_indices()]
