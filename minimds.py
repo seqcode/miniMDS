@@ -128,6 +128,7 @@ def partitionedMDS(path, args):
 				print("MDS performed on structure {} of {}".format(substructurenum + 1, numSubstructures))
 
 	highstructure.setstructures(highSubstructures)
+	highstructure.set_rel_indices()
 
 	return highstructure
 
