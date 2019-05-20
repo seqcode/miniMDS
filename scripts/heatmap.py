@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use("Agg")
 import sys
 sys.path.append("..")
 from matplotlib import pyplot as plt
@@ -16,7 +18,7 @@ def threshold(mat, value):
 def createHeatmap(mat, domains, outpath, colors=None):
 	# Plot
 	fig, ax = plt.subplots()
-	heatmap = ax.pcolor(mat, cmap=plt.cm.Reds)
+	plt.pcolor(mat, cmap=plt.cm.Reds)
 
 	# Format
 	fig = plt.gcf()
@@ -57,10 +59,10 @@ def createHeatmap(mat, domains, outpath, colors=None):
 		for (domain, color) in zip(domains, colors):
 			lowerBound = domain[0]
 			upperBound = domain[1]
-			plt.plot([lowerBound, upperBound], [lowerBound, lowerBound], c=color, lw=5)	#horizontal
-			plt.plot([lowerBound, upperBound], [upperBound, upperBound], c=color, lw=5)	#lower horizontal
-			plt.plot([upperBound, upperBound], [lowerBound, upperBound], c=color, lw=5)	#vertical
-			plt.plot([lowerBound, lowerBound], [lowerBound, upperBound], c=color, lw=5)	#left vertical
+			plt.plot([lowerBound, upperBound], [lowerBound, lowerBound], c=color, lw=1)	#horizontal
+			plt.plot([lowerBound, upperBound], [upperBound, upperBound], c=color, lw=1)	#lower horizontal
+			plt.plot([upperBound, upperBound], [lowerBound, upperBound], c=color, lw=1)	#vertical
+			plt.plot([lowerBound, lowerBound], [lowerBound, upperBound], c=color, lw=1)	#left vertical
 
 	if outpath is not None:
 		plt.savefig(outpath)
