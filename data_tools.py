@@ -19,7 +19,7 @@ class ChromParameters(object):
 
 	def getAbsoluteIndex(self, genCoord):
 		"""Converts genomic coordinate into absolute index. Absolute indexing includes empty (zero) points."""
-		if genCoord < self.minPos or genCoord > self.maxPos:
+		if genCoord < self.minPos or genCoord > self.maxPos + self.chrom.res:
 			return None
 		else:
 			return int((genCoord - self.minPos)/self.res) 
