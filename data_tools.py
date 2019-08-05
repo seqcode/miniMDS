@@ -180,7 +180,7 @@ def structureFromBed(path, chrom=None, start=None, end=None, offset=0):
 				abs_index2 = structure.chrom.getAbsoluteIndex(pos2)
 				if abs_index1 != abs_index2:	#non-self-interacting
 					structure.points[abs_index1] = Point((0,0,0), structure.chrom, abs_index1, 0)
-					structure.points[abs_index2)] = Point((0,0,0), structure.chrom, abs_index2, 0)
+					structure.points[abs_index2] = Point((0,0,0), structure.chrom, abs_index2, 0)
 			tracker.increment()
 		listFile.close()
 
