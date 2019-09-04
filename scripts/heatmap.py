@@ -1,24 +1,19 @@
-import matplotlib
-matplotlib.use("Agg")
-import sys
-sys.path.append("..")
 from matplotlib import pyplot as plt
 import numpy as np
-import array_tools as at
 
 def threshold(mat, value):
 	"""Cuts off values above threshold for ease of visualization of heatmap"""
 	n = len(mat)
 	thresholded = np.zeros_like(mat)
 	for i in range(n):
-		for j in range(n):
+		for j in range(len(mat[0])):
 			thresholded[i,j] = min((mat[i,j], value))
 	return thresholded
 
 def createHeatmap(mat, domains, outpath, colors=None):
 	# Plot
 	fig, ax = plt.subplots()
-	plt.pcolor(mat, cmap=plt.cm.Reds)
+	plt.pcolormesh(mat, cmap=plt.cm.Reds)
 
 	# Format
 	fig = plt.gcf()
@@ -71,7 +66,6 @@ def createHeatmap(mat, domains, outpath, colors=None):
 		plt.show()
 
 def heatMapFromMat(mat, maxvalue=None, tads=None, outpath=None, colors=None):
-	at.makeSymmetric(mat)
 	if maxvalue is not None:
 		mat = threshold(mat, maxvalue)
 	createHeatmap(mat, tads, outpath, colors)
