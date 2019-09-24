@@ -81,6 +81,13 @@ def plot_structures_gif(structures, outname, all_enrichments=None, colors=defaul
 	os.system("convert {}_*.png {}.gif".format(outname, outname))
 	os.system("rm {}_*.png".format(outname))
 
+	fig, ax = plt.subplots()
+	ax.axis("off")
+	for i, color in enumerate(colors):
+		plt.text(0.5, i, "structure {}".format(i+1), color=color)
+	plt.savefig("structures_legend")
+	plt.close()
+
 def plot_structure_gif(structure, outname, enrichments=None, color=(1,0,0), radius=None, increment=10):
 	if 360%increment != 0:
 		print("Error. Increment must be factor of 360.")
