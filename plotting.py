@@ -3,6 +3,8 @@ import numpy as np
 import linear_algebra as la
 import os
 import sys
+from matplotlib import pyplot as plt
+
 #from Rippe 2001
 kl = 289	#Kuhn length (nm)
 bpPerKL = 30000.	#base pairs per Kuhn length 
@@ -34,6 +36,13 @@ def plot_structures_interactive(structures, all_enrichments=None, colors=default
 	if out_path:
 		mlab.savefig(out_path)		
 	mlab.show()
+
+	fig, ax = plt.subplots()
+	ax.axis("off")
+	for i, color in enumerate(colors):
+		plt.text(0.5, i, "structure {}".format(i+1), color=color)
+	plt.savefig("structures_legend")
+	plt.close()
 
 def plot_structure_interactive(structure, enrichments=None, color=(1,0,0), radius=None, out_path=None):
 	if radius is None:
