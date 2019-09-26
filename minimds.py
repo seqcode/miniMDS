@@ -40,7 +40,7 @@ def infer_structure(contactMat, structure, alpha, num_threads, weight, classical
 def fullMDS(path, classical, alpha, num_threads, weight):
 	"""MDS without partitioning"""
 	structure = dt.structureFromBed(path)
-	contactMat = dt.matFromBed(path, structure)
+	contactMat = dt.matFromBed(path, structure=structure)
 	infer_structure(contactMat, structure, alpha, num_threads, weight, classical)
 	return structure
 	
@@ -58,16 +58,16 @@ def partitionedMDS(path, args):
 	#create low-res structure
 	low_chrom = dt.chromFromBed(path)
 	low_chrom.res *= res_ratio
-	lowstructure = dt.structureFromBed(path, low_chrom)	#low global structure
+	lowstructure = dt.structureFromBed(path, chrom=low_chrom)	#low global structure
 
 	#get TADs
-	low_contactMat = dt.matFromBed(path, lowstructure)
+	low_contactMat = dt.matFromBed(path, structure=lowstructure)
 	low_tads = tad.getDomains(low_contactMat, lowstructure, domainSmoothingParameter, minSizeFraction)		#low substructures, defined on relative indices not absolute indices
 	tad.substructuresFromTads(lowstructure, low_tads)
 
 	#create high-res chrom
-	size, res = dt.basicParamsFromBed(path)
-	highChrom = dt.ChromParameters(lowstructure.chrom.minPos, lowstructure.chrom.maxPos, res, lowstructure.chrom.name, size)
+	#size, res = dt.basicParamsFromBed(path)
+	highChrom = dt.ChromParameters(lowstructure.chrom.minPos, lowstructure.chrom.maxPos, low_chrom.res/res_ratio, lowstructure.chrom.name)
 
 	#create high-res structure
 	highstructure = dt.Structure([], [], highChrom, 0)
@@ -82,7 +82,7 @@ def partitionedMDS(path, args):
 			end_gen_coord = highstructure.chrom.maxPos
 		else:
 			end_gen_coord = low_gen_coords[low_tad[1]]
-		high_substructure = dt.structureFromBed(path, highChrom, start_gen_coord, end_gen_coord, offset)
+		high_substructure = dt.structureFromBed(path, None, highChrom, start_gen_coord, end_gen_coord, offset)
 		high_substructures.append(high_substructure)
 		offset += len(high_substructure.points)	#update
 		offset -= 1
@@ -104,7 +104,7 @@ def partitionedMDS(path, args):
 				trueLow = lowSubstructures[substructurenum]
 
 				#perform MDS individually
-				structure_contactMat = dt.matFromBed(path, highSubstructure)	#contact matrix for this structure only
+				structure_contactMat = dt.matFromBed(path, structure=highSubstructure)	#contact matrix for this structure only
 				infer_structure(structure_contactMat, highSubstructure, alpha2, num_threads, weight)
 
 				#approximate as low resolution
