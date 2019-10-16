@@ -58,6 +58,10 @@ class Structure(object):
 		"""Absolute indices for all non-zero points."""
 		return np.array([point.absolute_index for point in self.getPoints()])
 
+	def nonzero_bins_whole_chrom(self):
+		"""Nonzero bin numbers with indexing relative to chromosome position 0 (not chrom.minPos)"""
+		return self.nonzero_abs_indices() + int(self.chrom.minPos/self.chrom.res)
+
 	def getPoints(self):
 		"""All non-zero points"""
 		return self.points[np.where(self.points != 0)[0]]
