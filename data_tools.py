@@ -9,9 +9,12 @@ from tad import *
 class ChromParameters(object):
 	"""Basic information on chromosome, inferred from input file"""
 	def __init__(self, minPos, maxPos, res, name):
-		self.minPos = int(minPos)	#minimum genomic coordinate
-		self.maxPos = int(maxPos)	#maximum genomic coordinate
-		self.res = int(res)		#resolution (bp)
+		if minPos is not None:
+			self.minPos = int(minPos)	#minimum genomic coordinate
+		if maxPos is not None:
+			self.maxPos = int(maxPos)	#maximum genomic coordinate
+		if res is not None:
+			self.res = int(res)		#resolution (bp)
 		self.name = name	#e.g. "chr22"
 
 	def getLength(self):
@@ -45,7 +48,8 @@ class Structure(object):
 		else:
 			self.setstructures(structures)
 		self.chrom = chrom	#chromosome parameters
-		self.offset = int(offset)	#absolute indexing offset (for substructures only)
+		if offset is not None:	
+			self.offset = int(offset)	#absolute indexing offset (for substructures only)
 
 	def getCoords(self):
 		return [point.pos for point in self.getPoints()]
@@ -156,8 +160,10 @@ class Point(object):
 	def __init__(self, pos, chrom, absolute_index, relative_index):
 		self.pos = pos	#3D coordinates
 		self.chrom = chrom	#chromosome parameters
-		self.absolute_index = int(absolute_index)	#index relative to all points in structure (including null/zero points)
-		self.relative_index = int(relative_index)	#index relative to only non-zero points
+		if absolute_index is not None:
+			self.absolute_index = int(absolute_index)	#index relative to all points in structure (including null/zero points)
+		if relative_index is not None:
+			self.relative_index = int(relative_index)	#index relative to only non-zero points
 
 def structureFromBed(path, size=None, chrom=None, start=None, end=None, offset=0):
 	"""Initializes structure from intrachromosomal BED file."""
