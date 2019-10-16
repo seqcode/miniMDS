@@ -12,12 +12,14 @@ def infer_structures(contactMat, structures, offsets, alpha, num_threads, classi
 	"""Infers 3D coordinates for multiple structures with same contact matrix"""
 	assert sum([len(structure.nonzero_abs_indices()) for structure in structures]) == len(contactMat)
 
-	at.makeSymmetric(contactMat)
+	#at.makeSymmetric(contactMat)
 	rowsums = np.array([sum(row) for row in contactMat])
 	assert len(np.where(rowsums == 0)[0]) == 0 
 
 	distMat = at.contactToDist(contactMat, alpha)
 	at.makeSymmetric(distMat)
+	#rowsums = np.array([sum(row) for row in distMat])
+	#assert len(np.where(rowsums == 0)[0]) == 0 
 
 	if classical:	#classical MDS
 		coords = la.cmds(distMat)
@@ -54,7 +56,9 @@ def get_inter_mat(prefix, inter_res_string, intra_res_string, structures, offset
 					if index1 is not None and index2 is not None:
 						row = index1 + offsets[i]
 						col = index2 + offsets[j]
-						mat[row, col] += float(line[6])
+						count = float(line[6])
+						mat[row, col] += count
+						mat[col, row] += count
 			bed.close()
 	return mat
 
