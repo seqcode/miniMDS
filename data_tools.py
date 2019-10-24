@@ -1,10 +1,10 @@
 import sys
 import numpy as np
-from .tools import Tracker
-from .linear_algebra import *
-#import array_tools as at
-from .tad import *
-from .hic_oe import get_expected
+from tools import Tracker
+from linear_algebra import *
+import array_tools as at
+from tad import *
+from hic_oe import get_expected
 
 class ChromParameters(object):
 	"""Basic information on chromosome, inferred from input file"""
