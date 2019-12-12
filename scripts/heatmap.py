@@ -1,3 +1,4 @@
+import matplotlib
 from matplotlib import pyplot as plt
 import numpy as np
 
@@ -15,30 +16,15 @@ def createHeatmap(mat, domains, outpath, colors=None):
 	fig, ax = plt.subplots()
 	plt.pcolormesh(mat, cmap=plt.cm.Reds)
 
-	# Format
-	fig = plt.gcf()
-
 	# turn off the frame
 	ax.set_frame_on(False)
 
-	# put the major ticks at the middle of each cell
-	ax.set_yticks(np.arange(mat.shape[0]) + 0.5, minor=False)
-	ax.set_xticks(np.arange(mat.shape[1]) + 0.5, minor=False)
-	ax.set_xticklabels([])
-	ax.set_yticklabels([])
-
 	# want a more natural, table-like display
 	ax.invert_yaxis()
-	ax.xaxis.tick_top()
 
-	# rotate the ticks
-	plt.xticks(rotation=90)
-
-	ax.grid(False)
-
-	# Turn off all the ticks
-	ax = plt.gca()
-
+	#turn off ticks
+	ax.set_xticklabels([])
+	ax.set_yticklabels([])
 	for t in ax.xaxis.get_major_ticks():
 		t.tick1On = False
 		t.tick2On = False
