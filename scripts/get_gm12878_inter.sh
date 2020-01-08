@@ -8,7 +8,7 @@ cd hic_data
 
 if [ ! -e GSE63525_GM12878_combined_interchromosomal_contact_matrices.tar.gz ]
 	then
-		curl ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525%5FGM12878%5Fcombined%5Finterchromosomal%5Fcontact%5Fmatrices%2Etar%2Egz -o GSE65325_GM12878_combined_interchromosomal_contact_matrices.tar.gz
+		curl ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525_GM12878_combined_interchromosomal_contact_matrices.tar.gz -o GSE65325_GM12878_combined_interchromosomal_contact_matrices.tar.gz
 fi
 
 RES_KB=$(($RES/1000))
