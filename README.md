@@ -223,7 +223,7 @@ You can specify a different number of autosomes using -C. To perform interchromo
 Read a structure:
 
     import data_tools
-    structure = data_tools.structure_from_file("GM12878_combined_22_100kb_structure.tsv")``
+    structure = data_tools.structure_from_file("GM12878_combined_22_100kb_structure.tsv")
 
 Create an interactive 3D plot in Mayavi. (Mayavi allows you to rotate the image and save a view.)
 
