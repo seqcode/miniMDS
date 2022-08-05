@@ -11,8 +11,8 @@ chrom.res = res
 chrom.minPos = int(np.floor(float(chrom.minPos)/res)) * res	#round
 chrom.maxPos = int(np.ceil(float(chrom.maxPos)/res)) * res
 
-struct = dt.structureFromBed(path, chrom)
-mat = dt.matFromBed(path, struct)
+struct = dt.structureFromBed(path, chrom=chrom)
+mat = dt.matFromBed(path, structure=struct)
 
 points = struct.getPoints()
 
