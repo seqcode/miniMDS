@@ -223,12 +223,12 @@ You can specify a different number of autosomes using -C. To perform interchromo
 Read a structure:
 
     import data_tools
-    structure = data_tools.structure_from_file("GM12878_combined_22_100kb_structure.tsv")``
+    structure = data_tools.structure_from_file("GM12878_combined_22_100kb_structure.tsv")
 
 Create an interactive 3D plot in Mayavi. (Mayavi allows you to rotate the image and save a view.)
 
     import plotting
-    plotting.plot_structure_interactive(structure, color=(0,0.5,0.7), radius=0.01, enrichments=my_enrichments)``
+    plotting.plot_structure_interactive(structure, color=(0,0.5,0.7), radius=0.01, enrichments=my_enrichments)
 
 If _radius_ is not selected, the to-scale radius of heterochromatin is used. 
 
