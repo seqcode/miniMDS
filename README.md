@@ -2,16 +2,6 @@
 
 miniMDS is a tool for inferring and plotting 3D structures from normalized Hi-C data, using a novel approximation to multidimensional scaling (MDS). It produces a single 3D structure from a Hi-C BED file, representing an ensemble average of chromosome conformations within the population of cells. Using parallelization, it is able to process high-resolution data quickly with limited memory requirements. The human genome can be inferred at kilobase-resolution within several hours on a desktop computer. Standard MDS results in inaccuracies for sparse high-resolution data, but miniMDS focuses on local substructures to achieve greater accuracy. miniMDS also supports interchromosomal structural inference. Together with Mayavi, miniMDS produces publication-quality images and gifs.
 
-Example: GM12878 chr22 at 5-kb resolution
-
-Standard MDS
-
-![alt text](http://lugh.bmb.psu.edu/data/rieber/GM12878_combined_22_5kb_standard.gif "Standard MDS")
-
-miniMDS
-
-![alt text](http://lugh.bmb.psu.edu/data/rieber/GM12878_combined_22_5kb_minimds.gif "miniMDS")
-
 ## Update 9/27/18
 
 Major improvements in miniMDS. Please pull code for latest version.

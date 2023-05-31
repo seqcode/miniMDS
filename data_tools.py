@@ -269,7 +269,7 @@ def highToLow(highstructure, resRatio):
 	allPointsToMerge = [[] for i in range(low_n)]
 	
 	for highPoint in highstructure.getPoints():
-		pointsToMerge = []
+		#pointsToMerge = []
 		high_abs_index = highPoint.absolute_index - highstructure.offset
 		low_abs_index = int(high_abs_index/resRatio)
 		allPointsToMerge[low_abs_index].append(highPoint)
