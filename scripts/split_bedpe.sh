@@ -4,6 +4,22 @@ RES=$3
 
 BEDPE_PATH=all.bed
 
-python hicpro_to_bedpe.py $BED_PATH $MAT_PATH $BEDPE_PATH
+echo python hicpro_to_bedpe.py $BED_PATH $MAT_PATH $BEDPE_PATH
 
 PREFIX=${MAT_PATH%.matrix}
+
+CHROMS=(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X)
+
+#interchromosomal
+NUM_CHROMS=${#CHROMS[@]}
+for i in `seq $((NUM_CHROMS-1))`
+do
+    CHROM1=${CHROMS[$i]}
+    for j in `seq 0 $((i-1))`
+    do 
+        CHROM2=${CHROMS[$j]}
+        cat $BEDPE_PATH | awk -v chrom1=chr$CHROM1 -v chrom2=chr$CHROM2 '($1 == chrom1 && $4 == chrom2) || ($4 == chrom1 && $1 == chrom2) {print $0}' > ${PREFIX}_${CHROM2}_${CHROM1}_$RES.bed
+    done
+done  
+
+#TODO: intrachromosomal
