@@ -30,3 +30,5 @@ do
     CHROM=${CHROMS[$i]}
     cat $BEDPE_PATH | awk -v chrom=chr$CHROM '$1 == chrom && $4 == chrom {print $0}' > ${PREFIX}_${CHROM}_$RES.bed
 done 
+
+python ../minimds_inter.py $PREFIX $RES $RES 
