@@ -2,55 +2,26 @@ set -e
 
 RES=$1
 CHROM=$2
-RES_KB=$(($RES/1000))
 
-mkdir -p hic_data
+DATA_DIR=hic_data
+mkdir -p $DATA_DIR
 
-cd hic_data
+PREFIX=GM12878_combined
+TAR=$DATA_DIR/GSE63525_${PREFIX}_intrachromosomal_contact_matrices.tar.gz
 
-if [ ! -e GSE63525_GM12878_combined_intrachromosomal_contact_matrices.tar.gz ]
-	then
-		curl ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525%5FGM12878%5Fcombined%5Fintrachromosomal%5Fcontact%5Fmatrices%2Etar%2Egz -o GSE65325_GM12878_combined_intrachromosomal_contact_matrices.tar.gz		
-fi
+test ! -s $TAR && (curl ftp://ftp.ncbi.nlm.nih.gov/geo/series/GSE63nnn/GSE63525/suppl/GSE63525%5FGM12878%5Fcombined%5Fintrachromosomal%5Fcontact%5Fmatrices%2Etar%2Egz -o $TAR)
 
-
-RES_KB=$(($RES/1000))
-
-if [ $RES_KB -lt 1000 ]
-	then
-		RES_STRING=$RES_KB"kb"
-else
-	RES_STRING=$(($RES_KB/1000))"mb"
-fi
-
+#all human chromosomes
 if [ $CHROM -eq 0 ]
 	then
-		for CHROM in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 X
+		for CHROM in `seq 23`
 		do
-			DIR=$RES_STRING"_resolution_intrachromosomal"/chr$CHROM
-			if [ ! -e GM12878_combined/$DIR ]
-				then
-					tar xzf GSE63525_GM12878_combined_intrachromosomal_contact_matrices.tar.gz GM12878_combined/$DIR
-			fi
-
-			if [ ! -e "GM12878_combined_"$CHROM"_"$RES_KB$RES_STRING.bed ]
-				then
-	  				python ../normalize.py GM12878_combined $RES $CHROM
-			fi
+			bash chrom_from_tar.sh $RES $CHROM $TAR $DATA_DIR $PREFIX
 		done
 
+		bash chrom_from_tar.sh $RES X $TAR $DATA_DIR $PREFIX
+
+#selected chromosome
 else
-	DIR=$RES_STRING"_resolution_intrachromosomal"/chr$CHROM
-	if [ ! -e GM12878_combined/$DIR ]
-		then
-			tar xzf GSE63525_GM12878_combined_intrachromosomal_contact_matrices.tar.gz GM12878_combined/$DIR
-	fi
-
-	if [ ! -e GM12878_combined_$CHROM"_"$RES_KB$RES_STRING.bed ]
-		then
-	  		python ../normalize.py GM12878_combined $RES $CHROM
-	fi
-
+	bash chrom_from_tar.sh $RES $CHROM $TAR $DATA_DIR $PREFIX
 fi
-
-cd ..
