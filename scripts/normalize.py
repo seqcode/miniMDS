@@ -23,8 +23,8 @@ def normalize(chrom1, chrom2, rawpath, krpath1, krpath2, res, outpath):
 				line = line.split()
 				loc1 = line[0]
 				loc2 = line[1]
-				norm1 = kr1[int(loc1)/res]
-				norm2 = kr2[int(loc2)/res]
+				norm1 = kr1[int(int(loc1)/res)]
+				norm2 = kr2[int(int(loc2)/res)]
 				if not np.isnan(norm1) and not np.isnan(norm2):
 					out.write("\t".join((chrom1, loc1, str(int(loc1) + res), chrom2, loc2, str(int(loc2) + res), str(float(line[2])/(norm1 * norm2)))) + "\n")
 		out.close()
