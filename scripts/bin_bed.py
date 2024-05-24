@@ -1,5 +1,6 @@
-import data_tools as dt
 import sys
+sys.path.append("..")
+import data_tools as dt
 import numpy as np
 
 path = sys.argv[1]
@@ -24,4 +25,3 @@ with open(outpath, "w") as out:
 				abs_index2 = points[j].absolute_index
 				out.write("\t".join((chrom.name, str(chrom.getGenCoord(abs_index1)), str(chrom.getGenCoord(abs_index1) + res), chrom.name, str(chrom.getGenCoord(abs_index2)), str(chrom.getGenCoord(abs_index2) + res), str(mat[i,j]))))
 				out.write("\n")
-	out.close()
