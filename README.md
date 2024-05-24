@@ -227,13 +227,13 @@ _enrichments_ is a vector with a numerical value for each bin in the structure (
 Multiple structures can be plotted simultaneously:
 
     chroms = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, "X")
-    structures = [data_tools.structure_from_file(f"GM12878_combined_{chrom}_100kb_structure.tsv" for chrom in chroms)]
+    structures = [data_tools.structure_from_file(f"GM12878_combined_{chrom}_100kb_structure.tsv") for chrom in chroms]
     plotting.plot_structures_interactive(structures)
 
 plotting.py has 23 built-in colors designed to be maximally different to the human eye. By default, these colors are used when plotting multiple structures. You can also specify a list of colors:
 
     chroms = (1, 2)
-    structures = [data_tools.structure_from_file(f"GM12878_combined_{chrom}_100kb_structure.tsv" for chrom in chroms)]
+    structures = [data_tools.structure_from_file(f"GM12878_combined_{chrom}_100kb_structure.tsv") for chrom in chroms]
     plotting.plot_structures_interactive(structures, colors=[(1,0,0), (0,0,1)])
 
 plot_structures_interactive and plot_structures_gif output a file "structures_legend.png" showing the colors for each structure. 
