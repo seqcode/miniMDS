@@ -99,7 +99,7 @@ class Structure(object):
 	
 	def setstructures(self, structures):
 		self.structures = structures
-		self.points = np.zeros(max([max(structure.nonzero_abs_indices()) for structure in structures]) + 1, dtype=np.object)	#reset
+		self.points = np.zeros(max([max(structure.nonzero_abs_indices()) for structure in structures]) + 1, dtype=object)	#reset
 		for structure in self.structures:
 			for point in structure.points:
 				if point != 0:
@@ -159,7 +159,7 @@ class Point(object):
 		self.absolute_index = absolute_index	#index relative to all points in structure (including null/zero points)
 		self.relative_index = relative_index	#index relative to only non-zero points
 
-def structureFromBed(path, size=None, chrom=None, start=None, end=None, offset=0):
+def structureFromBed(path, size=None, chrom=None, start=None, end=None, offset=0, chrom_order=None):
 	"""Initializes structure from intrachromosomal BED file."""
 	if chrom is None:
 		chrom = chromFromBed(path)
@@ -182,56 +182,87 @@ def structureFromBed(path, size=None, chrom=None, start=None, end=None, offset=0
 			line = line.strip().split()
 			pos1 = int(line[1])
 			pos2 = int(line[4])
-			if pos1 >= start and pos1 <= end and pos2 >= start and pos2 <= end:
-				abs_index1 = structure.chrom.getAbsoluteIndex(pos1)
-				abs_index2 = structure.chrom.getAbsoluteIndex(pos2)
-				if abs_index1 != abs_index2:	#non-self-interacting
-					structure.points[int((pos1 - start)/chrom.res)] = Point((0,0,0), structure.chrom, abs_index1, 0)
-					structure.points[int((pos2 - start)/chrom.res)] = Point((0,0,0), structure.chrom, abs_index2, 0)
+
+			#intrachromosomal 
+			if chrom_order is None:
+				if pos1 >= start and pos1 <= end and pos2 >= start and pos2 <= end:
+					abs_index1 = structure.chrom.getAbsoluteIndex(pos1)
+					abs_index2 = structure.chrom.getAbsoluteIndex(pos2)
+					if abs_index1 != abs_index2:	#non-self-interacting
+						structure.points[int((pos1 - start)/chrom.res)] = Point((0,0,0), structure.chrom, abs_index1, 0)
+						structure.points[int((pos2 - start)/chrom.res)] = Point((0,0,0), structure.chrom, abs_index2, 0)
+			elif chrom_order == 1:
+				if pos1 >= start and pos1 <= end:
+					abs_index = structure.chrom.getAbsoluteIndex(pos1)
+					structure.points[int((pos1 - start)/chrom.res)] = Point((0,0,0), structure.chrom, abs_index, 0)
+			elif chrom_order == 2:
+				if pos2 >= start and pos2 <= end:
+					abs_index = structure.chrom.getAbsoluteIndex(pos2)
+					structure.points[int((pos2 - start)/chrom.res)] = Point((0,0,0), structure.chrom, abs_index, 0)
+			else:
+				sys.exit("Invalid chrom_order")
+
 			if size is not None:
 				tracker.increment()
-		listFile.close()
 
 	structure.set_rel_indices()
 	
 	return structure
 
-def chromFromBed(path, minPos=None, maxPos=None):
-	"""Initialize ChromParams from intrachromosomal file in BED format"""
-	overall_minPos = sys.float_info.max
-	overall_maxPos = 0
-	print("Scanning {}".format(path))
+def round_down(pos, res):
+	return int(np.floor(float(pos)/res)) * res
+
+def round_up(pos, res):
+	return int(np.ceil(float(pos)/res)) * res
+
+def chromFromBed(path, return_both=False):
+	"""Initialize ChromParams from BED file"""
+	minPos1 = sys.float_info.max
+	maxPos1 = 0
+	minPos2 = sys.float_info.max
+	maxPos2 = 0
+
 	with open(path) as infile:
 		for i, line in enumerate(infile):
-			line = line.strip().split()
-			if minPos is None or maxPos is None:
-				pos1 = int(line[1])
-				pos2 = int(line[4])
-				if minPos is None:
-					curr_minPos = min((pos1, pos2))
-					if curr_minPos < overall_minPos:
-						overall_minPos = curr_minPos
-				if maxPos is None:
-					curr_maxPos = max((pos1, pos2))
-					if curr_maxPos > overall_maxPos:
-						overall_maxPos = curr_maxPos
-			if i == 0:
-				name = line[0]
-				res = (int(line[2]) - pos1)	
-		infile.close()
-	minPos = int(np.floor(float(overall_minPos)/res)) * res	#round
-	maxPos = int(np.ceil(float(overall_maxPos)/res)) * res
-	return ChromParameters(minPos, maxPos, res, name)
+			line = line.split()
+			pos1 = int(line[1])
+			pos2 = int(line[4])
 
-def matFromBed(path, size=None, structure=None):	
+			if i == 0:	#get info from first line
+				name1 = line[0]
+				res1 = (int(line[2]) - pos1)	
+				name2 = line[3]
+				res2 = int(line[5]) - pos2
+
+			if pos1 < minPos1:
+				minPos1 = pos1
+			if pos1 > maxPos1:
+				maxPos1 = pos1
+
+			if pos2 < minPos2:
+				minPos2 = pos2
+			if pos2 > maxPos2:
+				maxPos2 = pos2
+
+	if return_both:
+		return ChromParameters(round_down(minPos1, res1), round_up(maxPos1, res1), res1, name1), \
+		ChromParameters(round_down(minPos2, res2), round_up(maxPos2, res2), res2, name2)
+	else:
+		return ChromParameters(round_down(min((minPos1, minPos2)), res1), round_up(max((maxPos1,maxPos2)), res1), res1, name1)
+
+def matFromBed(path, size=None, structure1=None, structure2=None):	
 	"""Converts BED file to matrix. Only includes loci in structure."""
-	if structure is None:
-		structure = structureFromBed(path, size)
+	if structure1 is None:
+		structure1 = structureFromBed(path, size)
 
-	abs_indices = structure.nonzero_abs_indices()
+	#intrachromosomal 
+	if structure2 is None:
+		structure2 = structure1
+		intrachromosomal = True
+	else:
+		intrachromosomal = False
 
-	numpoints = len(abs_indices)
-	mat = np.zeros((numpoints, numpoints))	
+	mat = np.zeros((len(structure1.nonzero_abs_indices()), len(structure2.nonzero_abs_indices())))	
 
 	if size is not None:
 		tracker = Tracker("Filling matrix", size)
@@ -241,15 +272,15 @@ def matFromBed(path, size=None, structure=None):
 			line = line.strip().split()
 			loc1 = int(line[1])
 			loc2 = int(line[4])
-			index1 = structure.get_rel_index(loc1)
-			index2 = structure.get_rel_index(loc2)
+			index1 = structure1.get_rel_index(loc1)
+			index2 = structure2.get_rel_index(loc2)
 			if index1 is not None and index2 is not None:
 				val = float(line[6])
 				mat[index1, index2] += val
-				mat[index2, index1] += val
+				if intrachromosomal:
+					mat[index2, index1] += val
 			if size is not None:
 				tracker.increment()
-		infile.close()
 
 	rowsums = np.array([sum(row) for row in mat])
 	if len(np.where(rowsums == 0)[0]) > 0:
@@ -264,7 +295,7 @@ def highToLow(highstructure, resRatio):
 
 	low_n = int(len(highstructure.points)/resRatio) + 1
 
-	lowstructure = Structure(np.zeros(low_n, dtype=np.object), [], lowChrom, highstructure.offset/resRatio)
+	lowstructure = Structure(np.zeros(low_n, dtype=object), [], lowChrom, highstructure.offset/resRatio)
 
 	allPointsToMerge = [[] for i in range(low_n)]
 	
