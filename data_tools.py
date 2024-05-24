@@ -99,7 +99,7 @@ class Structure(object):
 	
 	def setstructures(self, structures):
 		self.structures = structures
-		self.points = np.zeros(max([max(structure.nonzero_abs_indices()) for structure in structures]) + 1, dtype=np.object)	#reset
+		self.points = np.zeros(max([max(structure.nonzero_abs_indices()) for structure in structures]) + 1, dtype=object)	#reset
 		for structure in self.structures:
 			for point in structure.points:
 				if point != 0:
@@ -295,7 +295,7 @@ def highToLow(highstructure, resRatio):
 
 	low_n = int(len(highstructure.points)/resRatio) + 1
 
-	lowstructure = Structure(np.zeros(low_n, dtype=np.object), [], lowChrom, highstructure.offset/resRatio)
+	lowstructure = Structure(np.zeros(low_n, dtype=object), [], lowChrom, highstructure.offset/resRatio)
 
 	allPointsToMerge = [[] for i in range(low_n)]
 	
