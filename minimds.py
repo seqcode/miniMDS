@@ -40,7 +40,7 @@ def infer_structure(contactMat, structure, alpha, num_threads, weight, classical
 def fullMDS(path, classical, alpha, num_threads, weight):
 	"""MDS without partitioning"""
 	structure = dt.structureFromBed(path)
-	contactMat = dt.matFromBed(path, structure=structure)
+	contactMat = dt.matFromBed(path, structure1=structure)
 	infer_structure(contactMat, structure, alpha, num_threads, weight, classical)
 	return structure
 	
@@ -61,7 +61,7 @@ def partitionedMDS(path, args):
 	lowstructure = dt.structureFromBed(path, chrom=low_chrom)	#low global structure
 
 	#get TADs
-	low_contactMat = dt.matFromBed(path, structure=lowstructure)
+	low_contactMat = dt.matFromBed(path, structure1=lowstructure)
 	low_tads = tad.getDomains(low_contactMat, lowstructure, domainSmoothingParameter, minSizeFraction)		#low substructures, defined on relative indices not absolute indices
 	tad.substructuresFromTads(lowstructure, low_tads)
 
@@ -104,7 +104,7 @@ def partitionedMDS(path, args):
 				trueLow = lowSubstructures[substructurenum]
 
 				#perform MDS individually
-				structure_contactMat = dt.matFromBed(path, structure=highSubstructure)	#contact matrix for this structure only
+				structure_contactMat = dt.matFromBed(path, structure1=highSubstructure)	#contact matrix for this structure only
 				infer_structure(structure_contactMat, highSubstructure, alpha2, num_threads, weight)
 
 				#approximate as low resolution
