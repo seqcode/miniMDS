@@ -226,14 +226,14 @@ _enrichments_ is a vector with a numerical value for each bin in the structure (
 
 Multiple structures can be plotted simultaneously:
 
-    chroms = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, X)
-    structures = [data_tools.structure_from_file("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
+    chroms = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, "X")
+    structures = [data_tools.structure_from_file(f"GM12878_combined_{chrom}_100kb_structure.tsv") for chrom in chroms]
     plotting.plot_structures_interactive(structures)
 
 plotting.py has 23 built-in colors designed to be maximally different to the human eye. By default, these colors are used when plotting multiple structures. You can also specify a list of colors:
 
     chroms = (1, 2)
-    structures = [data_tools.structure_from_file("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
+    structures = [data_tools.structure_from_file(f"GM12878_combined_{chrom}_100kb_structure.tsv") for chrom in chroms]
     plotting.plot_structures_interactive(structures, colors=[(1,0,0), (0,0,1)])
 
 plot_structures_interactive and plot_structures_gif output a file "structures_legend.png" showing the colors for each structure. 
@@ -246,8 +246,8 @@ The radius can also be specified, as above.
 
 The option _cut_ creates a cross-section of the plot. For example, this is useful for viewing the interior of the nucleus.
 
-    chroms = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, X)
-    structures = [data_tools.structure_from_file("GM12878_combined_{}_100kb_structure.tsv".format(chrom) for chrom in chroms)]
+    chroms = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, "X")
+    structures = [data_tools.structure_from_file(f"GM12878_combined_{chrom}_100kb_structure.tsv" for chrom in chroms)]
     plotting.plot_structures_interactive(structures, cut=True)
 
 A plot can be saved as a gif:
@@ -278,32 +278,30 @@ If your dataset is small and not sparse (small chromosomes, low-resolution, high
 
 ``python minimds.py --full [Hi-C BED path]``
 
-Rao GM12878 chr22 250-kb resolution looks better with [full MDS](https://drive.google.com/file/d/1jkZy9z0O4z9VXKnRHqBZz5bMz2Bs-kNu/view?usp=sharing) than [partitioned MDS](https://drive.google.com/file/d/11rm4gbzUhM_sCW86-vwEA-gqc0ZHL90W/view?usp=sharing). Signs of over-partitioning include outliers and a clumpy or incoherent structure. 
+Rao GM12878 chr22 250-kb resolution looks better with full MDS. Signs of over-partitioning include outliers and a clumpy or incoherent structure. 
 
 Even if you use partitioned MDS, you can reduce the number of partitions to avoid over-partitioning. Increasing the values of the -m or -p parameters (see below) will reduce the number of partitions.
 
 #### Under-partitioning
 
-Many datasets will output a  dense spherical structure if full MDS is used, such as [Rao GM12878 chr22 10-kb resolution](https://drive.google.com/file/d/1h7OcoJ1EZyoYC692IEWEvqTtox0Z770L/view?usp=sharing). In theses cases partitioned MDS can be used to produce a [more defined structure](https://drive.google.com/file/d/1wuzphqkmNSYqn56bNFdHKzzH35vt_jHU/view?usp=sharing). If there are too few partitions, the partitions themselves may appear dense and clumpy. Decreasing the values of the -m or -p parameters (see below) will increase the number of partitions, [further improving the structure](https://drive.google.com/file/d/1DfarHkMs_6wJUdh5dzMgITQIZGLZpq0a/view?usp=sharing). 
+Many datasets will output a  dense spherical structure if full MDS is used, such as Rao GM12878 chr22 10-kb resolution. In theses cases partitioned MDS can be used to produce a more defined structure. If there are too few partitions, the partitions themselves may appear dense and clumpy. Decreasing the values of the -m or -p parameters (see below) will increase the number of partitions, further improving the structure. 
 
 #### Resolution is too high
 
-Though miniMDS allows structural inference to be achieved at greater resolutions, the degree of improvement will depend on the quality of input data. When performing structural inference, many Hi-C datasets must be processed at lower resolution than for other types of analysis. If miniMDS won't produce good structures at any parameter setting, take a look at the sparsity of your dataset, which will determine its optimal resolution. Sparsity can be estimated as the number of (nonzero) lines in the input file. For example, mesenchymal allele-phased chr22 40-kb resolution structures look spherical, regardless of whether they were generated from [full MDS](https://drive.google.com/file/d/1GIG009AAQtxF2l3vIEuj7TeT2nr84K_Y/view?usp=sharing) or [partitioned MDS](https://drive.google.com/file/d/1TFV0my7PBURrNrHbAnCnKmhcoejuYEaC/view?usp=sharing), or with an [increased partition number](https://drive.google.com/file/d/1z2fvysJe87rBV29Ie7jmMAdIb19aMuf6/view?usp=sharing). We see that the input file has only 28,239 lines, compared to 347,273 lines in the Rao GM12878 file for the same chromosome at the same resolution (a gold-standard dataset). Thus we reduce the resolution of the input file using bin_bed.py in the scripts folder:
+Though miniMDS allows structural inference to be achieved at greater resolutions, the degree of improvement will depend on the quality of input data. When performing structural inference, many Hi-C datasets must be processed at lower resolution than for other types of analysis. If miniMDS won't produce good structures at any parameter setting, take a look at the sparsity of your dataset, which will determine its optimal resolution. Sparsity can be estimated as the number of (nonzero) lines in the input file. For example, mesenchymal allele-phased chr22 40-kb resolution structures look spherical, regardless of whether they were generated from full MDS or partitioned MDS, or with an increased partition number. We see that the input file has only 28,239 lines, compared to 347,273 lines in the Rao GM12878 file for the same chromosome at the same resolution (a gold-standard dataset). Thus we reduce the resolution of the input file using bin_bed.py in the scripts folder:
 
 ``python bin_bed.py [input file (higher resolution)] [desired low resolution (bp)] [output file (lower resolution)]``
 
 ``python bin_bed.py mesenchymal_22_40kb.bed 500000 mesenchymal_22_500kb.bed``
 
-The lower-resolution file has 2181 lines, compared to 2551 in Rao GM12878. Now we can get an [okay structure](https://drive.google.com/file/d/1SyNTIqh39W-7RSgoLMwZSlMN8RUZgqX3/view?usp=sharing) using partitioned MDS. 
+The lower-resolution file has 2181 lines, compared to 2551 in Rao GM12878.
 
 #### Normalization problems
 
-Most datasets should produce okay structures at 1-Mb resolution using full MDS. If not, there could be an issue with normalization, which sometimes produces artifacts. As a sanity check, try inferring structures using raw (un-normalized) data. For a good dataset, this should produce okay structures other than a few outliers. For example, [here](https://drive.google.com/file/d/1CFiBVBjeQFYZxajlGeYANzDM9Z_N_XSI/view?usp=sharing) is the structure for Rao K562 raw chr1 1-Mb resolution. 
+Most datasets should produce okay structures at 1-Mb resolution using full MDS. If not, there could be an issue with normalization, which sometimes produces artifacts. As a sanity check, try inferring structures using raw (un-normalized) data. For a good dataset, this should produce okay structures other than a few outliers.
 
 #### Data quality problems
 
 If your raw low-resolution structures look bad, there may be a deeper problem with the data. A simple QC metric is the distance decay, the rapid decrease in contact frequency with linear genomic distance. This can be plotted using distance_decay.py in the scripts folder. 
 
 ``python distance_decay.py [Hi-C bed file]``
-
-Here is a [good](https://drive.google.com/file/d/1i7HCZiHSWO6NFi1HlNuf5cu9r20NPnku/view?usp=sharing) distance decay curve and a [bad](https://drive.google.com/file/d/1EYX0TA8qF8YsoMQNHShrXcHF_bEeLIIe/view?usp=sharing) one. A bad distance decay curve suggests serious issues with the Hi-C data, making it unsuitable for structural inference. 

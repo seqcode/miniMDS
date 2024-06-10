@@ -7,7 +7,7 @@ inpath = sys.argv[1]
 outpath = sys.argv[2]
 
 structure = dt.structureFromBed(inpath)
-contactMat = dt.matFromBed(inpath, structure)
+contactMat = dt.matFromBed(inpath, structure1=structure)
 n = len(contactMat)
 fullMat = np.zeros((n, n+2))
 

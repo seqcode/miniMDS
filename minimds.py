@@ -99,6 +99,7 @@ def partitionedMDS(path, args):
 
 	numSubstructures = len(highstructure.structures)
 	num_threads = min((num_threads, mp.cpu_count(), numSubstructures))	#don't exceed number of requested threads, available threads, or structures
+
 	#with pymp.Parallel(num_threads) as p:
 #		for substructurenum in p.range(numSubstructures):
 	#TODO: fix parallelization
