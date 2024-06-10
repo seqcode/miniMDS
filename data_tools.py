@@ -318,7 +318,7 @@ def structure_from_file(path):
 	hasMore = True
 	with open(path) as infile:
 		name = infile.readline().strip()
-		res = int(infile.readline().strip())
+		res = int(float(infile.readline().strip()))
 		minPos = int(infile.readline().strip())
 		chrom = ChromParameters(minPos, None, res, name)
 		structure = Structure([], [], chrom, 0)
