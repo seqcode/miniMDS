@@ -92,40 +92,45 @@ def partitionedMDS(path, args):
 	infer_structure(low_contactMat, lowstructure, alpha, num_threads, weight)
 	print("Low-resolution MDS complete")
 
-	highSubstructures = pymp.shared.list(highstructure.structures)
-	lowSubstructures = pymp.shared.list(lowstructure.structures)
+	#highSubstructures = pymp.shared.list(highstructure.structures)
+	#lowSubstructures = pymp.shared.list(lowstructure.structures)
+	highSubstructures = highstructure.structures
+	lowSubstructures = lowstructure.structures
 
 	numSubstructures = len(highstructure.structures)
 	num_threads = min((num_threads, mp.cpu_count(), numSubstructures))	#don't exceed number of requested threads, available threads, or structures
-	with pymp.Parallel(num_threads) as p:
-		for substructurenum in p.range(numSubstructures):
-			highSubstructure = highSubstructures[substructurenum]	
-			if len(highSubstructure.getPoints()) > 0:	#skip empty
-				trueLow = lowSubstructures[substructurenum]
 
-				#perform MDS individually
-				structure_contactMat = dt.matFromBed(path, structure1=highSubstructure)	#contact matrix for this structure only
-				infer_structure(structure_contactMat, highSubstructure, alpha2, num_threads, weight)
+	#with pymp.Parallel(num_threads) as p:
+#		for substructurenum in p.range(numSubstructures):
+	#TODO: fix parallelization
+	for substructurenum in range(numSubstructures):
+		highSubstructure = highSubstructures[substructurenum]	
+		if len(highSubstructure.getPoints()) > 0:	#skip empty
+			trueLow = lowSubstructures[substructurenum]
 
-				#approximate as low resolution
-				inferredLow = dt.highToLow(highSubstructure, res_ratio)
+			#perform MDS individually
+			structure_contactMat = dt.matFromBed(path, structure1=highSubstructure)	#contact matrix for this structure only
+			infer_structure(structure_contactMat, highSubstructure, alpha2, num_threads, weight)
 
-				#rescale
-				scaling_factor = la.radius_of_gyration(trueLow)/la.radius_of_gyration(inferredLow)
-				for i, point in enumerate(inferredLow.points):
-					if point != 0:
-						x, y, z = point.pos
-						inferredLow.points[i].pos = (x*scaling_factor, y*scaling_factor, z*scaling_factor)
+			#approximate as low resolution
+			inferredLow = dt.highToLow(highSubstructure, res_ratio)
 
-				#recover the transformation for inferred from true low structure
-				r, t = la.getTransformation(inferredLow, trueLow)
-				t /= scaling_factor
+			#rescale
+			scaling_factor = la.radius_of_gyration(trueLow)/la.radius_of_gyration(inferredLow)
+			for i, point in enumerate(inferredLow.points):
+				if point != 0:
+					x, y, z = point.pos
+					inferredLow.points[i].pos = (x*scaling_factor, y*scaling_factor, z*scaling_factor)
 
-				#transform high structure
-				highSubstructure.transform(r, t)
-				highSubstructures[substructurenum] = highSubstructure
+			#recover the transformation for inferred from true low structure
+			r, t = la.getTransformation(inferredLow, trueLow)
+			t /= scaling_factor
 
-				print("MDS performed on structure {} of {}".format(substructurenum + 1, numSubstructures))
+			#transform high structure
+			highSubstructure.transform(r, t)
+			highSubstructures[substructurenum] = highSubstructure
+
+			print("MDS performed on structure {} of {}".format(substructurenum + 1, numSubstructures))
 
 	highstructure.setstructures(highSubstructures)
 	highstructure.set_rel_indices()
