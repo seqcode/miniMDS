@@ -16,4 +16,4 @@ fi
 OUT_DIR=$PREFIX/$RES_STRING"_resolution_intrachromosomal"/chr$CHROM
 test ! -d $DATA_DIR/$OUT_DIR && (tar -C $DATA_DIR -xzf $TAR $OUT_DIR)
 
-test ! -s $DATA_DIR/$PREFIX"_"$CHROM"_"$RES_KB$RES_STRING.bed && (python3 normalize.py $DATA_DIR/$PREFIX $RES $CHROM)
+test ! -s $DATA_DIR/$PREFIX"_"$CHROM"_"$RES_KB$RES_STRING.bed && (python normalize.py $DATA_DIR/$PREFIX $RES $CHROM)
