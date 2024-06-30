@@ -319,7 +319,7 @@ def structure_from_file(path):
 	with open(path) as infile:
 		name = infile.readline().strip()
 		res = int(float(infile.readline().strip()))
-		minPos = int(infile.readline().strip())
+		minPos = int(float(infile.readline().strip()))
 		chrom = ChromParameters(minPos, None, res, name)
 		structure = Structure([], [], chrom, 0)
 		index = 0
@@ -338,7 +338,7 @@ def structure_from_file(path):
 					point = Point((x,y,z), chrom, num, index)
 					index += 1
 				structure.points.append(point)
-		infile.close()
+				
 	structure.points = np.array(structure.points)
 	structure.chrom.maxPos = structure.chrom.minPos + structure.chrom.res*num	#max pos is last point num
 	return structure
